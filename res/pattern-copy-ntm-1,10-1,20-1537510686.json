@@ -1,0 +1,6 @@
+{'M': 36, 'N': 40, 'T': 1, 'bsz': 4, 'dropout': 0.1, 'edim': 9, 'emb_type': 'one-hot', 'enc_type': 'ntm', 'fix_emb': False, 'fload': None, 'ftrain': 'data/pattern/copy_train1-10.pkl', 'fvalid': 'data/pattern/copy_valid11-20.pkl', 'gpu': -1, 'hdim': 120, 'lr': 0.001, 'max_len_train': 10, 'max_len_valid': 20, 'min_freq': 0, 'min_len_train': 1, 'min_len_valid': 1, 'nepoch': 30, 'nstack': 2, 'num_batches_train': 5000, 'num_batches_valid': 1000, 'odim': 8, 'repeat_max_train': 3, 'repeat_max_valid': 3, 'repeat_min_train': 1, 'repeat_min_valid': 1, 'save_per': 2, 'seed': 1000, 'seq_width': 8, 'stack_depth': 2, 'sub_task': 'copy', 'task': 'pattern', 'wdecay': 0}
+{'Epoch':0, 'Format':'a/l', 'Metrics':[0.0475, 0.5541]}
+{'Epoch':0, 'Format':'a/l', 'Metrics':[0.1410, 0.4005]}
+{'Epoch':0, 'Format':'a/l', 'Metrics':[0.9985, 0.0250]}
+{'Epoch':0, 'Format':'a/l', 'Metrics':[0.9998, 0.0122]}
+{'Epoch':1, 'Format':'a/l', 'Metrics':[0.9992, 0.0027]}
