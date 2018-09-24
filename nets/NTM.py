@@ -146,8 +146,8 @@ class NTMWriteHead(nn.Module):
 
 class EncoderNTM(MANNBaseEncoder):
 
-    def __init__(self, idim, cdim, N, M, T):
-        super(EncoderNTM, self).__init__(idim, cdim, N, M, T)
+    def __init__(self, idim, cdim, N, M, dropout):
+        super(EncoderNTM, self).__init__(idim, cdim, N, M, dropout)
         self.mem = NTMMemory(N, M)
         self.rhead = NTMReadHead(self.mem, cdim)
         self.whead = NTMWriteHead(self.mem, cdim)
@@ -165,7 +165,7 @@ class EncoderNTM(MANNBaseEncoder):
         r, self.rstate = self.rhead(controller_outp, self.rstate)
         return r
 
-    def write(self, controller_outp, r):
+    def write(self, controller_outp, input):
         self.wstate = self.whead(controller_outp, self.wstate)
 
 

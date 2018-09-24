@@ -110,28 +110,26 @@ if __name__ == '__main__':
                                   cdim=opt.hdim,
                                   N=opt.N,
                                   M=opt.M,
-                                  T=opt.T)
+                                  dropout=opt.dropout)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
-                                    nstack=opt.nstack,
                                     N=opt.N,
                                     M=opt.M,
-                                    T=opt.T,
-                                    depth=opt.stack_depth)
+                                    dropout=opt.dropout)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    T=opt.T)
+                                   dropout=opt.dropout)
 
     if opt.enc_type == 'alstm':
         encoder = nets.EncoderALSTM(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    T=opt.T)
+                                    dropout=opt.dropout)
 
     model = None
     if embedding is None:

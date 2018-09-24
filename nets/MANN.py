@@ -9,15 +9,14 @@ from torch.nn.utils.rnn import pack_padded_sequence as pack, \
 
 class MANNBaseEncoder(nn.Module):
 
-    def __init__(self, idim, cdim, N, M, T):
+    def __init__(self, idim, cdim, N, M, dropout):
         super(MANNBaseEncoder, self).__init__()
         self.idim = idim
         self.odim = cdim + M
         self.cdim = cdim
         self.N = N
         self.M = M
-        self.T = T
-        self.controller = nn.LSTM(idim + M, cdim)
+        self.controller = nn.LSTM(idim + M, cdim, dropout=dropout)
 
         self._reset_controller()
 
@@ -26,6 +25,7 @@ class MANNBaseEncoder(nn.Module):
         self.r0 = nn.Parameter(torch.randn(1, M) * 0.02, requires_grad=False)
         self.mlp_mhops = nn.Sequential(nn.Linear(cdim + M, cdim),
                                        nn.ReLU())
+        self.dropout = nn.Dropout(dropout)
 
     def _reset_controller(self):
         for p in self.controller.parameters():
@@ -47,11 +47,12 @@ class MANNBaseEncoder(nn.Module):
     def read(self, controller_outp):
         raise NotImplementedError
 
-    def write(self, controller_outp, r):
+    def write(self, controller_outp, input):
         raise NotImplementedError
 
     def forward(self, **input):
         embs = input['embs']
+        embs = self.dropout(embs)
         lens = input['lens']
         bsz = embs.shape[1]
 
@@ -71,18 +72,13 @@ class MANNBaseEncoder(nn.Module):
             controller_outp, (h, c) = self.controller(controller_inp, (h, c))
             controller_outp = controller_outp.squeeze(0)
 
-            o = None
-            for ihop in range(self.T):
-                r = self.read(controller_outp)
-                self.write(controller_outp, r)
-                o = torch.cat([controller_outp, r], dim=1)
-                if ihop > 0:
-                    controller_outp = self.mlp_mhops(o)
-            o = o[None]
+            self.write(controller_outp, emb)
+            r = self.read(controller_outp)
+            o = torch.cat([controller_outp, r], dim=1)
 
             hs.append(h)
             cs.append(c)
-            os.append(o)
+            os.append(o.unsqueeze(0))
 
         os = torch.cat(os, dim=0)
         hs = torch.cat(hs, dim=0)

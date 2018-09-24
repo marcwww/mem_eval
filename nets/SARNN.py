@@ -12,91 +12,72 @@ class EncoderSARNN(MANNBaseEncoder):
     def __init__(self,
                  idim,
                  cdim,
-                 nstack,
                  N,
                  M,
-                 T,
-                 depth):
-        super(EncoderSARNN, self).__init__(idim, cdim, N, M, T)
+                 dropout):
+        super(EncoderSARNN, self).__init__(idim, cdim, N, M, dropout)
 
-        self.nstack = nstack
-        self.depth = depth
-        self.mem_bias = nn.Parameter(torch.Tensor(nstack, M),
+        self.mem_bias = nn.Parameter(torch.zeros(M),
                                      requires_grad=False)
-        stdev = 1 / (np.sqrt(nstack * N + M))
-        nn.init.uniform(self.mem_bias, -stdev, stdev)
+        self.update_kernel = nn.Parameter(torch.eye(N + 1).
+            view(N + 1, 1, N + 1, 1),
+            requires_grad=False)
 
-        self.stack2r = nn.Linear(nstack * M * depth, M)
+        self.policy_stack = nn.Conv1d(M, 2, kernel_size=2)
+        # 2 for push and stay
+        self.policy_input = nn.Linear(idim, 2 * (N + 1))
+        self.hid2pushed = nn.Linear(cdim, M)
 
-        # shift matrix for stack
-        W_up, W_down = utils.shift_matrix(N)
-        self.W_up = nn.Parameter(torch.Tensor(W_up), requires_grad=False)
-        self.W_pop = self.W_up
+    def policy(self, input):
+        bsz = input.shape[0]
+        mem_padded = F.pad(self.mem.transpose(1, 2),
+                           (0, 2), 'constant', 0)
+        policy_stack = self.policy_stack(mem_padded).view(bsz, -1)
+        policy_input = self.policy_input(input)
 
-        self.W_down = nn.Parameter(torch.Tensor(W_down), requires_grad=False)
-        self.W_push = self.W_down
+        return F.softmax(policy_stack + policy_input, dim=1)
 
-        self.wlstm = nn.LSTM(cdim + M, cdim)
-        self.wstate_init = nn.Parameter(torch.zeros(cdim),
-                                       requires_grad=False)
-        self.analysis_ctrl = nn.Linear(cdim, 3 + nstack * M)
-        self.write_ctrl = nn.LSTM(M, cdim)
+    def update_stack(self,
+                     p_push, p_stay, hid):
+        bsz = hid.shape[0]
 
-    def update_stack(self, stack,
-                     p_push, p_pop,
-                     p_noop, push_vals):
-
-        # stack: (bsz, nstack, ssz, sdim)
-        # p_push, p_pop, p_noop: (bsz, nstack, 1, 1)
-        # push_vals: (bsz, nstack, sdim)
+        p_stay = p_stay.unsqueeze(-1).unsqueeze(-1)
         p_push = p_push.unsqueeze(-1).unsqueeze(-1)
-        p_pop = p_pop.unsqueeze(-1).unsqueeze(-1)
-        p_noop = p_noop.unsqueeze(-1).unsqueeze(-1)
 
-        stack_push = self.W_push.matmul(stack)
-        stack_push[:, :, 0, :] += push_vals
+        mem_padded = F.pad(self.mem.unsqueeze(1),
+                           (0, 0, 0, self.N),
+                           'constant', 0)
 
-        stack_pop = self.W_pop.matmul(stack)
-        # fill the stack with empty elements
-        stack_pop[:, :, self.N - 1:, :] += \
-            self.mem_bias.unsqueeze(1).unsqueeze(0)
+        # m_stay: (bsz, N+1, N, M)
+        m_stay = F.conv2d(mem_padded, self.update_kernel)
 
-        stack  = p_push * stack_push + p_pop * stack_pop + p_noop * stack
-        return stack
+        # pushed: (bsz, M)
+        pushed = self.hid2pushed(hid)
+        # pushed: (bsz, N+1, 1, M)
+        pushed = pushed.unsqueeze(1).unsqueeze(1).expand(bsz, self.N + 1, 1, self.M)
+        m_push = torch.cat([pushed, m_stay[:, :, :-1]], dim=2)
+
+        mem_new = (m_stay * p_stay).sum(dim=1) + (m_push * p_push).sum(dim=1)
+        self.mem = mem_new
 
     def read(self, controller_outp):
-        bsz = controller_outp.shape[0]
-        tops = self.stack[:, :, :self.depth, :].\
-            contiguous(). \
-            view(bsz, -1)
-        return self.stack2r(tops)
+        r = self.mem[:, 0]
+        return r
 
-    def write(self, controller_outp, r):
+    def write(self, controller_outp, input):
         # r: (bsz, M)
         # controller_outp: (bsz, cdim)
         # ctrl_info: (bsz, 3 + nstack * M)
-        o = torch.cat([controller_outp, r], dim=1)
-        wout, self.whid = self.wlstm(o.unsqueeze(0), self.whid)
-
-        ctrl_info = self.analysis_ctrl(wout.squeeze(0))
-        p_push, p_pop, p_noop = \
-            F.softmax(ctrl_info[:, :3], dim=-1)\
-            .chunk(3, dim=-1)
-        push_vals = ctrl_info[:, 3:].view(-1, self.nstack, self.M)
-        self.stack = \
-            self.update_stack(self.stack, p_push, p_pop, p_noop, push_vals)
+        hid = controller_outp
+        policy = self.policy(input)
+        p_stay, p_push = torch.chunk(policy, 2, dim=1)
+        self.update_stack(p_stay, p_push, hid)
 
     def reset_read(self, bsz):
         pass
 
     def reset_write(self, bsz):
-        self.whid = (self.wstate_init.expand(1, bsz, self.cdim).contiguous(),
-                     self.wstate_init.expand(1, bsz, self.cdim).contiguous())
+        pass
 
     def reset_mem(self, bsz):
-        self.stack = self.mem_bias.unsqueeze(1). \
-            unsqueeze(0). \
-            expand(bsz,
-                   self.nstack,
-                   self.N,
-                   self.M)
+        self.mem = self.mem_bias.expand(bsz, self.N, self.M)
