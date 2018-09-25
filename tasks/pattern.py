@@ -216,9 +216,11 @@ def valid(model, valid_iter):
 
     return nc/nt
 
-def train(model, iters, opt, criterion, optim, scheduler):
+def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
     valid_iter = iters['valid_iter']
+
+    criterion = nn.BCELoss()
 
     # print(valid(model, valid_iter))
     basename = "{}-{}-{}-{},{}-{},{}-{}".format(opt.task,

@@ -7,7 +7,7 @@ import argparse
 from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import pattern, flang
+from tasks import pattern, flang, agreement
 import crash_on_ipy
 
 
@@ -38,6 +38,11 @@ if __name__ == '__main__':
         train = flang.train
         Model = flang.Model
 
+    if opt.task == 'agreement':
+        build_iters = agreement.build_iters
+        train = agreement.train
+        Model = agreement.Model
+
     param_iter = {'ftrain': opt.ftrain,
                   'fvalid': opt.fvalid,
                   'bsz': opt.bsz,
@@ -63,6 +68,7 @@ if __name__ == '__main__':
     SEQ = None
     SRC = None
     TAR = None
+    SGOLD = None
     if 'SEQ' in res_iters.keys():
         SEQ = res_iters['SEQ']
         embedding = nn.Embedding(num_embeddings=len(SEQ.vocab.itos),
@@ -146,14 +152,6 @@ if __name__ == '__main__':
         model.load_state_dict(model_dict)
         print('Loaded from ' + model_path)
 
-    if TAR is None:
-        criterion = nn.CrossEntropyLoss()
-    else:
-        criterion = nn.CrossEntropyLoss(ignore_index=TAR.vocab.stoi[PAD])
-
-    if opt.task == 'pattern':
-        criterion = nn.BCELoss()
-
     optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
                            lr=opt.lr,
                            weight_decay=opt.wdecay)
@@ -170,5 +168,5 @@ if __name__ == '__main__':
     param_str = utils.param_str(opt)
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
-    train(model, res_iters, opt, criterion, optimizer, scheduler)
+    train(model, res_iters, opt, optimizer, scheduler)
 

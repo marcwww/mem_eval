@@ -25,7 +25,7 @@ def load_examples(fname):
     with open(fname, 'r') as f:
         for line in f:
             seq, lbl, d, e = \
-                line.split('\t')
+                line.strip().split('\t')
             examples.append(Example(seq, lbl))
 
     return examples
@@ -92,9 +92,11 @@ def valid(model, valid_iter):
     # return accuracy, precision, recall, f1
     return accuracy
 
-def train(model, iters, opt, criterion, optim, scheduler):
+def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
     valid_iter = iters['valid_iter']
+    criterion_clf = nn.CrossEntropyLoss()
+    criterion_lm = nn.CrossEntropyLoss(ignore_index=model.padding_idx)
 
     basename = "{}-{}-{}-{}".format(opt.task,
                                        opt.sub_task,
@@ -113,20 +115,19 @@ def train(model, iters, opt, criterion, optim, scheduler):
             seq = batch.seq
             lbl = batch.lbl
 
-            seq_len = seq.shape[0]
             model.train()
             model.zero_grad()
             out = model(seq[:-1])
             pred_lbl = out['res_clf']
             next_words = out['next_words']
 
-            loss_clf = criterion(pred_lbl, lbl)
+            loss_clf = criterion_clf(pred_lbl, lbl)
             # mask: (bsz)
             mask = lbl.eq(0).expand_as(seq)
             # seq: (seq_len, bsz)
             seq_lm = seq.clone().masked_fill_(mask, model.padding_idx)
-            loss_lm = F.cross_entropy(next_words.view(-1, model.num_words), seq_lm[1:].view(-1),
-                            ignore_index=model.padding_idx)
+            loss_lm = criterion_lm(next_words.view(-1, model.num_words),
+                                   seq_lm[1:].view(-1))
 
             loss = (loss_clf + opt.lm_coef * loss_lm)/(1 + opt.lm_coef)
             losses.append(loss.item())
@@ -134,7 +135,6 @@ def train(model, iters, opt, criterion, optim, scheduler):
             loss.backward()
             clip_grad_norm(model.parameters(), 5)
             optim.step()
-
             loss = {'clf_loss': loss.item()}
 
             utils.progress_bar(i / len(train_iter), loss, epoch)

@@ -7,26 +7,24 @@ from torch.nn import functional as F
 from torch.nn.utils import clip_grad_norm
 import numpy as np
 import utils
-from sklearn.metrics import accuracy_score, \
-    precision_score, recall_score, f1_score
 
 class Example(object):
 
-    def __init__(self, seq, lbl):
-        self.seq = self.tokenizer(seq)
-        self.lbl = lbl
+    def __init__(self, sgold, sdiff):
+        self.sgold = self.tokenizer(sgold)
+        self.sdiff = self.tokenizer(sdiff)
 
     def tokenizer(self, seq):
-        return list(seq)
+        return seq.split()
 
 def load_examples(fname):
     examples = []
 
     with open(fname, 'r') as f:
         for line in f:
-            lbl, seq = \
-                line.split('\t')
-            examples.append(Example(seq, lbl))
+            sgold, sdiff = \
+                line.strip().split('\t')
+            examples.append(Example(sgold, sdiff))
 
     return examples
 
@@ -42,59 +40,56 @@ def build_iters(param_iter):
     SEQ = torchtext.data.Field(sequential=True, use_vocab=True,
                                pad_token=PAD,
                                unk_token=UNK,
-                               eos_token=EOS)
-    LBL = torchtext.data.Field(sequential=False, use_vocab=False)
+                               eos_token=None)
 
-    train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('lbl', LBL)])
+    train = Dataset(examples_train, fields=[('sgold', SEQ),
+                                            ('sdiff', SEQ)])
     SEQ.build_vocab(train)
     examples_valid = load_examples(fvalid)
-    valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('lbl', LBL)])
+    valid = Dataset(examples_valid, fields=[('sgold', SEQ),
+                                            ('sdiff', SEQ)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
                                          sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.seq),
+                                         sort_key=lambda x: len(x.sgold),
                                          sort_within_batch=True,
                                          device=device)
     valid_iter = torchtext.data.Iterator(valid, batch_size=bsz,
                                          sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.seq),
+                                         sort_key=lambda x: len(x.sgold),
                                          sort_within_batch=True,
                                          device=device)
 
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
-            'SEQ': SEQ,
-            'LBL': LBL}
+            'SEQ': SEQ}
 
-def valid(model, valid_iter):
-    pred_lst = []
-    true_lst = []
-
+def valid(model, valid_iter, criterion_lm):
+    nc = 0
+    nt = 0
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            seq, lbl = batch.seq, batch.lbl
-            res= model(seq)
-            res_clf = res['res_clf']
+            sgold = batch.sgold
+            sdiff = batch.sdiff
+            next_words = model(sgold[:-1])
 
-            pred = res_clf.max(dim=1)[1].cpu().numpy()
-            lbl = lbl.cpu().numpy()
-            pred_lst.extend(pred)
-            true_lst.extend(lbl)
+            loss_gold = criterion_lm(next_words.view(-1, model.num_words),
+                                sgold[1:].view(-1))
+            loss_diff = criterion_lm(next_words.view(-1, model.num_words),
+                                sdiff[1:].view(-1))
 
-    accuracy = accuracy_score(true_lst, pred_lst)
-    precision = precision_score(true_lst, pred_lst)
-    recall = recall_score(true_lst, pred_lst)
-    f1 = f1_score(true_lst, pred_lst)
+            nc += (loss_diff - loss_gold).gt(0).sum().item()
+            nt += sgold.shape[0]
 
-    # return accuracy, precision, recall, f1
+    accuracy = nc / nt
     return accuracy
 
-def train(model, iters, opt, criterion, optim, scheduler):
+def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
     valid_iter = iters['valid_iter']
+
+    criterion_lm = nn.CrossEntropyLoss(ignore_index=model.padding_idx)
 
     basename = "{}-{}-{}-{}".format(opt.task,
                                        opt.sub_task,
@@ -104,35 +99,23 @@ def train(model, iters, opt, criterion, optim, scheduler):
     log_path = os.path.join(RES, log_fname)
     with open(log_path, 'w') as f:
         f.write(str(utils.param_str(opt)) + '\n')
-    # print(valid(model, valid_iter))
 
+    # print(valid(model, valid_iter, criterion_lm))
     best_performance = 0
     losses = []
     for epoch in range(opt.nepoch):
         for i, batch in enumerate(train_iter):
-            seq = batch.seq
-            lbl = batch.lbl
+            sgold = batch.sgold
+            sdiff = batch.sdiff
 
-            seq_len = seq.shape[0]
             model.train()
             model.zero_grad()
-            out = model(seq[:-1])
-            pred_lbl = out['res_clf']
-            next_words = out['next_words']
+            next_words = model(sgold[:-1])
 
-            loss_clf = criterion(pred_lbl, lbl)
-            # mask: (bsz)
-            mask = lbl.eq(0).expand_as(seq)
-            # seq: (seq_len, bsz)
-            seq_lm = seq.clone().masked_fill_(mask, model.padding_idx)
-            loss_lm = F.cross_entropy(next_words.view(-1, model.num_words), seq_lm[1:].view(-1),
-                            ignore_index=model.padding_idx)
-
-            loss = (loss_clf + opt.lm_coef * loss_lm)/(1 + opt.lm_coef)
+            loss = criterion_lm(next_words.view(-1, model.num_words), sgold[1:].view(-1))
             losses.append(loss.item())
-
             loss.backward()
-            clip_grad_norm(model.parameters(), 5)
+            clip_grad_norm(model.parameters(), 15)
             optim.step()
 
             loss = {'clf_loss': loss.item()}
@@ -144,7 +127,7 @@ def train(model, iters, opt, criterion, optim, scheduler):
                 loss_ave = np.array(losses).sum() / len(losses)
                 losses = []
                 accurracy = \
-                    valid(model, valid_iter)
+                    valid(model, valid_iter, criterion_lm)
                 log_str = '{\'Epoch\':%d, \'Format\':\'a/l\', \'Metrics\':[%.4f, %.4f]}' % \
                           (epoch, accurracy, loss_ave)
                 print(log_str)
@@ -183,21 +166,15 @@ class Model(nn.Module):
         inp = self.embedding(seq)
         res = self.encoder(embs=inp, lens=lens)
         output = res['output']
-        reps = torch.cat([output[lens[b] - 1, b, :].unsqueeze(0) for b in range(bsz)],
-                         dim=0)
-        res['reps'] = reps
         res['output'] = output
         return res
 
     def forward(self, seq):
         res = self.enc(seq)
-        rep = res['reps']
         output = res['output']
         next_words = self.out(output)
 
-        res_clf = self.clf(rep)
-        return {'res_clf':res_clf,
-                'next_words': next_words}
+        return next_words
 
 
 
