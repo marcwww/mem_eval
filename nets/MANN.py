@@ -23,8 +23,6 @@ class MANNBaseEncoder(nn.Module):
         self.h0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
         self.c0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
         self.r0 = nn.Parameter(torch.randn(1, M) * 0.02, requires_grad=False)
-        self.mlp_mhops = nn.Sequential(nn.Linear(cdim + M, cdim),
-                                       nn.ReLU())
         self.dropout = nn.Dropout(dropout)
 
     def _reset_controller(self):

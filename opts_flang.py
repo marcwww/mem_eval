@@ -42,8 +42,8 @@ def train_opts(parser):
     group.add_argument('-gpu', type=int, default=-1)
     group.add_argument('-lr', type=float, default=1e-3)
     group.add_argument('-wdecay', type=float, default=0)
-    group.add_argument('-lm_coef', type=float, default=1)
-    # group.add_argument('-lm_coef', type=float, default=0)
+    # group.add_argument('-lm_coef', type=float, default=1)
+    group.add_argument('-lm_coef', type=float, default=0)
 
     # for copy-tasks
     group.add_argument('-seq_width', type=int, default=8)

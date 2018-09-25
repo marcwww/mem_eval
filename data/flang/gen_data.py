@@ -195,5 +195,5 @@ if __name__ == '__main__':
     # for i in range(100):
     #     print(cgen.gen())
 
-    gen_data(10000, 3, 1, 'train')
-    gen_data(1000, 3, 1, 'valid')
+    # gen_data(10000, 4, 1, 'train')
+    gen_data(1000, 10, 1, 'valid')
