@@ -4,7 +4,7 @@ def model_opts(parser):
     group = parser.add_argument_group('model')
     group.add_argument('-edim', type=int, default=50)
     group.add_argument('-hdim', type=int, default=50)
-    group.add_argument('-odim', type=int, default=8)
+    group.add_argument('-odim', type=int, default=50)
     group.add_argument('-dropout', type=float, default=0)
     group.add_argument('-fix_emb', default=False, action='store_true')
     # group.add_argument('-emb_type', type=str, default='one-hot')
@@ -14,7 +14,7 @@ def model_opts(parser):
     group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
     group.add_argument('-N', type=int, default=40)
-    group.add_argument('-M', type=int, default=50)
+    group.add_argument('-M', type=int, default=1)
     # group.add_argument('-T', type=int, default=1)
     group.add_argument('-T', type=int, default=2)
 
@@ -35,14 +35,22 @@ def train_opts(parser):
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(AGREE,
                         'valid.tsv'))
-    group.add_argument('-fload', type=str, default=None)
-    group.add_argument('-bsz', type=int, default=64)
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(AGREE,
+    #                                         'numpred.train'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(AGREE,
+    #                                         'numpred.val'))
+    group.add_argument('-fload', type=str, default='agreement-overall-lstm-1537960032.model')
+    # group.add_argument('-fload', type=str, default=None)
+    group.add_argument('-bsz', type=int, default=16)
     group.add_argument('-min_freq', type=int, default=0)
     group.add_argument('-nepoch', type=int, default=30)
     group.add_argument('-save_per', type=int, default=2)
     # group.add_argument('-task', type=str, default='flang')
     # group.add_argument('-task', type=str, default='pattern')
     group.add_argument('-task', type=str, default='agreement')
+    # group.add_argument('-task', type=str, default='agreement_clf')
     # group.add_argument('-sub_task', type=str, default='copy')
     # group.add_argument('-sub_task', type=str, default='mirror')
     # group.add_argument('-sub_task', type=str, default='expr')

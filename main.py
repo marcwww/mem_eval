@@ -10,7 +10,6 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tasks import pattern, flang, agreement
 import crash_on_ipy
 
-
 if __name__ == '__main__':
     parser = argparse. \
         ArgumentParser(description='main.py',

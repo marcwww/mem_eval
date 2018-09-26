@@ -8,23 +8,26 @@ from torch.nn.utils import clip_grad_norm
 import numpy as np
 import utils
 
+
 class Example(object):
 
-    def __init__(self, sgold, sdiff):
+    def __init__(self, sen, sgold, sdiff):
+        self.sen = self.tokenizer(sen)
         self.sgold = self.tokenizer(sgold)
         self.sdiff = self.tokenizer(sdiff)
 
     def tokenizer(self, seq):
         return seq.split()
 
+
 def load_examples(fname):
     examples = []
 
     with open(fname, 'r') as f:
         for line in f:
-            sgold, sdiff = \
+            sen, sgold, sdiff = \
                 line.strip().split('\t')
-            examples.append(Example(sgold, sdiff))
+            examples.append(Example(sen, sgold, sdiff))
 
     return examples
 
@@ -42,11 +45,13 @@ def build_iters(param_iter):
                                unk_token=UNK,
                                eos_token=None)
 
-    train = Dataset(examples_train, fields=[('sgold', SEQ),
+    train = Dataset(examples_train, fields=[('sen', SEQ),
+                                            ('sgold', SEQ),
                                             ('sdiff', SEQ)])
     SEQ.build_vocab(train)
     examples_valid = load_examples(fvalid)
-    valid = Dataset(examples_valid, fields=[('sgold', SEQ),
+    valid = Dataset(examples_valid, fields=[('sen', SEQ),
+                                            ('sgold', SEQ),
                                             ('sdiff', SEQ)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
@@ -64,7 +69,23 @@ def build_iters(param_iter):
             'valid_iter': valid_iter,
             'SEQ': SEQ}
 
-def valid(model, valid_iter, criterion_lm):
+def build_iters_test(ftests, SEQ, bsz, device):
+    iters = []
+    for ftest in ftests:
+        examples = load_examples(ftest)
+        test = Dataset(examples, fields=[('sen', SEQ),
+                                    ('sgold', SEQ),
+                                    ('sdiff', SEQ)])
+        iter = torchtext.data.Iterator(test, batch_size=bsz,
+                                             sort=False, repeat=False,
+                                             sort_key=lambda x: len(x.sgold),
+                                             sort_within_batch=True,
+                                             device=device)
+        iters.append(iter)
+
+    return iters
+
+def valid(model, valid_iter):
     nc = 0
     nt = 0
     with torch.no_grad():
@@ -73,14 +94,25 @@ def valid(model, valid_iter, criterion_lm):
             sgold = batch.sgold
             sdiff = batch.sdiff
             next_words = model(sgold[:-1])
+            bsz = next_words.shape[1]
 
-            loss_gold = criterion_lm(next_words.view(-1, model.num_words),
-                                sgold[1:].view(-1))
-            loss_diff = criterion_lm(next_words.view(-1, model.num_words),
-                                sdiff[1:].view(-1))
+            lens = sgold.ne(model.padding_idx).sum(0)
+            final_word_logits = next_words[lens-2, range(bsz)]
+            gold = sgold[lens-1, range(bsz)]
+            diff = sdiff[lens-1, range(bsz)]
 
-            nc += (loss_diff - loss_gold).gt(0).sum().item()
-            nt += sgold.shape[0]
+            prob_diff = final_word_logits[range(bsz), gold] - \
+                    final_word_logits[range(bsz), diff]
+
+            nc += prob_diff.gt(0).sum().item()
+            nt += bsz
+            # loss_gold = F.cross_entropy(next_words.view(-1, model.num_words),
+            #                     sgold[1:].view(-1), reduce=False, ignore_index=model.padding_idx)
+            # loss_diff = F.cross_entropy(next_words.view(-1, model.num_words),
+            #                     sdiff[1:].view(-1), reduce=False, ignore_index=model.padding_idx)
+            #
+            # nc += (loss_diff - loss_gold).gt(0).sum().item()
+            # nt += sgold.shape[0]
 
     accuracy = nc / nt
     return accuracy
@@ -100,19 +132,17 @@ def train(model, iters, opt, optim, scheduler):
     with open(log_path, 'w') as f:
         f.write(str(utils.param_str(opt)) + '\n')
 
-    # print(valid(model, valid_iter, criterion_lm))
     best_performance = 0
     losses = []
     for epoch in range(opt.nepoch):
         for i, batch in enumerate(train_iter):
-            sgold = batch.sgold
-            sdiff = batch.sdiff
+            sen = batch.sen
 
             model.train()
             model.zero_grad()
-            next_words = model(sgold[:-1])
+            next_words = model(sen[:-1])
 
-            loss = criterion_lm(next_words.view(-1, model.num_words), sgold[1:].view(-1))
+            loss = criterion_lm(next_words.view(-1, model.num_words), sen[1:].view(-1))
             losses.append(loss.item())
             loss.backward()
             clip_grad_norm(model.parameters(), 15)
@@ -127,7 +157,7 @@ def train(model, iters, opt, optim, scheduler):
                 loss_ave = np.array(losses).sum() / len(losses)
                 losses = []
                 accurracy = \
-                    valid(model, valid_iter, criterion_lm)
+                    valid(model, valid_iter)
                 log_str = '{\'Epoch\':%d, \'Format\':\'a/l\', \'Metrics\':[%.4f, %.4f]}' % \
                           (epoch, accurracy, loss_ave)
                 print(log_str)
