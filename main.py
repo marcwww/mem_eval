@@ -121,7 +121,8 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    dropout=opt.dropout)
+                                    idrop=opt.idrop,
+                                    odrop=opt.odrop)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
@@ -140,7 +141,7 @@ if __name__ == '__main__':
     if embedding is None:
         model = Model(encoder, opt.odim).to(device)
     else:
-        model = Model(encoder, embedding).to(device)
+        model = Model(encoder, embedding, opt.edrop).to(device)
     utils.init_model(model)
 
     if opt.fload is not None:
@@ -160,7 +161,8 @@ if __name__ == '__main__':
     # optimizer = optim.RMSprop(params=filter(lambda p: p.requires_grad, model.parameters()),
     #                           momentum=0.9,
     #                           alpha=0.95,
-    #                           lr=1e-4)
+    #                           lr=opt.lr,
+    #                           weight_decay=opt.wdecay)
 
     scheduler = ReduceLROnPlateau(optimizer, mode='max',factor=0.5, patience=10000)
 

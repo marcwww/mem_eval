@@ -164,10 +164,12 @@ def train(model, iters, opt, optim, scheduler):
 
 class Model(nn.Module):
 
-    def __init__(self, encoder, embedding):
+    def __init__(self, encoder, embedding, edrop):
         super(Model, self).__init__()
         self.encoder = encoder
         self.embedding = embedding
+        self.embedding_drop = \
+            utils.fixMaskEmbeddedDropout(self.embedding, edrop)
         self.hdim = self.encoder.odim
         self.clf = nn.Linear(self.hdim, 2)
         self.padding_idx = embedding.padding_idx
@@ -180,7 +182,8 @@ class Model(nn.Module):
         len_total, bsz = seq.shape
         lens = len_total - mask.sum(dim=0)
 
-        inp = self.embedding(seq)
+        # inp = self.embedding(seq)
+        inp = self.embedding_drop(True, seq)
         res = self.encoder(embs=inp, lens=lens)
         output = res['output']
         reps = torch.cat([output[lens[b] - 1, b, :].unsqueeze(0) for b in range(bsz)],

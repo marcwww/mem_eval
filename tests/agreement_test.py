@@ -108,7 +108,8 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    dropout=opt.dropout)
+                                    idrop=opt.idrop,
+                                    odrop=opt.odrop)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
@@ -125,9 +126,9 @@ if __name__ == '__main__':
 
     model = None
     if embedding is None:
-        model = Model(encoder, opt.odim).to(device)
+        model = Model(encoder, opt.odim, opt.edrop).to(device)
     else:
-        model = Model(encoder, embedding).to(device)
+        model = Model(encoder, embedding, opt.edrop).to(device)
     utils.init_model(model)
 
     if opt.fload is not None:
@@ -147,8 +148,6 @@ if __name__ == '__main__':
 
     ftests = []
     for i in range(6):
-        if i == 4:
-            continue
         ftest = os.path.join(AGREE, 'test.%d.tsv' % i)
         ftest = os.path.join('..', ftest)
         ftests.append(ftest)
@@ -156,7 +155,7 @@ if __name__ == '__main__':
     iters_tests = build_iters_test(ftests, SEQ, opt.bsz, opt.gpu)
     accus = []
     for n, iters_test in enumerate(iters_tests):
-        if n != 0:
+        if n == 0:
             continue
         accu = valid(model, iters_test)
         accus.append(str(accu))

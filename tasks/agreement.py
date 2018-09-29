@@ -145,7 +145,7 @@ def train(model, iters, opt, optim, scheduler):
             loss = criterion_lm(next_words.view(-1, model.num_words), sen[1:].view(-1))
             losses.append(loss.item())
             loss.backward()
-            clip_grad_norm(model.parameters(), 15)
+            clip_grad_norm(model.parameters(), opt.gclip)
             optim.step()
 
             loss = {'clf_loss': loss.item()}
@@ -177,23 +177,26 @@ def train(model, iters, opt, optim, scheduler):
 
 class Model(nn.Module):
 
-    def __init__(self, encoder, embedding):
+    def __init__(self, encoder, embedding, edrop):
         super(Model, self).__init__()
         self.encoder = encoder
         self.embedding = embedding
+        self.embedding_drop = \
+            utils.fixMaskEmbeddedDropout(self.embedding, edrop)
         self.hdim = self.encoder.odim
         self.clf = nn.Linear(self.hdim, 2)
         self.padding_idx = embedding.padding_idx
         self.num_words = embedding.num_embeddings
-        self.out = nn.Linear(self.hdim,
-                             embedding.num_embeddings)
+        self.out2esz = nn.Linear(self.hdim, self.embedding.embedding_dim)
+        # self.out = nn.Linear(self.hdim,
+        #                      embedding.num_embeddings)
 
     def enc(self, seq):
         mask = seq.data.eq(self.padding_idx)
         len_total, bsz = seq.shape
         lens = len_total - mask.sum(dim=0)
 
-        inp = self.embedding(seq)
+        inp = self.embedding_drop(True, seq)
         res = self.encoder(embs=inp, lens=lens)
         output = res['output']
         res['output'] = output
@@ -202,7 +205,9 @@ class Model(nn.Module):
     def forward(self, seq):
         res = self.enc(seq)
         output = res['output']
-        next_words = self.out(output)
+        w_t = self.embedding.weight.transpose(0, 1)
+        next_words = self.out2esz(output).matmul(w_t)
+        # next_words = self.out(output)
 
         return next_words
 

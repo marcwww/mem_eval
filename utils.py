@@ -6,6 +6,7 @@ from torch.nn import functional as F
 import logging
 import random
 import time
+from torch.autograd import Variable
 
 LOGGER = logging.getLogger(__name__)
 
@@ -191,6 +192,46 @@ def param_str(opt):
 
 def time_int():
     return int(time.time())
+
+
+class fixMaskDropout(nn.Module):
+    def __init__(self, dropout=0.5):
+        super(fixMaskDropout, self).__init__()
+        self.dropout = dropout
+        self.mask = None
+
+    def forward(self, draw_mask, input):
+        if self.training == False:
+            return input
+        if self.mask is None or draw_mask == True:
+            self.mask = input.data.new().resize_(input.size()).bernoulli_(1 - self.dropout) / (1 - self.dropout)
+        mask = Variable(self.mask)
+        masked_input = mask * input
+        return masked_input
+
+class fixMaskEmbeddedDropout(nn.Module):
+    def __init__(self, embed, dropout=0.5):
+        super(fixMaskEmbeddedDropout, self).__init__()
+        self.dropout = dropout
+        self.e = embed
+        w = getattr(self.e, 'weight')
+        del self.e._parameters['weight']
+        self.e.register_parameter('weight_raw', nn.Parameter(w.data))
+
+    def _setweights(self):
+        raw_w = getattr(self.e, 'weight_raw')
+        if self.training:
+            mask = raw_w.data.new().resize_((raw_w.size(0), 1)).bernoulli_(1 - self.dropout).expand_as(raw_w) / (
+                        1 - self.dropout)
+            w = Variable(mask) * raw_w
+            setattr(self.e, 'weight', w)
+        else:
+            setattr(self.e, 'weight', Variable(raw_w.data))
+
+    def forward(self, draw_mask, *args):
+        if draw_mask or self.training == False:
+            self._setweights()
+        return self.e.forward(*args)
 
 if __name__ == '__main__':
     up, down = shift_matrix(3)
