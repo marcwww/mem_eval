@@ -24,7 +24,7 @@ def load_examples(fname):
 
     with open(fname, 'r') as f:
         for line in f:
-            seq, lbl, d, e = \
+            seq, lbl, d, t = \
                 line.strip().split('\t')
             examples.append(Example(seq, lbl))
 
@@ -174,8 +174,7 @@ class Model(nn.Module):
         self.clf = nn.Linear(self.hdim, 2)
         self.padding_idx = embedding.padding_idx
         self.num_words = embedding.num_embeddings
-        self.out = nn.Linear(self.hdim,
-                             embedding.num_embeddings)
+        self.out2esz = nn.Linear(self.hdim, self.embedding.embedding_dim)
 
     def enc(self, seq):
         mask = seq.data.eq(self.padding_idx)
@@ -196,7 +195,8 @@ class Model(nn.Module):
         res = self.enc(seq)
         rep = res['reps']
         output = res['output']
-        next_words = self.out(output)
+        w_t = self.embedding.weight.transpose(0, 1)
+        next_words = self.out2esz(output).matmul(w_t)
 
         res_clf = self.clf(rep)
         return {'res_clf':res_clf,

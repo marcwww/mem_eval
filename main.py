@@ -128,7 +128,8 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                   dropout=opt.dropout)
+                                    idrop=opt.idrop,
+                                    odrop=opt.odrop)
 
     if opt.enc_type == 'alstm':
         encoder = nets.EncoderALSTM(idim=opt.edim,

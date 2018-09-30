@@ -121,10 +121,60 @@ class IncorrExprGenerator(object):
             else:
                 return ' '.join(['(', self.prod_E(d + 1), ops[branch], self.prod_E(d + 1), ')'])
 
-def gen_data(num, d_bound, e_bound, e_type, dataset_type):
+def gen_data(num_train_each, num_test_each, d_bound_train, d_test, e):
+    train = []
+    for d in range(d_bound_train + 1):
+        if d == 0:
+             continue
+
+        exchange = gen_list_partial(num_train_each, d, e, 'exchange')
+        train.extend(exchange)
+
+        omit = gen_list_partial(num_train_each, d, e, 'omit')
+        train.extend(omit)
+
+        redun = gen_list_partial(num_train_each, d, e, 'redun')
+        train.extend(redun)
+
+    test = []
+    for d_type in ['exchange', 'omit', 'redun']:
+        test.extend(gen_list_partial(num_test_each + 1, d_test, e, d_type))
+
+    train = random.sample(train, k=len(train))
+    test = random.sample(test, k=len(test))
+
+    with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
+               (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'train')), 'w') as f:
+        for line in train:
+            f.write(line)
+
+    with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
+               (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'test')), 'w') as f:
+        for line in test:
+            f.write(line)
+
+def gen_list_partial(num, d_bound, e_bound, e_type):
     igen = IncorrExprGenerator(d_bound, e_bound, e_type)
     cgen = CorrExprGenerator(d_bound)
-    
+
+    e2s = {'exchange':'0', 'omit':'1', 'redun':'2'}
+
+    res = []
+    for i in range(num):
+        correct = np.random.choice(2)
+        if correct == 1:
+            expr = cgen.gen()
+        else:
+            expr, _ = igen.gen()
+
+        res.append('\t'.join([expr, str(correct), str(d_bound), e2s[e_type]]) + '\n')
+
+    return res
+
+def gen_data_partial(num, d_bound, e_bound, e_type, dataset_type):
+    igen = IncorrExprGenerator(d_bound, e_bound, e_type)
+    cgen = CorrExprGenerator(d_bound)
+
     with open(('expr-n%d-d%d-e%d-%s.%s.txt' %
                (num, d_bound, e_bound, e_type, dataset_type)), 'w') as f:
 
@@ -139,23 +189,24 @@ def gen_data(num, d_bound, e_bound, e_type, dataset_type):
 
 if __name__ == '__main__':
 
-    # exchange:
-    gen_data(10000, 2, 1, 'exchange','train')
-    gen_data(10000, 3, 1, 'exchange','train')
-
-    gen_data(1000, 4, 1, 'exchange', 'valid')
-    gen_data(1000, 5, 1, 'exchange', 'valid')
-
-    # omit:
-    gen_data(10000, 2, 1, 'omit','train')
-    gen_data(10000, 3, 1, 'omit','train')
-
-    gen_data(1000, 4, 1, 'omit', 'valid')
-    gen_data(1000, 5, 1, 'omit', 'valid')
-
-    # redundant:
-    gen_data(10000, 2, 1, 'redun', 'train')
-    gen_data(10000, 3, 1, 'redun', 'train')
-
-    gen_data(1000, 4, 1, 'redun', 'valid')
-    gen_data(1000, 5, 1, 'redun', 'valid')
+    gen_data(3333, 1000, 3, 5, 1)
+    # # exchange:
+    # gen_data_partial(10000, 2, 1, 'exchange','train')
+    # gen_data_partial(10000, 3, 1, 'exchange','train')
+    #
+    # gen_data_partial(1000, 4, 1, 'exchange', 'valid')
+    # gen_data_partial(1000, 5, 1, 'exchange', 'valid')
+    #
+    # # omit:
+    # gen_data_partial(10000, 2, 1, 'omit','train')
+    # gen_data_partial(10000, 3, 1, 'omit','train')
+    #
+    # gen_data_partial(1000, 4, 1, 'omit', 'valid')
+    # gen_data_partial(1000, 5, 1, 'omit', 'valid')
+    #
+    # # redundant:
+    # gen_data_partial(10000, 2, 1, 'redun', 'train')
+    # gen_data_partial(10000, 3, 1, 'redun', 'train')
+    #
+    # gen_data_partial(1000, 4, 1, 'redun', 'valid')
+    # gen_data_partial(1000, 5, 1, 'redun', 'valid')
