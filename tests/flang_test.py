@@ -5,10 +5,9 @@ import utils
 import opts
 import argparse
 from torch import nn
-from torch import optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import pattern, flang, agreement
+from tasks import flang
 import crash_on_ipy
+
 
 if __name__ == '__main__':
     parser = argparse. \
@@ -22,28 +21,16 @@ if __name__ == '__main__':
 
     utils.init_seed(opt.seed)
 
-    build_iters = None
-    train = None
-    Model = None
-    criterion = None
+    assert opt.task == 'flang'
 
-    if opt.task == 'pattern':
-        build_iters = pattern.build_iters
-        train = pattern.train
-        Model = pattern.Model
+    build_iters = flang.build_iters
+    train = flang.train
+    valid = flang.valid
+    valid_detail = flang.valid_detail
+    Model = flang.Model
 
-    if opt.task == 'flang':
-        build_iters = flang.build_iters
-        train = flang.train
-        Model = flang.Model
-
-    if opt.task == 'agreement':
-        build_iters = agreement.build_iters
-        train = agreement.train
-        Model = agreement.Model
-
-    param_iter = {'ftrain': opt.ftrain,
-                  'fvalid': opt.fvalid,
+    param_iter = {'ftrain': os.path.join('..', opt.ftrain),
+                  'fvalid': os.path.join('..', opt.fvalid),
                   'bsz': opt.bsz,
                   'device': opt.gpu,
                   'sub_task': opt.sub_task,
@@ -141,7 +128,7 @@ if __name__ == '__main__':
 
     model = None
     if embedding is None:
-        model = Model(encoder, opt.odim).to(device)
+        model = Model(encoder, opt.odim, opt.edrop).to(device)
     else:
         model = Model(encoder, embedding, opt.edrop).to(device)
     utils.init_model(model)
@@ -150,26 +137,14 @@ if __name__ == '__main__':
         model_fname = opt.fload
         location = {'cuda:' + str(opt.gpu): 'cuda:' + str(opt.gpu)} if opt.gpu != -1 else 'cpu'
         model_path = os.path.join(RES, model_fname)
+        model_path = os.path.join('..', model_path)
         model_dict = torch.load(model_path, map_location=location)
         model.load_state_dict(model_dict)
         print('Loaded from ' + model_path)
 
-    optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
-                           lr=opt.lr,
-                           weight_decay=opt.wdecay)
-    # optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()),
-    #                        lr=opt.lr,
-    #                        weight_decay=opt.wdecay)
-    # optimizer = optim.RMSprop(params=filter(lambda p: p.requires_grad, model.parameters()),
-    #                           momentum=0.9,
-    #                           alpha=0.95,
-    #                           lr=opt.lr,
-    #                           weight_decay=opt.wdecay)
-
-    scheduler = ReduceLROnPlateau(optimizer, mode='max',factor=0.5, patience=10000)
-
     param_str = utils.param_str(opt)
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
-    train(model, res_iters, opt, optimizer, scheduler)
+
+    print('Valid result: \n', valid_detail(model, res_iters['valid_iter']))
 

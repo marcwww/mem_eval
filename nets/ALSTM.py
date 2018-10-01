@@ -14,8 +14,9 @@ class EncoderALSTM(MANNBaseEncoder):
                  cdim,
                  N,
                  M,
-                 dropout):
-        super(EncoderALSTM, self).__init__(idim, cdim, N, M, dropout)
+                 idrop,
+                 odrop):
+        super(EncoderALSTM, self).__init__(idim, cdim, N, M, idrop, odrop)
         self.atten = utils.Attention(cdim, M)
         self.zero = nn.Parameter(torch.zeros(M), requires_grad=False)
 

@@ -12,9 +12,10 @@ from sklearn.metrics import accuracy_score, \
 
 class Example(object):
 
-    def __init__(self, seq, lbl):
+    def __init__(self, seq, lbl, etype):
         self.seq = self.tokenizer(seq)
         self.lbl = int(lbl)
+        self.etype = int(etype)
 
     def tokenizer(self, seq):
         return list(seq)
@@ -26,7 +27,7 @@ def load_examples(fname):
         for line in f:
             seq, lbl, d, t = \
                 line.strip().split('\t')
-            examples.append(Example(seq, lbl))
+            examples.append(Example(seq, lbl, t))
 
     return examples
 
@@ -44,13 +45,16 @@ def build_iters(param_iter):
                                unk_token=UNK,
                                eos_token=EOS)
     LBL = torchtext.data.Field(sequential=False, use_vocab=False)
+    ETYPE = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('lbl', LBL)])
+                                            ('lbl', LBL),
+                                            ('etype', ETYPE)])
     SEQ.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('lbl', LBL)])
+                                            ('lbl', LBL),
+                                            ('etype', ETYPE)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
                                          sort=False, repeat=False,
@@ -66,7 +70,8 @@ def build_iters(param_iter):
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
             'SEQ': SEQ,
-            'LBL': LBL}
+            'LBL': LBL,
+            'ETYPE': ETYPE}
 
 def valid(model, valid_iter):
     pred_lst = []
@@ -90,6 +95,35 @@ def valid(model, valid_iter):
     f1 = f1_score(true_lst, pred_lst)
 
     # return accuracy, precision, recall, f1
+    return accuracy
+
+def valid_detail(model, valid_iter):
+    pred_lsts = {'exchange':[], 'omit':[], 'redun':[]}
+    true_lsts = {'exchange':[], 'omit':[], 'redun':[]}
+    pred_lst = []
+    true_lst = []
+    etypes = ['exchange', 'omit', 'redun']
+
+    with torch.no_grad():
+        model.eval()
+        for i, batch in enumerate(valid_iter):
+            seq, lbl, etype = batch.seq, batch.lbl, batch.etype
+            res= model(seq)
+            res_clf = res['res_clf']
+
+            pred = res_clf.max(dim=1)[1].cpu().numpy()
+            lbl = lbl.cpu().numpy()
+            pred_lst.extend(pred)
+            true_lst.extend(lbl)
+            for b, e in enumerate(etype):
+                pred_lsts[etypes[e]].append(pred[b])
+                true_lsts[etypes[e]].append(lbl[b])
+
+    accuracy = {}
+    for etype in etypes:
+        accuracy[etype] = accuracy_score(true_lsts[etype], pred_lsts[etype])
+    accuracy['overall'] = accuracy_score(true_lst, pred_lst)
+
     return accuracy
 
 def train(model, iters, opt, optim, scheduler):
