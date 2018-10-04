@@ -94,17 +94,17 @@ class Attention(nn.Module):
         super(Attention, self).__init__()
         self.c2r = nn.Linear(cdim, odim)
 
-    def forward(self, h, enc_outputs):
+    def forward(self, h, mem):
         # h: (bsz, hdim)
         # h_current: (bsz, 1, 1, hdim)
         h_current = h.unsqueeze(1).unsqueeze(1)
-        # enc_outputs: (bsz, len_total, hdim, 1)
-        enc_outputs = enc_outputs.unsqueeze(-1)
+        # mem: (bsz, len_total, hdim, 1)
+        mem = mem.unsqueeze(-1)
         # a: (bsz, len_total, 1, 1)
-        a = h_current.matmul(enc_outputs)
+        a = h_current.matmul(mem)
         a = F.softmax(a, dim=1)
         # c: (bsz, len_total, hdim, 1)
-        c = a * enc_outputs
+        c = a * mem
         # c: (bsz, hdim)
         c = c.sum(1).squeeze(-1)
         r = self.c2r(c)

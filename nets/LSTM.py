@@ -14,9 +14,8 @@ class EncoderLSTM(MANNBaseEncoder):
                  cdim,
                  N,
                  M,
-                 idrop,
-                 odrop):
-        super(EncoderLSTM, self).__init__(idim, cdim, N, M, idrop, odrop)
+                 drop):
+        super(EncoderLSTM, self).__init__(idim, cdim, N, M, drop)
         self.zero = nn.Parameter(torch.zeros(M), requires_grad=False)
 
     def read(self, controller_outp):

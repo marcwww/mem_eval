@@ -14,9 +14,8 @@ class EncoderALSTM(MANNBaseEncoder):
                  cdim,
                  N,
                  M,
-                 idrop,
-                 odrop):
-        super(EncoderALSTM, self).__init__(idim, cdim, N, M, idrop, odrop)
+                 drop):
+        super(EncoderALSTM, self).__init__(idim, cdim, N, M, drop)
         self.atten = utils.Attention(cdim, M)
         self.zero = nn.Parameter(torch.zeros(M), requires_grad=False)
 
@@ -33,6 +32,8 @@ class EncoderALSTM(MANNBaseEncoder):
 
     def write(self, controller_outp, r):
         self.mem.append(controller_outp.unsqueeze(1))
+        if len(self.mem) > self.N:
+            self.mem.pop(0)
 
     def reset_read(self, bsz):
         pass

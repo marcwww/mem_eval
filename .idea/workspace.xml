@@ -2,14 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2cd814a6-0683-48d0-b9f3-abe9aedd5438" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/opts_flang_alstm.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/opts_flang_lstm.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/flang_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/polysemy/gen.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/flang_alstm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/flang_lstm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/flang_ntm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/flang_sarnn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/polysemy_alstm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/polysemy_lstm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/polysemy_ntm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/polysemy_sarnn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tasks/polysemy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/polysemy_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/flang/gen_data_parenthesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/flang/gen_data_parenthesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macros.py" beforeDir="false" afterPath="$PROJECT_DIR$/macros.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/nets/ALSTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/ALSTM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opts.py" beforeDir="false" afterPath="$PROJECT_DIR$/opts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nets/LSTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/LSTM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nets/MANN.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/MANN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nets/NTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/NTM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nets/SARNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/SARNN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts_agreeement_sarnn.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts_agreement_lstm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts_flang.py" beforeDir="false" afterPath="$PROJECT_DIR$/params/opts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts_flang_alstm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts_flang_lstm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/opts_pattern_copy.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/flang.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/flang.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/flang_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/flang_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,50 +40,36 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/mann_eval$gpu1.coverage" NAME="gpu1 Coverage Results" MODIFIED="1538297420202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu3.coverage" NAME="gpu3 Coverage Results" MODIFIED="1538226060379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu1.coverage" NAME="gpu1 Coverage Results" MODIFIED="1538637324677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gen.coverage" NAME="gen Coverage Results" MODIFIED="1538640066597" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/polysemy" />
     <SUITE FILE_PATH="coverage/mann_eval$main.coverage" NAME="main Coverage Results" MODIFIED="1537546414949" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/mann_eval$flang_test.coverage" NAME="flang_test Coverage Results" MODIFIED="1538321055976" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/mann_eval$flang_test.coverage" NAME="flang_test Coverage Results" MODIFIED="1538650128417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/mann_eval$cpu.coverage" NAME="cpu Coverage Results" MODIFIED="1537959918350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu0.coverage" NAME="gpu0 Coverage Results" MODIFIED="1538649029918" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$agreement_test.coverage" NAME="agreement_test Coverage Results" MODIFIED="1538209440898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu3.coverage" NAME="gpu3 Coverage Results" MODIFIED="1538568937817" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu5.coverage" NAME="gpu5 Coverage Results" MODIFIED="1538468027926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$polysemy.coverage" NAME="polysemy Coverage Results" MODIFIED="1538638439917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
+    <SUITE FILE_PATH="coverage/mann_eval$polysemy_test.coverage" NAME="polysemy_test Coverage Results" MODIFIED="1538650906713" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/mann_eval$flang.coverage" NAME="flang Coverage Results" MODIFIED="1537544722944" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
     <SUITE FILE_PATH="coverage/mann_eval$gen_data.coverage" NAME="gen_data Coverage Results" MODIFIED="1537841741141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/flang" />
-    <SUITE FILE_PATH="coverage/mann_eval$cpu.coverage" NAME="cpu Coverage Results" MODIFIED="1537959918350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu0.coverage" NAME="gpu0 Coverage Results" MODIFIED="1538289937019" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/mann_eval$agreement_test.coverage" NAME="agreement_test Coverage Results" MODIFIED="1538209440898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu2.coverage" NAME="gpu2 Coverage Results" MODIFIED="1538276239842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/mann_eval$gen_data_parenthesis.coverage" NAME="gen_data_parenthesis Coverage Results" MODIFIED="1538225968800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/flang" />
-  </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/opts_flang.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="585">
-                    <caret line="39" column="37" selection-start-line="39" selection-start-column="37" selection-end-line="39" selection-end-column="37" />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
+    <SUITE FILE_PATH="coverage/mann_eval$gpu6.coverage" NAME="gpu6 Coverage Results" MODIFIED="1538408474150" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu2.coverage" NAME="gpu2 Coverage Results" MODIFIED="1538580915295" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gen_data_parenthesis.coverage" NAME="gen_data_parenthesis Coverage Results" MODIFIED="1538407007006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/flang" />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="-1705755844">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="5" />
+          <entry key="project.closed" value="7" />
           <entry key="project.open.time.0" value="1" />
-          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.22" value="1" />
-          <entry key="project.open.time.3" value="1" />
+          <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="7" />
+          <entry key="project.opened" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -69,9 +77,9 @@
           <entry key="ipynb" value="2" />
           <entry key="json" value="1" />
           <entry key="md" value="1" />
-          <entry key="py" value="99" />
-          <entry key="tsv" value="17" />
-          <entry key="txt" value="55" />
+          <entry key="py" value="170" />
+          <entry key="tsv" value="18" />
+          <entry key="txt" value="90" />
           <entry key="val" value="1" />
           <entry key="vocab" value="1" />
         </counts>
@@ -81,21 +89,21 @@
           <entry key="IPNB" value="2" />
           <entry key="JSON" value="1" />
           <entry key="Markdown" value="1" />
-          <entry key="PLAIN_TEXT" value="74" />
-          <entry key="Python" value="99" />
+          <entry key="PLAIN_TEXT" value="110" />
+          <entry key="Python" value="170" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="11" />
-          <entry key="py" value="14214" />
+          <entry key="py" value="21199" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="11" />
-          <entry key="Python" value="14227" />
+          <entry key="Python" value="21212" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
@@ -104,63 +112,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/opts.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/params/opts.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="16" column="57" lean-forward="true" selection-start-line="16" selection-start-column="57" selection-end-line="16" selection-end-column="57" />
+            <state relative-caret-position="180">
+              <caret line="14" selection-start-line="14" selection-end-line="14" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/opts_flang_lstm.py">
+        <entry file="file://$PROJECT_DIR$/params/polysemy_alstm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="394">
-              <caret line="30" column="49" lean-forward="true" selection-start-line="30" selection-start-column="49" selection-end-line="30" selection-end-column="49" />
+            <state relative-caret-position="165">
+              <caret line="11" column="46" selection-start-line="11" selection-start-column="46" selection-end-line="11" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/opts_flang_alstm.py">
+        <entry file="file://$PROJECT_DIR$/params/flang_alstm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="14" column="23" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/params/flang_lstm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" column="50" selection-start-line="12" selection-start-column="50" selection-end-line="12" selection-end-column="50" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/listops/test_d20s.tsv">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/flang/gen_data_parenthesis.py">
+        <entry file="file://$PROJECT_DIR$/tasks/flang.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="149" lean-forward="true" selection-start-line="149" selection-end-line="149" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-                <marker date="1538225967106" expanded="true" signature="4334:5302" ph="..." />
-                <marker date="1538225967106" expanded="true" signature="4334:5786" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="267">
-              <caret line="139" column="52" lean-forward="true" selection-start-line="112" selection-start-column="4" selection-end-line="139" selection-end-column="52" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tests/agreement_test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1709">
-              <caret line="28" column="27" selection-start-line="28" selection-start-column="27" selection-end-line="28" selection-end-column="27" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="915">
+              <caret line="71" column="37" selection-start-line="71" selection-start-column="37" selection-end-line="71" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -168,8 +168,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/flang_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="148" column="42" selection-start-line="148" selection-start-column="42" selection-end-line="148" selection-end-column="42" />
+            <state relative-caret-position="180">
+              <caret line="20" column="29" selection-start-line="20" selection-start-column="29" selection-end-line="20" selection-end-column="29" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tests/polysemy_test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="205">
+              <caret line="137" column="22" lean-forward="true" selection-start-line="137" selection-start-column="22" selection-end-line="137" selection-end-column="22" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -178,31 +190,27 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tasks/agreement.py">
+        <entry file="file://$PROJECT_DIR$/data/polysemy/gen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
+            <state relative-caret-position="1785">
+              <caret line="120" column="16" selection-start-line="120" selection-start-column="16" selection-end-line="120" selection-end-column="16" />
               <folding>
-                <element signature="e#0#16#0" expanded="true" />
+                <element signature="e#0#13#0" expanded="true" />
+                <marker date="1538639950359" expanded="true" signature="609:1461" ph="..." />
+                <marker date="1538639950359" expanded="true" signature="1506:1511" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tasks/flang.py">
+        <entry file="file://$PROJECT_DIR$/tasks/polysemy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="29">
-              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/sklearn/metrics/classification.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
+            <state relative-caret-position="466">
+              <caret line="213" lean-forward="true" selection-start-line="213" selection-end-line="213" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -227,6 +235,13 @@
       <find>uses</find>
       <find>some bath</find>
       <find>VBP</find>
+      <find>A</find>
+      <find>B</find>
+      <find>C</find>
+      <find>D</find>
+      <find>E</find>
+      <find>F</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -239,26 +254,38 @@
         <option value="$PROJECT_DIR$/tasks/form_lang.py" />
         <option value="$PROJECT_DIR$/opts_pattern_copy.py" />
         <option value="$PROJECT_DIR$/nets/__init__.py" />
-        <option value="$PROJECT_DIR$/nets/NTM.py" />
         <option value="$PROJECT_DIR$/tasks/pattern.py" />
-        <option value="$PROJECT_DIR$/macros.py" />
         <option value="$PROJECT_DIR$/tasks/agreement_clf.py" />
         <option value="$PROJECT_DIR$/data/flang/gen_data.py" />
         <option value="$PROJECT_DIR$/tests/agreement.py" />
         <option value="$PROJECT_DIR$/opts_agreeement_sarnn.py" />
-        <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/tasks/agreement.py" />
-        <option value="$PROJECT_DIR$/nets/SARNN.py" />
-        <option value="$PROJECT_DIR$/nets/MANN.py" />
         <option value="$PROJECT_DIR$/tests/agreement_test.py" />
-        <option value="$PROJECT_DIR$/nets/LSTM.py" />
-        <option value="$PROJECT_DIR$/data/flang/gen_data_parenthesis.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/nets/ALSTM.py" />
-        <option value="$PROJECT_DIR$/tests/flang_test.py" />
-        <option value="$PROJECT_DIR$/tasks/flang.py" />
         <option value="$PROJECT_DIR$/opts_flang_lstm.py" />
+        <option value="$PROJECT_DIR$/data/flang/gen_data_parenthesis.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/nets/ALSTM.py" />
+        <option value="$PROJECT_DIR$/nets/NTM.py" />
+        <option value="$PROJECT_DIR$/nets/SARNN.py" />
+        <option value="$PROJECT_DIR$/nets/LSTM.py" />
         <option value="$PROJECT_DIR$/opts.py" />
+        <option value="$PROJECT_DIR$/macros.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/tasks/flang.py" />
+        <option value="$PROJECT_DIR$/tests/flang_test.py" />
+        <option value="$PROJECT_DIR$/params/flang_ntm.py" />
+        <option value="$PROJECT_DIR$/params/polysemy_sarnn.py" />
+        <option value="$PROJECT_DIR$/params/polysemy_ntm.py" />
+        <option value="$PROJECT_DIR$/params/flang_sarnn.py" />
+        <option value="$PROJECT_DIR$/params/polysemy_alstm.py" />
+        <option value="$PROJECT_DIR$/nets/MANN.py" />
+        <option value="$PROJECT_DIR$/params/polysemy_lstm.py" />
+        <option value="$PROJECT_DIR$/data/polysemy/gen.py" />
+        <option value="$PROJECT_DIR$/params/flang_alstm.py" />
+        <option value="$PROJECT_DIR$/params/flang_lstm.py" />
+        <option value="$PROJECT_DIR$/params/opts.py" />
+        <option value="$PROJECT_DIR$/tasks/polysemy.py" />
+        <option value="$PROJECT_DIR$/tests/polysemy_test.py" />
       </list>
     </option>
   </component>
@@ -271,7 +298,7 @@
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1440" />
-    <option name="height" value="809" />
+    <option name="height" value="829" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -295,6 +322,28 @@
             <path>
               <item name="mann_eval" type="b2602c69:ProjectViewProjectNode" />
               <item name="mann_eval" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="listops" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mann_eval" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mann_eval" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="polysemy" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mann_eval" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mann_eval" type="462c0819:PsiDirectoryNode" />
+              <item name="params" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mann_eval" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mann_eval" type="462c0819:PsiDirectoryNode" />
+              <item name="tasks" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mann_eval" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mann_eval" type="462c0819:PsiDirectoryNode" />
               <item name="tests" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -310,12 +359,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/params" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/tests" />
+      <recent name="$PROJECT_DIR$/params" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/data/agreement" />
       <recent name="$PROJECT_DIR$/data/flang" />
-      <recent name="$PROJECT_DIR$/tasks" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -330,7 +382,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.flang_test">
+  <component name="RunManager" selected="Python.polysemy_test">
     <configuration name="agreement_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="mann_eval" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -375,7 +427,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="flang_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="flang_test" type="PythonConfigurationType" factoryName="Python">
       <module name="mann_eval" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -389,7 +441,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/flang_test.py" />
-      <option name="PARAMETERS" value="-gpu 0" />
+      <option name="PARAMETERS" value="-gpu 7" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -397,7 +449,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="gen_data" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="gen" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="mann_eval" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -405,12 +457,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="$USER_HOME$/.pyenv/versions/atec36/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data/flang" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data/polysemy" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/flang/gen_data.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/polysemy/gen.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -529,14 +581,14 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="gpu5" type="PythonConfigurationType" factoryName="Python">
       <module name="mann_eval" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/.pyenv/versions/atec36/bin/python" />
+      <option name="SDK_HOME" value="sftp://kxwang@172.18.31.58:22/home/kxwang/.pyenv/versions/py364/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -551,25 +603,94 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="gpu6" type="PythonConfigurationType" factoryName="Python">
+      <module name="mann_eval" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="sftp://kxwang@172.18.31.58:22/home/kxwang/.pyenv/versions/py364/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="-gpu 0" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="polysemy" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="mann_eval" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tasks" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tasks/polysemy.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="polysemy_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="mann_eval" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/polysemy_test.py" />
+      <option name="PARAMETERS" value="-gpu 7" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.gpu0" />
       <item itemvalue="Python.cpu" />
       <item itemvalue="Python.gpu1" />
       <item itemvalue="Python.gpu3" />
+      <item itemvalue="Python.gpu5" />
+      <item itemvalue="Python.gpu6" />
       <item itemvalue="Python.gpu2" />
-      <item itemvalue="Python.main" />
-      <item itemvalue="Python.gen_data" />
+      <item itemvalue="Python.flang_test" />
       <item itemvalue="Python.gen_data_parenthesis" />
       <item itemvalue="Python.agreement_test" />
-      <item itemvalue="Python.flang_test" />
+      <item itemvalue="Python.gen" />
+      <item itemvalue="Python.polysemy" />
+      <item itemvalue="Python.polysemy_test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.flang_test" />
+        <item itemvalue="Python.polysemy_test" />
+        <item itemvalue="Python.gen" />
+        <item itemvalue="Python.polysemy" />
         <item itemvalue="Python.gen_data_parenthesis" />
         <item itemvalue="Python.agreement_test" />
-        <item itemvalue="Python.gen_data" />
-        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -596,24 +717,24 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="809" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="829" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22889842" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4956822" visible="true" weight="0.22031474" />
+      <window_info id="Structure" order="1" sideWeight="0.50431776" side_tool="true" weight="0.2274678" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3278237" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4985694" visible="true" weight="0.38075313" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49928468" weight="0.40816328" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32428765" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4985694" visible="true" weight="0.45454547" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49928468" weight="0.34056988" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32953367" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.32658568" />
+      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.3256445" />
       <window_info anchor="bottom" id="Database Changes" order="10" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.29564032" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.23744912" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5007153" side_tool="true" weight="0.47891158" />
       <window_info anchor="bottom" id="Python Console" order="13" weight="0.32866243" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -623,6 +744,31 @@
       <window_info anchor="right" id="SciView" order="4" />
       <window_info anchor="right" id="Database" order="5" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49803922" visible="true" weight="0.21888413" />
+      <window_info id="Structure" order="1" sideWeight="0.5019608" side_tool="true" weight="0.3319027" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32655826" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4985694" visible="true" weight="0.34854773" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49928468" weight="0.40816328" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32953367" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.32655826" />
+      <window_info anchor="bottom" id="Database Changes" order="10" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.60704607" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5007153" side_tool="true" weight="0.47891158" />
+      <window_info anchor="bottom" id="Python Console" order="13" weight="0.32866243" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Remote Host" order="3" />
+      <window_info anchor="right" id="SciView" order="4" />
+      <window_info anchor="right" id="Database" order="5" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -634,15 +780,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/torch/nn/modules/module.py</url>
-          <line>703</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="r.shape" language="Python" />
@@ -651,11 +788,50 @@
         <watch expression="prefix" language="Python" />
         <watch expression="self.weight_raw" language="Python" />
         <watch expression="param" language="Python" />
+        <watch expression="context_map[word]" language="Python" />
+        <watch expression="word" language="Python" />
+        <watch expression="seq" language="Python" />
+        <watch expression="lbl" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
+      <expression>
+        <expression-string>na_b</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>na</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pred_b</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>lbl</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>seq</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>word</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>context_map[word]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>param</expression-string>
         <language-id>Python</language-id>
@@ -671,344 +847,9 @@
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>self.embedding</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>local_name_params.items()</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>prefix</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>len(valid_iter)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>controller_outp.shape</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>r.shape</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n1000-d5-e1-exchange.valid.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="69" lean-forward="true" selection-start-line="11" selection-start-column="69" selection-end-line="11" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n10000-d2-e1-omit.train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="25" lean-forward="true" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n1000-d4-e1-exchange.valid.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="82" column="54" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n10000-d3-e1-exchange.train.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n10000-d3-e1-redun.train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="34" lean-forward="true" selection-start-line="13" selection-start-column="34" selection-end-line="13" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n10000-d2-e1-exchange.train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="34" lean-forward="true" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n1000-d5-e1-redun.valid.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="39" lean-forward="true" selection-start-line="16" selection-start-column="39" selection-end-line="16" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/agreement/train.tsv">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="13680">
-          <caret line="912" column="44" selection-start-line="912" selection-start-column="44" selection-end-line="912" selection-end-column="44" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="LargeFileEditor">
-        <state relative-caret-position="-958">
-          <caret line="4" column="40" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="1067" selection-start-line="1067" selection-end-line="1067" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/crash_on_ipy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/agreement_clf.py" />
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/torch/serialization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="356" column="8" lean-forward="true" selection-start-line="356" selection-start-column="8" selection-end-line="356" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/agreement/test.0.tsv">
-      <provider selected="true" editor-type-id="LargeFileEditor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/agreement/test.1.tsv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/agreement/test.5.tsv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/agreement/valid.tsv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="30" selection-start-line="2" selection-start-column="30" selection-end-line="2" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/agreement/wiki.vocab">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/agreement-overall-lstm-1537875065.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/opts_agreement_lstm.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nets/MANN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-110">
-          <caret line="68" column="15" lean-forward="true" selection-start-line="68" selection-start-column="15" selection-end-line="68" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1538098196481" expanded="true" signature="255:256" ph="..." />
-            <marker date="1538098196481" expanded="true" signature="255:261" ph="..." />
-            <marker date="1538098196481" expanded="true" signature="927:936" ph="..." />
-            <marker date="1538098196481" expanded="true" signature="1344:1384" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/opts_agreeement_sarnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="21" column="23" lean-forward="true" selection-end-line="88" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/torchtext/data/dataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="26" column="8" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/torchtext/data/field.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="251" column="33" lean-forward="true" selection-start-line="251" selection-start-column="33" selection-end-line="251" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="646" column="101" selection-start-line="646" selection-start-column="101" selection-end-line="646" selection-end-column="101" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/opts_flang.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="39" column="37" selection-start-line="39" selection-start-column="37" selection-end-line="39" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="923">
-          <caret line="232" column="30" lean-forward="true" selection-start-line="232" selection-start-column="30" selection-end-line="232" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/gen_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="185" column="17" selection-start-line="185" selection-start-column="17" selection-end-line="185" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest333-dbound3-dtest3-e1.test.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest3-e1.test.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7830">
-          <caret line="522" column="45" lean-forward="true" selection-start-line="522" selection-start-column="45" selection-end-line="522" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n10000-d2-e1-redun.train.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/-808922322/argparse.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="1509" selection-start-line="1509" selection-end-line="1509" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest3-e1.train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-85">
-          <caret column="12" selection-start-column="12" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-n10000-d3-e1-omit.train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="46" selection-start-column="46" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest4-e1.train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="21" lean-forward="true" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest5-e1.test.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest5-e1.train.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nets/SARNN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-628">
-          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nets/LSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="16" column="23" lean-forward="true" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nets/ALSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="45" lean-forward="true" selection-start-line="19" selection-start-column="45" selection-end-line="19" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/agreement_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1709">
-          <caret line="28" column="27" selection-start-line="28" selection-start-column="27" selection-end-line="28" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="139" column="52" lean-forward="true" selection-start-line="112" selection-start-column="4" selection-end-line="139" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/agreement.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/flang/gen_data_parenthesis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="149" lean-forward="true" selection-start-line="149" selection-end-line="149" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-            <marker date="1538225967106" expanded="true" signature="4334:5302" ph="..." />
-            <marker date="1538225967106" expanded="true" signature="4334:5786" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/sklearn/metrics/classification.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="147">
@@ -1016,37 +857,302 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest6-e1.test.txt" />
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest3-e1.test.txt" />
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest3-e1.valid.txt" />
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest3-e1.train.txt" />
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound3-dtest4-e1.test.txt" />
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound4-dtest5-e1.test.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound4-dtest6-e1.test.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound4-dtest5-e1.valid.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="35" lean-forward="true" selection-start-line="13" selection-start-column="35" selection-end-line="13" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound4-dtest5-e1.train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-335" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound4-dtest4-e1.train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26055">
+          <caret line="1737" column="17" lean-forward="true" selection-start-line="1737" selection-start-column="17" selection-end-line="1737" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/opts_flang_lstm.py" />
+    <entry file="file://$PROJECT_DIR$/opts_flang_alstm.py" />
+    <entry file="file://$PROJECT_DIR$/opts_flang.py" />
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound5-dtest5-e1.train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="13279" column="61" lean-forward="true" selection-start-line="13279" selection-start-column="61" selection-end-line="13279" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain1501-ntest500-dbound4-dtest4-e1.test.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain1501-ntest500-dbound4-dtest4-e1.train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="21" lean-forward="true" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="97" column="24" lean-forward="true" selection-start-line="97" selection-start-column="24" selection-end-line="97" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/NTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="149" column="36" lean-forward="true" selection-start-line="149" selection-start-column="36" selection-end-line="149" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/ALSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/opts_agreeement_sarnn.py" />
+    <entry file="file://$PROJECT_DIR$/opts.py" />
+    <entry file="file://$PROJECT_DIR$/macros.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="11" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/gen_data_parenthesis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="772">
+          <caret line="217" column="18" lean-forward="true" selection-start-line="217" selection-start-column="18" selection-end-line="217" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain10000-ntest1000-dbound4-dtest4-e1.test.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain601-ntest500-dbound4-dtest4-e1.train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-35645" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/flang/expr-ntrain601-ntest500-dbound4-dtest4-e1.test.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="415">
+          <caret line="1501" column="55" selection-start-line="1501" selection-start-column="55" selection-end-line="1501" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="127" lean-forward="true" selection-start-line="127" selection-end-line="127" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/flang_ntm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/polysemy_ntm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="50" lean-forward="true" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/SARNN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="945">
+          <caret line="63" column="10" lean-forward="true" selection-start-line="63" selection-start-column="10" selection-end-line="63" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/polysemy_sarnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="59" lean-forward="true" selection-start-line="7" selection-start-column="59" selection-end-line="7" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/flang_sarnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="50" lean-forward="true" selection-start-line="12" selection-start-column="50" selection-end-line="12" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/MANN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="69" column="44" lean-forward="true" selection-start-line="69" selection-start-column="44" selection-end-line="69" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1538638708962" expanded="true" signature="255:256" ph="..." />
+            <marker date="1538638708962" expanded="true" signature="255:261" ph="..." />
+            <marker date="1538638708962" expanded="true" signature="840:849" ph="..." />
+            <marker date="1538638708962" expanded="true" signature="1257:1297" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/LSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/-786991715/315780697/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-96">
+          <caret line="703" selection-start-line="703" selection-end-line="703" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/polysemy/polysemy-ntrain5000-ntest1000-dis1_10-na0_7-no8_12.train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="47" column="73" lean-forward="true" selection-start-line="47" selection-start-column="73" selection-end-line="47" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/polysemy_lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="16" column="31" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/polysemy/polysemy-ntrain5000-ntest1000-dis1_10-na0_7-no8_12.test.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-12661">
+          <caret line="130" column="20" lean-forward="true" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/pattern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="266" column="16" selection-start-line="266" selection-start-column="16" selection-end-line="266" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/listops/make_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/opts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/polysemy_alstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="46" selection-start-line="11" selection-start-column="46" selection-end-line="11" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/flang_alstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="23" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/flang_lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="50" selection-start-line="12" selection-start-column="50" selection-end-line="12" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/listops/test_d20s.tsv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/flang.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="915">
+          <caret line="71" column="37" selection-start-line="71" selection-start-column="37" selection-end-line="71" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tests/flang_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="148" column="42" selection-start-line="148" selection-start-column="42" selection-end-line="148" selection-end-column="42" />
+        <state relative-caret-position="180">
+          <caret line="20" column="29" selection-start-line="20" selection-start-column="29" selection-end-line="20" selection-end-column="29" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/flang.py">
+    <entry file="file://$PROJECT_DIR$/data/polysemy/gen.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="29">
-          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+        <state relative-caret-position="1785">
+          <caret line="120" column="16" selection-start-line="120" selection-start-column="16" selection-end-line="120" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+            <marker date="1538639950359" expanded="true" signature="609:1461" ph="..." />
+            <marker date="1538639950359" expanded="true" signature="1506:1511" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/opts_flang_alstm.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/opts_flang_lstm.py">
+    <entry file="file://$PROJECT_DIR$/tasks/polysemy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="394">
-          <caret line="30" column="49" lean-forward="true" selection-start-line="30" selection-start-column="49" selection-end-line="30" selection-end-column="49" />
+        <state relative-caret-position="466">
+          <caret line="213" lean-forward="true" selection-start-line="213" selection-end-line="213" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/opts.py">
+    <entry file="file://$PROJECT_DIR$/tests/polysemy_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="16" column="57" lean-forward="true" selection-start-line="16" selection-start-column="57" selection-end-line="16" selection-end-column="57" />
+        <state relative-caret-position="205">
+          <caret line="137" column="22" lean-forward="true" selection-start-line="137" selection-start-column="22" selection-end-line="137" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

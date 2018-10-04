@@ -17,3 +17,6 @@ SCAN = os.path.join(DATA, 'scan')
 PATTERN = os.path.join(DATA, 'pattern')
 FLANG = os.path.join(DATA, 'flang')
 AGREE = os.path.join(DATA, 'agreement')
+POLYSEMY = os.path.join(DATA, 'polysemy')
+
+INDICATOR = '<indicator>'

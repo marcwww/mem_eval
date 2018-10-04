@@ -136,12 +136,18 @@ def gen_data(num_train_each, num_test_each, d_bound_train, d_test, e):
         redun = gen_list_partial(num_train_each, d, e, 'redun')
         train.extend(redun)
 
+    valid = []
+    for d_type in ['exchange', 'omit', 'redun']:
+        valid.extend(gen_list_partial(num_test_each + 1, d_test, e, d_type))
+
     test = []
     for d_type in ['exchange', 'omit', 'redun']:
         test.extend(gen_list_partial(num_test_each + 1, d_test, e, d_type))
 
     train = random.sample(train, k=len(train))
     test = random.sample(test, k=len(test))
+    valid = random.sample(test, k=len(valid))
+
 
     with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
                (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'train')), 'w') as f:
@@ -151,6 +157,11 @@ def gen_data(num_train_each, num_test_each, d_bound_train, d_test, e):
     with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
                (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'test')), 'w') as f:
         for line in test:
+            f.write(line)
+
+    with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
+               (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'valid')), 'w') as f:
+        for line in valid:
             f.write(line)
 
 def gen_list_partial(num, d_bound, e_bound, e_type):
@@ -189,7 +200,7 @@ def gen_data_partial(num, d_bound, e_bound, e_type, dataset_type):
 
 if __name__ == '__main__':
 
-    gen_data(3333, 1000, 3, 5, 1)
+    gen_data(200, 500, 4, 4, 1)
     # # exchange:
     # gen_data_partial(10000, 2, 1, 'exchange','train')
     # gen_data_partial(10000, 3, 1, 'exchange','train')

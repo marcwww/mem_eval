@@ -2,7 +2,7 @@ import nets
 from macros import *
 import torch
 import utils
-import opts
+from params import opts
 import argparse
 from torch import nn
 from tasks import flang
@@ -11,42 +11,32 @@ import crash_on_ipy
 
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='main.py',
+        ArgumentParser(description='flang_test.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
+    opts.general_opts(parser)
+    opt = parser.parse_args()
 
-    opts.model_opts(parser)
-    opts.train_opts(parser)
+    parser = opts.select_opt(opt, parser)
     opt = parser.parse_args()
 
     utils.init_seed(opt.seed)
 
     assert opt.task == 'flang'
 
-    build_iters = flang.build_iters
+    build_iters = flang.build_iters_test
     train = flang.train
     valid = flang.valid
     valid_detail = flang.valid_detail
     Model = flang.Model
 
-    param_iter = {'ftrain': os.path.join('..', opt.ftrain),
-                  'fvalid': os.path.join('..', opt.fvalid),
-                  'bsz': opt.bsz,
-                  'device': opt.gpu,
-                  'sub_task': opt.sub_task,
-                  'num_batches_train': opt.num_batches_train,
-                  'num_batches_valid': opt.num_batches_valid,
-                  'min_len_train': opt.min_len_train,
-                  'min_len_valid': opt.min_len_valid,
-                  'max_len_train': opt.max_len_train,
-                  'max_len_valid': opt.max_len_valid,
-                  'repeat_min_train': opt.repeat_min_train,
-                  'repeat_max_train': opt.repeat_max_train,
-                  'repeat_min_valid': opt.repeat_min_valid,
-                  'repeat_max_valid': opt.repeat_max_valid,
-                  'seq_width': opt.seq_width}
-
-    res_iters = build_iters(param_iter)
+    res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
+                            fvalid=os.path.join('..', opt.fvalid),
+                            ftest1=os.path.join('..', opt.ftest1),
+                            ftest2=os.path.join('..', opt.ftest2),
+                            bsz=opt.bsz,
+                            device=opt.gpu,
+                            sub_task=opt.sub_task)
 
     embedding = None
     embedding_enc = None
@@ -99,38 +89,35 @@ if __name__ == '__main__':
 
     if opt.enc_type == 'ntm':
         encoder = nets.EncoderNTM(idim=opt.edim,
-                                  cdim=opt.hdim,
-                                  N=opt.N,
-                                  M=opt.M,
-                                  dropout=opt.dropout)
+                                    cdim=opt.hdim,
+                                    N=opt.N,
+                                    M=opt.M,
+                                    drop=opt.dropout)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    idrop=opt.idrop,
-                                    odrop=opt.odrop)
+                                    drop=opt.dropout)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    idrop=opt.idrop,
-                                    odrop=opt.odrop)
+                                    drop=opt.dropout)
 
     if opt.enc_type == 'alstm':
         encoder = nets.EncoderALSTM(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    idrop=opt.idrop,
-                                    odrop=opt.odrop)
+                                    drop=opt.dropout)
 
     model = None
     if embedding is None:
-        model = Model(encoder, opt.odim, opt.edrop).to(device)
+        model = Model(encoder, opt.odim, opt.dropout).to(device)
     else:
-        model = Model(encoder, embedding, opt.edrop).to(device)
+        model = Model(encoder, embedding, opt.dropout).to(device)
     utils.init_model(model)
 
     if opt.fload is not None:
@@ -146,5 +133,8 @@ if __name__ == '__main__':
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
 
-    print('Valid result: \n', valid_detail(model, res_iters['valid_iter']))
+    print('Valid result: \n', valid(model, res_iters['valid_iter']))
+    print('Test1 result: \n', valid_detail(model, res_iters['test1_iter']))
+    print('Test2 result: \n', valid_detail(model, res_iters['test2_iter']))
+
 

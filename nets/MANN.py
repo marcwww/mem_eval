@@ -9,23 +9,20 @@ from torch.nn.utils.rnn import pack_padded_sequence as pack, \
 
 class MANNBaseEncoder(nn.Module):
 
-    def __init__(self, idim, cdim, N, M, idrop, odrop):
+    def __init__(self, idim, cdim, N, M, dropout):
         super(MANNBaseEncoder, self).__init__()
         self.idim = idim
         self.odim = cdim + M
         self.cdim = cdim
         self.N = N
         self.M = M
-        self.controller = nn.LSTM(idim + M, cdim)
+        self.controller = nn.LSTM(idim + M, cdim, dropout=dropout)
 
         self._reset_controller()
 
         self.h0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
         self.c0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
         self.r0 = nn.Parameter(torch.randn(1, M) * 0.02, requires_grad=False)
-
-        self.idrop = utils.fixMaskDropout(idrop)
-        self.odrop = utils.fixMaskDropout(odrop)
 
     def _reset_controller(self):
         for p in self.controller.parameters():
@@ -52,8 +49,6 @@ class MANNBaseEncoder(nn.Module):
 
     def forward(self, **input):
         embs = input['embs']
-        embs = self.idrop(True, embs)
-        lens = input['lens']
         bsz = embs.shape[1]
 
         self.reset_read(bsz)
@@ -67,31 +62,23 @@ class MANNBaseEncoder(nn.Module):
         hs = []
         cs = []
         os = []
-        for t, emb in enumerate(embs):
+        for emb in embs:
             controller_inp = torch.cat([emb, r], dim=1).unsqueeze(0)
             controller_outp, (h, c) = self.controller(controller_inp, (h, c))
             controller_outp = controller_outp.squeeze(0)
-            controller_outp = self.odrop(True, controller_outp)
 
             self.write(controller_outp, emb)
             r = self.read(controller_outp)
             o = torch.cat([controller_outp, r], dim=1)
-            o = self.odrop(True, o)
 
             hs.append(h)
             cs.append(c)
             os.append(o.unsqueeze(0))
 
         os = torch.cat(os, dim=0)
-        hs = torch.cat(hs, dim=0)
-        cs = torch.cat(cs, dim=0)
-        h = torch.cat([hs[lens[b] - 1, b, :].unsqueeze(0) for b in range(bsz)],
-                      dim=0).unsqueeze(0)
-        c = torch.cat([cs[lens[b] - 1, b, :].unsqueeze(0) for b in range(bsz)],
-                      dim=0).unsqueeze(0)
 
-        return {'output': os,
-                'hid': (h, c)}
+        return os
+
 
 
 

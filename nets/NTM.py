@@ -146,8 +146,8 @@ class NTMWriteHead(nn.Module):
 
 class EncoderNTM(MANNBaseEncoder):
 
-    def __init__(self, idim, cdim, N, M, dropout):
-        super(EncoderNTM, self).__init__(idim, cdim, N, M, dropout)
+    def __init__(self, idim, cdim, N, M, drop):
+        super(EncoderNTM, self).__init__(idim, cdim, N, M, drop)
         self.mem = NTMMemory(N, M)
         self.rhead = NTMReadHead(self.mem, cdim)
         self.whead = NTMWriteHead(self.mem, cdim)

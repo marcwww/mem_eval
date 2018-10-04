@@ -5,14 +5,13 @@ import utils
 from params import opts
 import argparse
 from torch import nn
-from torch import optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import polysemy, flang
+from tasks import polysemy
 import crash_on_ipy
+
 
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='main.py',
+        ArgumentParser(description='polysemy_test.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
@@ -23,23 +22,16 @@ if __name__ == '__main__':
 
     utils.init_seed(opt.seed)
 
-    build_iters = None
-    train = None
-    Model = None
-    criterion = None
+    assert opt.task == 'polysemy'
 
-    if opt.task == 'polysemy':
-        build_iters = polysemy.build_iters
-        train = polysemy.train
-        Model = polysemy.Model
+    build_iters_test = polysemy.build_iters_test
+    train = polysemy.train
+    valid = polysemy.valid
+    Model = polysemy.Model
 
-    if opt.task == 'flang':
-        build_iters = flang.build_iters
-        train = flang.train
-        Model = flang.Model
-
-    res_iters = build_iters(ftrain=opt.ftrain,
-                            fvalid=opt.fvalid,
+    res_iters = build_iters_test(ftrain=os.path.join('..', opt.ftrain),
+                            fvalid=os.path.join('..', opt.fvalid),
+                            ftest=os.path.join('..', opt.ftest),
                             bsz=opt.bsz,
                             device=opt.gpu,
                             sub_task=opt.sub_task)
@@ -95,53 +87,55 @@ if __name__ == '__main__':
 
     if opt.enc_type == 'ntm':
         encoder = nets.EncoderNTM(idim=opt.edim,
-                                cdim=opt.hdim,
-                                N=opt.N,
-                                M=opt.M,
-                                drop=opt.dropout)
+                                    cdim=opt.hdim,
+                                    N=opt.N,
+                                    M=opt.M,
+                                    drop=opt.dropout)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
-                                cdim=opt.hdim,
-                                N=opt.N,
-                                M=opt.M,
-                                drop=opt.dropout)
+                                    cdim=opt.hdim,
+                                    N=opt.N,
+                                    M=opt.M,
+                                    drop=opt.dropout)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
-                                cdim=opt.hdim,
-                                N=opt.N,
-                                M=opt.M,
-                                drop=opt.dropout)
+                                    cdim=opt.hdim,
+                                    N=opt.N,
+                                    M=opt.M,
+                                    drop=opt.dropout)
 
     if opt.enc_type == 'alstm':
         encoder = nets.EncoderALSTM(idim=opt.edim,
-                                cdim=opt.hdim,
-                                N=opt.N,
-                                M=opt.M,
-                                drop=opt.dropout)
+                                    cdim=opt.hdim,
+                                    N=opt.N,
+                                    M=opt.M,
+                                    drop=opt.dropout)
 
     model = None
     if embedding is None:
-        model = Model(encoder, opt.odim).to(device)
+        model = Model(encoder, opt.odim, opt.dropout).to(device)
     else:
         model = Model(encoder, embedding, opt.dropout).to(device)
     utils.init_model(model)
 
-    optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
-                           lr=opt.lr,
-                           weight_decay=opt.wdecay)
-    # optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()),
-    #                        lr=opt.lr,
-    #                        weight_decay=opt.wdecay)
-    # optimizer = optim.RMSprop(params=filter(lambda p: p.requires_grad, model.parameters()),
-    #                           momentum=0.9,
-    #                           alpha=0.95,
-    #                           lr=opt.lr,
-    #                           weight_decay=opt.wdecay)
-
-    scheduler = ReduceLROnPlateau(optimizer, mode='max',factor=0.5, patience=10000)
+    if opt.fload is not None:
+        model_fname = opt.fload
+        location = {'cuda:' + str(opt.gpu): 'cuda:' + str(opt.gpu)} if opt.gpu != -1 else 'cpu'
+        model_path = os.path.join(RES, model_fname)
+        model_path = os.path.join('..', model_path)
+        model_dict = torch.load(model_path, map_location=location)
+        model.load_state_dict(model_dict)
+        print('Loaded from ' + model_path)
 
     param_str = utils.param_str(opt)
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
-    train(model, res_iters, opt, optimizer, scheduler)
+
+    print('Valid result: \n', valid(model, res_iters['valid_iter'])[0])
+    test_res = valid(model, res_iters['test_iter'])
+    print('Test1 result: \n', test_res[0])
+    print(test_res[1])
+    print(test_res[2])
+    print(test_res[3])
+
 

@@ -12,75 +12,33 @@ from sklearn.metrics import accuracy_score, \
 
 class Example(object):
 
-    def __init__(self, seq, lbl, etype):
+    def __init__(self, seq, context, lbl, dis, na, no):
         self.seq = self.tokenizer(seq)
-        self.lbl = int(lbl)
-        self.etype = int(etype)
+        self.cntxt = context
+        self.lbl = lbl
+        self.dis = int(dis)
+        self.na = int(na)
+        self.no = int(no)
 
     def tokenizer(self, seq):
-        return list(seq)
+        return seq.split()
 
 def load_examples(fname):
     examples = []
 
     with open(fname, 'r') as f:
         for line in f:
-            seq, lbl, d, t = \
+            seq, context, lbl, dis, na, no = \
                 line.strip().split('\t')
-            examples.append(Example(seq, lbl, t))
+            examples.append(Example(seq, context, lbl, dis, na, no))
 
     return examples
-
-def build_iters(**param):
-
-    ftrain = param['ftrain']
-    fvalid = param['fvalid']
-
-    bsz = param['bsz']
-    device = param['device']
-
-    examples_train = load_examples(ftrain)
-
-    SEQ = torchtext.data.Field(sequential=True, use_vocab=True,
-                               pad_token=PAD,
-                               unk_token=UNK,
-                               eos_token=EOS)
-    LBL = torchtext.data.Field(sequential=False, use_vocab=False)
-    ETYPE = torchtext.data.Field(sequential=False, use_vocab=False)
-
-    train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('lbl', LBL),
-                                            ('etype', ETYPE)])
-    SEQ.build_vocab(train)
-    examples_valid = load_examples(fvalid)
-    valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('lbl', LBL),
-                                            ('etype', ETYPE)])
-
-    train_iter = torchtext.data.Iterator(train, batch_size=bsz,
-                                         sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.seq),
-                                         sort_within_batch=True,
-                                         device=device)
-    valid_iter = torchtext.data.Iterator(valid, batch_size=bsz,
-                                         sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.seq),
-                                         sort_within_batch=True,
-                                         device=device)
-
-    return {'train_iter': train_iter,
-            'valid_iter': valid_iter,
-            'SEQ': SEQ,
-            'LBL': LBL,
-            'ETYPE': ETYPE}
 
 def build_iters_test(**param):
 
     ftrain = param['ftrain']
     fvalid = param['fvalid']
-    ftest1 = param['ftest1']
-    ftest2 = param['ftest2']
-
+    ftest = param['ftest']
     bsz = param['bsz']
     device = param['device']
 
@@ -90,27 +48,35 @@ def build_iters_test(**param):
                                pad_token=PAD,
                                unk_token=UNK,
                                eos_token=EOS)
-    LBL = torchtext.data.Field(sequential=False, use_vocab=False)
-    ETYPE = torchtext.data.Field(sequential=False, use_vocab=False)
+    CNTXT = torchtext.data.Field(sequential=False, use_vocab=True)
+    LBL = torchtext.data.Field(sequential=False, use_vocab=True, unk_token=None)
+    INT = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
+                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('etype', ETYPE)])
+                                            ('dis', INT),
+                                            ('na', INT),
+                                            ('no', INT)])
+
     SEQ.build_vocab(train)
+    CNTXT.build_vocab(train)
+    LBL.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
+                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('etype', ETYPE)])
+                                            ('dis', INT),
+                                            ('na', INT),
+                                            ('no', INT)])
 
-    examples_test1 = load_examples(ftest1)
-    test1 = Dataset(examples_test1, fields=[('seq', SEQ),
+    examples_test = load_examples(ftest)
+    test = Dataset(examples_test, fields=[('seq', SEQ),
+                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('etype', ETYPE)])
-
-    examples_test2 = load_examples(ftest2)
-    test2 = Dataset(examples_test2, fields=[('seq', SEQ),
-                                            ('lbl', LBL),
-                                            ('etype', ETYPE)])
+                                            ('dis', INT),
+                                            ('na', INT),
+                                            ('no', INT)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
                                          sort=False, repeat=False,
@@ -122,12 +88,7 @@ def build_iters_test(**param):
                                          sort_key=lambda x: len(x.seq),
                                          sort_within_batch=True,
                                          device=device)
-    test1_iter = torchtext.data.Iterator(test1, batch_size=bsz,
-                                         sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.seq),
-                                         sort_within_batch=True,
-                                         device=device)
-    test2_iter = torchtext.data.Iterator(test2, batch_size=bsz,
+    test_iter = torchtext.data.Iterator(test, batch_size=bsz,
                                          sort=False, repeat=False,
                                          sort_key=lambda x: len(x.seq),
                                          sort_within_batch=True,
@@ -135,20 +96,80 @@ def build_iters_test(**param):
 
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
-            'test1_iter': test1_iter,
-            'test2_iter': test2_iter,
+            'test_iter': test_iter,
             'SEQ': SEQ,
-            'LBL': LBL,
-            'ETYPE': ETYPE}
+            'LBL': LBL}
+
+def build_iters(**param):
+
+    ftrain = param['ftrain']
+    fvalid = param['fvalid']
+    bsz = param['bsz']
+    device = param['device']
+
+    examples_train = load_examples(ftrain)
+
+    SEQ = torchtext.data.Field(sequential=True, use_vocab=True,
+                               pad_token=PAD,
+                               unk_token=UNK,
+                               eos_token=EOS)
+    CNTXT = torchtext.data.Field(sequential=False, use_vocab=True)
+    LBL = torchtext.data.Field(sequential=False, use_vocab=True, unk_token=None)
+    INT = torchtext.data.Field(sequential=False, use_vocab=False)
+
+    train = Dataset(examples_train, fields=[('seq', SEQ),
+                                            ('cntxt', CNTXT),
+                                            ('lbl', LBL),
+                                            ('dis', INT),
+                                            ('na', INT),
+                                            ('no', INT)])
+
+    SEQ.build_vocab(train)
+    CNTXT.build_vocab(train)
+    LBL.build_vocab(train)
+    examples_valid = load_examples(fvalid)
+    valid = Dataset(examples_valid, fields=[('seq', SEQ),
+                                            ('cntxt', CNTXT),
+                                            ('lbl', LBL),
+                                            ('dis', INT),
+                                            ('na', INT),
+                                            ('no', INT)])
+
+    train_iter = torchtext.data.Iterator(train, batch_size=bsz,
+                                         sort=False, repeat=False,
+                                         sort_key=lambda x: len(x.seq),
+                                         sort_within_batch=True,
+                                         device=device)
+    valid_iter = torchtext.data.Iterator(valid, batch_size=bsz,
+                                         sort=False, repeat=False,
+                                         sort_key=lambda x: len(x.seq),
+                                         sort_within_batch=True,
+                                         device=device)
+
+    return {'train_iter': train_iter,
+            'valid_iter': valid_iter,
+            'SEQ': SEQ,
+            'LBL': LBL}
 
 def valid(model, valid_iter):
     pred_lst = []
     true_lst = []
 
+    pred_lst_na = {}
+    true_lst_na = {}
+
+    pred_lst_dis = {}
+    true_lst_dis = {}
+
+    pred_lst_no = {}
+    true_lst_no = {}
+
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            seq, lbl = batch.seq, batch.lbl
+            seq, lbl, dis, na, no = batch.seq, batch.lbl,\
+                                    batch.dis, batch.na, \
+                                    batch.no
             res= model(seq)
             res_clf = res['res_clf']
 
@@ -156,43 +177,42 @@ def valid(model, valid_iter):
             lbl = lbl.cpu().numpy()
             pred_lst.extend(pred)
             true_lst.extend(lbl)
+            for pred_b, true_b, dis_b, na_b, no_b in\
+                    zip(pred, lbl, dis, na, no):
+                dis_b = dis_b.item()
+                na_b = na_b.item()
+                no_b = no_b.item()
+                if dis_b not in pred_lst_dis:
+                    pred_lst_dis[dis_b] = []
+                    true_lst_dis[dis_b] = []
+
+                if na_b not in pred_lst_na:
+                    pred_lst_na[na_b] = []
+                    true_lst_na[na_b] = []
+
+                if no_b not in pred_lst_no:
+                    pred_lst_no[no_b] = []
+                    true_lst_no[no_b] = []
+
+                pred_lst_dis[dis_b].append(pred_b)
+                true_lst_dis[dis_b].append(true_b)
+                pred_lst_na[na_b].append(pred_b)
+                true_lst_na[na_b].append(true_b)
+                pred_lst_no[no_b].append(pred_b)
+                true_lst_no[no_b].append(true_b)
 
     accuracy = accuracy_score(true_lst, pred_lst)
-    precision = precision_score(true_lst, pred_lst)
-    recall = recall_score(true_lst, pred_lst)
-    f1 = f1_score(true_lst, pred_lst)
+    accuracy_dis = {}
+    accuracy_na = {}
+    accuracy_no = {}
+    for dis in pred_lst_dis.keys():
+        accuracy_dis[dis] = accuracy_score(true_lst_dis[dis], pred_lst_dis[dis])
+    for na in pred_lst_na.keys():
+        accuracy_na[na] = accuracy_score(true_lst_na[na], pred_lst_na[na])
+    for no in pred_lst_no.keys():
+        accuracy_no[no] = accuracy_score(true_lst_no[no], pred_lst_no[no])
 
-    # return accuracy, precision, recall, f1
-    return accuracy
-
-def valid_detail(model, valid_iter):
-    pred_lsts = {'exchange':[], 'omit':[], 'redun':[]}
-    true_lsts = {'exchange':[], 'omit':[], 'redun':[]}
-    pred_lst = []
-    true_lst = []
-    etypes = ['exchange', 'omit', 'redun']
-
-    with torch.no_grad():
-        model.eval()
-        for i, batch in enumerate(valid_iter):
-            seq, lbl, etype = batch.seq, batch.lbl, batch.etype
-            res= model(seq)
-            res_clf = res['res_clf']
-
-            pred = res_clf.max(dim=1)[1].cpu().numpy()
-            lbl = lbl.cpu().numpy()
-            pred_lst.extend(pred)
-            true_lst.extend(lbl)
-            for b, e in enumerate(etype):
-                pred_lsts[etypes[e]].append(pred[b])
-                true_lsts[etypes[e]].append(lbl[b])
-
-    accuracy = {}
-    for etype in etypes:
-        accuracy[etype] = accuracy_score(true_lsts[etype], pred_lsts[etype])
-    accuracy['overall'] = accuracy_score(true_lst, pred_lst)
-
-    return accuracy
+    return accuracy, accuracy_dis, accuracy_na, accuracy_no
 
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
@@ -273,7 +293,7 @@ class Model(nn.Module):
         self.embedding_drop = \
             utils.fixMaskEmbeddedDropout(self.embedding, drop)
         self.hdim = self.encoder.odim
-        self.clf = nn.Linear(self.hdim, 2)
+        self.clf = nn.Linear(self.hdim, 4)
         self.padding_idx = embedding.padding_idx
         self.num_words = embedding.num_embeddings
         self.out2esz = nn.Linear(self.hdim, self.embedding.embedding_dim)

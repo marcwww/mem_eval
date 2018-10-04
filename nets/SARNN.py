@@ -14,9 +14,8 @@ class EncoderSARNN(MANNBaseEncoder):
                  cdim,
                  N,
                  M,
-                 idrop,
-                 odrop):
-        super(EncoderSARNN, self).__init__(idim, cdim, N, M, idrop, odrop)
+                 drop):
+        super(EncoderSARNN, self).__init__(idim, cdim, N, M, drop)
 
         self.mem_bias = nn.Parameter(torch.zeros(M),
                                      requires_grad=False)
