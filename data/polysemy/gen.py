@@ -4,129 +4,69 @@ from macros import *
 vocab = set()
 context_map = {}
 meaning_map = {}
-alphabet = [chr(ord('A') + offset) for offset in range(26)]
+alphabet = [chr(ord('A') + offset) for offset in range(10)]
+ncontext_types = 4
 
 for word in alphabet:
     vocab.add(word)
     context_map[word] = []
-    for is_close in [0, 1]:
-        for direction in ['l', 'r']:
-            context = '%s%i%s' % (word, is_close, direction)
-            vocab.add(context)
-            context_map[word].append(context)
+    for i in range(ncontext_types):
+        context = '%s%i' % (word, i)
+        vocab.add(context)
+        context_map[word].append(context)
     for meaning, context in enumerate(context_map[word]):
-        # meaning_map[context] = meaning
-        meaning_map[context] = context[1:]
+        # meaning_map[context] = context[1:]
+        meaning_map[context] = context
 
-def analysis_meaning(noises, context, attractor):
-    is_close_attractor, direction_attractor = attractor[1], attractor[2]
-    is_close, direction = context[1], context[2]
-
-    meaning = None
-    if direction_attractor == direction:
-        if is_close_attractor == '0':
-            if direction == 'l':
-                if noises[-1] != attractor:
-                    meaning = meaning_map[attractor]
-            else:
-                # direction == 'r'
-                if noises[0] != attractor:
-                    meaning = meaning_map[attractor]
-        else:
-            # is_close_leader == '1'
-            if direction == 'l':
-                if noises[-1] == attractor:
-                    meaning = meaning_map[attractor]
-            else:
-                # direction == 'r'
-                if noises[0] == attractor:
-                    meaning = meaning_map[attractor]
-
-    return meaning
-
-def gen_sample(dis, nattractors, num_other):
-
+def gen_sample(nattractors, num_other):
+    assert nattractors > 0
     word = random.choice(alphabet)
-    context = random.choice(context_map[word])
+    vocab_except = vocab - {word} - set(context_map[word])
 
-    assert context[0] == word
+    attractors = []
+    seq = []
+    for _ in range(nattractors):
+        attractor = random.choice(context_map[word])
+        attractors.append(attractor)
+        ipos = random.choice(range(len(seq) + 1))
+        seq.insert(ipos, attractor)
 
-    is_close, direction = context[1], context[2]
-    vocab_except = vocab - set(context_map[word]) - {word}
-    meaning = meaning_map[context]
-    critical = None
-    res = []
-
-    # for critical part
-    if is_close == '0':
-        assert dis > 0
-        noises = []
-        attractors = []
-        for _ in range(nattractors):
-            attractor = random.choice(context_map[word])
-            attractors.append(attractor)
-            ipos = random.choice(range(len(noises)+1))
-            noises.insert(ipos, attractor)
-
-        if dis > nattractors:
-            for _ in range(dis - nattractors):
-                noise = random.choice(list(vocab_except))
-                ipos = random.choice(range(len(noises) + 1))
-                noises.insert(ipos, noise)
-
-        critical = [context] + noises + [INDICATOR] + [word] if direction == 'l' else [INDICATOR] + [word] + noises + [context]
-
-        attractors_sorted = sorted(attractors + [context], reverse=True)
-        for attractor in attractors_sorted:
-            res = analysis_meaning(noises, context, attractor)
-            if res != None:
-                meaning = res
-                break
-    else:
-        # is_close == '1'
-        critical = [context] + [INDICATOR] + [word] if direction == 'l' else [INDICATOR] + [word] + [context]
-        nattractors = 0
-        dis = 0
-
-    # for other words
-    res = critical
     for _ in range(num_other):
-        direction = random.choice(['l', 'r'])
-        word = random.choice(list(vocab_except))
-        if direction == 'l':
-            res.insert(0, word)
-        else:
-            res.append(word)
+        oword = random.choice(list(vocab_except))
+        ipos = random.choice(range(len(seq) + 1))
+        seq.insert(ipos, oword)
 
-    return ' '.join(res), context, meaning, str(dis), str(nattractors), str(num_other)
+    ipos = random.choice(range(len(seq) + 1))
+    seq.insert(ipos, ' '.join([INDICATOR, word]))
 
-def gen_samples(num, dis_min, dis_max, na_min, na_max, no_min, no_max):
-    assert dis_min > 0
+    meaning = meaning_map[max(attractors)]
+
+    return ' '.join(seq), meaning
+
+def gen_samples(num, na_min, na_max, no_min, no_max):
+
     samples = []
     for _ in range(num):
-        dis = random.choice(range(dis_min, dis_max + 1))
         na = random.choice(range(na_min, na_max+1))
         no = random.choice(range(no_min, no_max+1))
-        sample = gen_sample(dis, na, no)
-        sample = '\t'.join(sample)
+        seq, meaning = gen_sample(na, no)
+        sample = '\t'.join([seq, meaning, str(na), str(no)])
         samples.append(sample)
 
     return samples
 
 def gen_dataset(gen_train=True, gen_valid=True, gen_test=True):
     num_train = 5000
-    num_valid = 500
-    num_test = 1000
-    dis_min = 1
-    dis_max = 10
-    na_min = 0
-    na_max = 7
+    num_valid = 2000
+    num_test = 2000
+    na_min = 1
+    na_max = 5
     no_min = 8
     no_max = 12
 
-    train = gen_samples(num_train, dis_min, dis_max, na_min, na_max, no_min, no_max)
-    valid = gen_samples(num_valid, dis_min, dis_max, na_min, na_max, no_min, no_max)
-    test = gen_samples(num_test, dis_min, dis_max, na_min, na_max, no_min, no_max)
+    train = gen_samples(num_train, na_min, na_max, no_min, no_max)
+    valid = gen_samples(num_valid, na_min, na_max, no_min, no_max)
+    test = gen_samples(num_test, na_min, na_max, no_min, no_max)
 
     for type , samples in zip(['train', 'valid', 'test'], [train, valid, test]):
         if type == 'train' and not gen_train:
@@ -136,17 +76,13 @@ def gen_dataset(gen_train=True, gen_valid=True, gen_test=True):
         if type == 'test' and not gen_test:
             continue
 
-        with open('polysemy-ntrain%d-ntest%d-dis%d_%d-na%d_%d-no%d_%d.%s.txt'
-                  % (num_train, num_test, dis_min, dis_max, na_min, na_max, no_min, no_max, type), 'w') as f:
+        with open('polysemy-ntrain%d-ntest%d-ntypes%d-na%d_%d-no%d_%d.%s.txt'
+                  % (num_train, num_test, ncontext_types, na_min, na_max, no_min, no_max, type), 'w') as f:
             for sample in samples:
                 f.write(sample + '\n')
 
-gen_dataset(False, False, True)
-
-
-
-
-
+# gen_dataset(False, False, True)
+gen_dataset(True, True, True)
 
 
 # n = 0

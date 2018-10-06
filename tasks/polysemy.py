@@ -7,16 +7,15 @@ from torch.nn import functional as F
 from torch.nn.utils import clip_grad_norm
 import numpy as np
 import utils
+from collections import defaultdict
 from sklearn.metrics import accuracy_score, \
     precision_score, recall_score, f1_score
 
 class Example(object):
 
-    def __init__(self, seq, context, lbl, dis, na, no):
+    def __init__(self, seq, lbl, na, no):
         self.seq = self.tokenizer(seq)
-        self.cntxt = context
         self.lbl = lbl
-        self.dis = int(dis)
         self.na = int(na)
         self.no = int(no)
 
@@ -28,9 +27,9 @@ def load_examples(fname):
 
     with open(fname, 'r') as f:
         for line in f:
-            seq, context, lbl, dis, na, no = \
+            seq, lbl, na, no = \
                 line.strip().split('\t')
-            examples.append(Example(seq, context, lbl, dis, na, no))
+            examples.append(Example(seq, lbl, na, no))
 
     return examples
 
@@ -48,33 +47,24 @@ def build_iters_test(**param):
                                pad_token=PAD,
                                unk_token=UNK,
                                eos_token=EOS)
-    CNTXT = torchtext.data.Field(sequential=False, use_vocab=True)
     LBL = torchtext.data.Field(sequential=False, use_vocab=True, unk_token=None)
     INT = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('dis', INT),
                                             ('na', INT),
                                             ('no', INT)])
 
     SEQ.build_vocab(train)
-    CNTXT.build_vocab(train)
     LBL.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('dis', INT),
                                             ('na', INT),
                                             ('no', INT)])
-
     examples_test = load_examples(ftest)
     test = Dataset(examples_test, fields=[('seq', SEQ),
-                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('dis', INT),
                                             ('na', INT),
                                             ('no', INT)])
 
@@ -113,25 +103,19 @@ def build_iters(**param):
                                pad_token=PAD,
                                unk_token=UNK,
                                eos_token=EOS)
-    CNTXT = torchtext.data.Field(sequential=False, use_vocab=True)
     LBL = torchtext.data.Field(sequential=False, use_vocab=True, unk_token=None)
     INT = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('dis', INT),
                                             ('na', INT),
                                             ('no', INT)])
 
     SEQ.build_vocab(train)
-    CNTXT.build_vocab(train)
     LBL.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('cntxt', CNTXT),
                                             ('lbl', LBL),
-                                            ('dis', INT),
                                             ('na', INT),
                                             ('no', INT)])
 
@@ -158,17 +142,17 @@ def valid(model, valid_iter):
     pred_lst_na = {}
     true_lst_na = {}
 
-    pred_lst_dis = {}
-    true_lst_dis = {}
-
     pred_lst_no = {}
     true_lst_no = {}
+
+    na_num = defaultdict(int)
+    no_num = defaultdict(int)
 
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            seq, lbl, dis, na, no = batch.seq, batch.lbl,\
-                                    batch.dis, batch.na, \
+            seq, lbl, na, no = batch.seq, batch.lbl,\
+                                    batch.na, \
                                     batch.no
             res= model(seq)
             res_clf = res['res_clf']
@@ -177,14 +161,13 @@ def valid(model, valid_iter):
             lbl = lbl.cpu().numpy()
             pred_lst.extend(pred)
             true_lst.extend(lbl)
-            for pred_b, true_b, dis_b, na_b, no_b in\
-                    zip(pred, lbl, dis, na, no):
-                dis_b = dis_b.item()
+            for pred_b, true_b, na_b, no_b in\
+                    zip(pred, lbl, na, no):
                 na_b = na_b.item()
                 no_b = no_b.item()
-                if dis_b not in pred_lst_dis:
-                    pred_lst_dis[dis_b] = []
-                    true_lst_dis[dis_b] = []
+
+                na_num[na_b] += 1
+                no_num[no_b] += 1
 
                 if na_b not in pred_lst_na:
                     pred_lst_na[na_b] = []
@@ -194,25 +177,20 @@ def valid(model, valid_iter):
                     pred_lst_no[no_b] = []
                     true_lst_no[no_b] = []
 
-                pred_lst_dis[dis_b].append(pred_b)
-                true_lst_dis[dis_b].append(true_b)
                 pred_lst_na[na_b].append(pred_b)
                 true_lst_na[na_b].append(true_b)
                 pred_lst_no[no_b].append(pred_b)
                 true_lst_no[no_b].append(true_b)
 
     accuracy = accuracy_score(true_lst, pred_lst)
-    accuracy_dis = {}
     accuracy_na = {}
     accuracy_no = {}
-    for dis in pred_lst_dis.keys():
-        accuracy_dis[dis] = accuracy_score(true_lst_dis[dis], pred_lst_dis[dis])
     for na in pred_lst_na.keys():
         accuracy_na[na] = accuracy_score(true_lst_na[na], pred_lst_na[na])
     for no in pred_lst_no.keys():
         accuracy_no[no] = accuracy_score(true_lst_no[no], pred_lst_no[no])
 
-    return accuracy, accuracy_dis, accuracy_na, accuracy_no
+    return accuracy, accuracy_na, accuracy_no
 
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
@@ -266,7 +244,7 @@ def train(model, iters, opt, optim, scheduler):
                 loss_ave = np.array(losses).sum() / len(losses)
                 losses = []
                 accurracy = \
-                    valid(model, valid_iter)
+                    valid(model, valid_iter)[0]
                 log_str = '{\'Epoch\':%d, \'Format\':\'a/l\', \'Metrics\':[%.4f, %.4f]}' % \
                           (epoch, accurracy, loss_ave)
                 print(log_str)
@@ -293,7 +271,7 @@ class Model(nn.Module):
         self.embedding_drop = \
             utils.fixMaskEmbeddedDropout(self.embedding, drop)
         self.hdim = self.encoder.odim
-        self.clf = nn.Linear(self.hdim, 4)
+        self.clf = nn.Linear(self.hdim, 4 * 10)
         self.padding_idx = embedding.padding_idx
         self.num_words = embedding.num_embeddings
         self.out2esz = nn.Linear(self.hdim, self.embedding.embedding_dim)

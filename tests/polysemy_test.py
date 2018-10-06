@@ -25,6 +25,7 @@ if __name__ == '__main__':
     assert opt.task == 'polysemy'
 
     build_iters_test = polysemy.build_iters_test
+    build_iters = polysemy.build_iters
     train = polysemy.train
     valid = polysemy.valid
     Model = polysemy.Model
@@ -35,6 +36,12 @@ if __name__ == '__main__':
                             bsz=opt.bsz,
                             device=opt.gpu,
                             sub_task=opt.sub_task)
+
+    # res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
+    #                         fvalid=os.path.join('..', opt.fvalid),
+    #                         bsz=opt.bsz,
+    #                         device=opt.gpu,
+    #                         sub_task=opt.sub_task)
 
     embedding = None
     embedding_enc = None
@@ -131,11 +138,16 @@ if __name__ == '__main__':
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
 
-    print('Valid result: \n', valid(model, res_iters['valid_iter'])[0])
+    valid_res = valid(model, res_iters['valid_iter'])
+    print('Valid result:', round(valid_res[0], 3))
+    print('Valid na:\n')
+    for na in sorted(valid_res[1].keys()):
+        print(na, round(valid_res[1][na],3))
+
     test_res = valid(model, res_iters['test_iter'])
-    print('Test1 result: \n', test_res[0])
-    print(test_res[1])
-    print(test_res[2])
-    print(test_res[3])
+    print('Test result:', round(test_res[0], 3))
+    print('Test na:')
+    for na in sorted(test_res[1].keys()):
+        print(na, round(test_res[1][na],3))
 
 
