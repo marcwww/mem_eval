@@ -32,8 +32,7 @@ if __name__ == '__main__':
 
     res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
                             fvalid=os.path.join('..', opt.fvalid),
-                            ftest1=os.path.join('..', opt.ftest1),
-                            ftest2=os.path.join('..', opt.ftest2),
+                            ftest=os.path.join('..', opt.ftest),
                             bsz=opt.bsz,
                             device=opt.gpu,
                             sub_task=opt.sub_task)
@@ -134,7 +133,6 @@ if __name__ == '__main__':
         print(str(key) + ': ' + str(val))
 
     print('Valid result: \n', valid(model, res_iters['valid_iter']))
-    print('Test1 result: \n', valid_detail(model, res_iters['test1_iter']))
-    print('Test2 result: \n', valid_detail(model, res_iters['test2_iter']))
+    print('Test result: \n', valid_detail(model, res_iters['test_iter']))
 
 

@@ -12,9 +12,10 @@ from sklearn.metrics import accuracy_score, \
 
 class Example(object):
 
-    def __init__(self, seq, lbl, etype):
+    def __init__(self, seq, lbl, d, etype):
         self.seq = self.tokenizer(seq)
         self.lbl = int(lbl)
+        self.d = int(d)
         self.etype = int(etype)
 
     def tokenizer(self, seq):
@@ -27,7 +28,7 @@ def load_examples(fname):
         for line in f:
             seq, lbl, d, t = \
                 line.strip().split('\t')
-            examples.append(Example(seq, lbl, t))
+            examples.append(Example(seq, lbl, d, t))
 
     return examples
 
@@ -46,15 +47,18 @@ def build_iters(**param):
                                unk_token=UNK,
                                eos_token=EOS)
     LBL = torchtext.data.Field(sequential=False, use_vocab=False)
+    D = torchtext.data.Field(sequential=False, use_vocab=False)
     ETYPE = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
                                             ('lbl', LBL),
+                                            ('d', D),
                                             ('etype', ETYPE)])
     SEQ.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
                                             ('lbl', LBL),
+                                            ('d', D),
                                             ('etype', ETYPE)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
@@ -78,8 +82,7 @@ def build_iters_test(**param):
 
     ftrain = param['ftrain']
     fvalid = param['fvalid']
-    ftest1 = param['ftest1']
-    ftest2 = param['ftest2']
+    ftest = param['ftest']
 
     bsz = param['bsz']
     device = param['device']
@@ -91,25 +94,24 @@ def build_iters_test(**param):
                                unk_token=UNK,
                                eos_token=EOS)
     LBL = torchtext.data.Field(sequential=False, use_vocab=False)
+    D = torchtext.data.Field(sequential=False, use_vocab=False)
     ETYPE = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
                                             ('lbl', LBL),
+                                            ('d', D),
                                             ('etype', ETYPE)])
     SEQ.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
                                             ('lbl', LBL),
+                                            ('d', D),
                                             ('etype', ETYPE)])
 
-    examples_test1 = load_examples(ftest1)
-    test1 = Dataset(examples_test1, fields=[('seq', SEQ),
+    examples_test = load_examples(ftest)
+    test = Dataset(examples_test, fields=[('seq', SEQ),
                                             ('lbl', LBL),
-                                            ('etype', ETYPE)])
-
-    examples_test2 = load_examples(ftest2)
-    test2 = Dataset(examples_test2, fields=[('seq', SEQ),
-                                            ('lbl', LBL),
+                                            ('d', D),
                                             ('etype', ETYPE)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
@@ -122,12 +124,7 @@ def build_iters_test(**param):
                                          sort_key=lambda x: len(x.seq),
                                          sort_within_batch=True,
                                          device=device)
-    test1_iter = torchtext.data.Iterator(test1, batch_size=bsz,
-                                         sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.seq),
-                                         sort_within_batch=True,
-                                         device=device)
-    test2_iter = torchtext.data.Iterator(test2, batch_size=bsz,
+    test_iter = torchtext.data.Iterator(test, batch_size=bsz,
                                          sort=False, repeat=False,
                                          sort_key=lambda x: len(x.seq),
                                          sort_within_batch=True,
@@ -135,8 +132,7 @@ def build_iters_test(**param):
 
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
-            'test1_iter': test1_iter,
-            'test2_iter': test2_iter,
+            'test_iter': test_iter,
             'SEQ': SEQ,
             'LBL': LBL,
             'ETYPE': ETYPE}
@@ -166,31 +162,36 @@ def valid(model, valid_iter):
     return accuracy
 
 def valid_detail(model, valid_iter):
-    pred_lsts = {'exchange':[], 'omit':[], 'redun':[]}
-    true_lsts = {'exchange':[], 'omit':[], 'redun':[]}
-    pred_lst = []
-    true_lst = []
+    pred_lsts = {}
+    true_lsts = {}
+
     etypes = ['exchange', 'omit', 'redun']
 
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            seq, lbl, etype = batch.seq, batch.lbl, batch.etype
+            seq, lbl, d, etype = batch.seq, batch.lbl, batch.d, batch.etype
             res= model(seq)
             res_clf = res['res_clf']
 
             pred = res_clf.max(dim=1)[1].cpu().numpy()
             lbl = lbl.cpu().numpy()
-            pred_lst.extend(pred)
-            true_lst.extend(lbl)
-            for b, e in enumerate(etype):
-                pred_lsts[etypes[e]].append(pred[b])
-                true_lsts[etypes[e]].append(lbl[b])
+
+            for b, (d, e) in enumerate(zip(d, etype)):
+                d = d.item()
+                if d not in pred_lsts:
+                    pred_lsts[d] = {'exchange':[], 'omit':[], 'redun':[], 'overall':[]}
+                    true_lsts[d] = {'exchange':[], 'omit':[], 'redun':[], 'overall':[]}
+                pred_lsts[d][etypes[e]].append(pred[b])
+                true_lsts[d][etypes[e]].append(lbl[b])
+                pred_lsts[d]['overall'].append(pred[b])
+                true_lsts[d]['overall'].append(lbl[b])
 
     accuracy = {}
-    for etype in etypes:
-        accuracy[etype] = accuracy_score(true_lsts[etype], pred_lsts[etype])
-    accuracy['overall'] = accuracy_score(true_lst, pred_lst)
+    for d in pred_lsts.keys():
+        accuracy[d] = {}
+        for k in pred_lsts[d].keys():
+            accuracy[d][k] = accuracy_score(true_lsts[d][k], pred_lsts[d][k])
 
     return accuracy
 
@@ -270,20 +271,22 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.encoder = encoder
         self.embedding = embedding
-        self.embedding_drop = \
-            utils.fixMaskEmbeddedDropout(self.embedding, drop)
+        # self.embedding_drop = \
+        #     utils.fixMaskEmbeddedDropout(self.embedding, drop)
         self.hdim = self.encoder.odim
         self.clf = nn.Linear(self.hdim, 2)
         self.padding_idx = embedding.padding_idx
         self.num_words = embedding.num_embeddings
         self.out2esz = nn.Linear(self.hdim, self.embedding.embedding_dim)
+        self.edrop = nn.Dropout(drop)
 
     def enc(self, seq):
         mask = seq.data.eq(self.padding_idx)
         len_total, bsz = seq.shape
         lens = len_total - mask.sum(dim=0)
 
-        inp = self.embedding_drop(True, seq)
+        # inp = self.embedding_drop(True, seq)
+        inp = self.embedding(seq)
         os = self.encoder(embs=inp, mask=1-mask, lens = lens)
         rep = torch.cat([os[lens[b] - 1, b, :].unsqueeze(0) for b in range(bsz)],
                          dim=0)

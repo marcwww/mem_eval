@@ -121,48 +121,36 @@ class IncorrExprGenerator(object):
             else:
                 return ' '.join(['(', self.prod_E(d + 1), ops[branch], self.prod_E(d + 1), ')'])
 
-def gen_data(num_train_each, num_test_each, d_bound_train, d_test, e):
-    train = []
-    for d in range(d_bound_train + 1):
+def gen_data(num_train, num_valid, num_test, d_max, e):
+    samples = []
+    num_total = num_train + num_valid + num_test
+
+    num_each = int(num_total / (d_max * 3))
+
+    for d in range(d_max + 1):
         if d == 0:
              continue
 
-        exchange = gen_list_partial(num_train_each, d, e, 'exchange')
-        train.extend(exchange)
+        exchange = gen_list_partial(num_each, d, e, 'exchange')
+        samples.extend(exchange)
 
-        omit = gen_list_partial(num_train_each, d, e, 'omit')
-        train.extend(omit)
+        omit = gen_list_partial(num_each, d, e, 'omit')
+        samples.extend(omit)
 
-        redun = gen_list_partial(num_train_each, d, e, 'redun')
-        train.extend(redun)
+        redun = gen_list_partial(num_each, d, e, 'redun')
+        samples.extend(redun)
 
-    valid = []
-    for d_type in ['exchange', 'omit', 'redun']:
-        valid.extend(gen_list_partial(num_test_each + 1, d_test, e, d_type))
-
-    test = []
-    for d_type in ['exchange', 'omit', 'redun']:
-        test.extend(gen_list_partial(num_test_each + 1, d_test, e, d_type))
-
-    train = random.sample(train, k=len(train))
-    test = random.sample(test, k=len(test))
-    valid = random.sample(test, k=len(valid))
+    samples = random.sample(samples, k=len(samples))
+    train = samples[:num_train]
+    valid = samples[num_train: num_train + num_valid]
+    test = samples[num_train + num_valid:]
 
 
-    with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
-               (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'train')), 'w') as f:
-        for line in train:
-            f.write(line)
-
-    with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
-               (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'test')), 'w') as f:
-        for line in test:
-            f.write(line)
-
-    with open(('expr-ntrain%d-ntest%d-dbound%d-dtest%d-e%d.%s.txt' %
-               (num_train_each * 3 + 1, num_test_each, d_bound_train, d_test, e, 'valid')), 'w') as f:
-        for line in valid:
-            f.write(line)
+    for data_type, data in zip(['train','valid','test'],[train, valid, test]):
+        with open(('expr-ntrain%d-nvalid%d-ntest%d-dmax%d-e%d.%s.txt' %
+                   (num_train, num_valid, num_test, d_max, e, data_type)), 'w') as f:
+            for line in data:
+                f.write(line)
 
 def gen_list_partial(num, d_bound, e_bound, e_type):
     igen = IncorrExprGenerator(d_bound, e_bound, e_type)
@@ -200,7 +188,9 @@ def gen_data_partial(num, d_bound, e_bound, e_type, dataset_type):
 
 if __name__ == '__main__':
 
-    gen_data(200, 500, 4, 4, 1)
+    # gen_data(200, 500, 4, 4, 1)
+    gen_data(5000, 1000, 10000, 7, 1)
+
     # # exchange:
     # gen_data_partial(10000, 2, 1, 'exchange','train')
     # gen_data_partial(10000, 3, 1, 'exchange','train')

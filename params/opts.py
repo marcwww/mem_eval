@@ -4,13 +4,13 @@ from . import flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
-    group.add_argument('-enc_type', type=str, default='ntm')
+    # group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='sarnn')
     # group.add_argument('-enc_type', type=str, default='lstm')
-    # group.add_argument('-enc_type', type=str, default='alstm')
+    group.add_argument('-enc_type', type=str, default='alstm')
 
-    # group.add_argument('-task', type=str, default='flang')
-    group.add_argument('-task', type=str, default='polysemy')
+    group.add_argument('-task', type=str, default='flang')
+    # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
 
     group.add_argument('-nepoch', type=int, default=30)
