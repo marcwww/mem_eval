@@ -19,7 +19,7 @@ class Example(object):
         self.etype = int(etype)
 
     def tokenizer(self, seq):
-        return list(seq)
+        return seq.split()
 
 def load_examples(fname):
     examples = []
@@ -213,6 +213,7 @@ def train(model, iters, opt, optim, scheduler):
 
     best_performance = 0
     losses = []
+    gnorms = []
     for epoch in range(opt.nepoch):
         for i, batch in enumerate(train_iter):
             seq = batch.seq
@@ -236,25 +237,29 @@ def train(model, iters, opt, optim, scheduler):
             losses.append(loss.item())
 
             loss.backward()
-            clip_grad_norm(model.parameters(), 5)
+            gnorm = clip_grad_norm(model.parameters(), opt.gclip)
+            gnorms.append(gnorm)
+
             optim.step()
-            loss = {'clf_loss': loss.item()}
+            loss = {'clf_loss': loss.item(), 'gnorm': gnorm}
 
             utils.progress_bar(i / len(train_iter), loss, epoch)
 
             if (i + 1) % int(1 / 4 * len(train_iter)) == 0:
                 # print('\r')
                 loss_ave = np.array(losses).sum() / len(losses)
+                gnorm_ave = np.array(gnorms).sum() / len(gnorms)
                 losses = []
+                gnorms = []
                 accurracy = \
                     valid(model, valid_iter)
-                log_str = '{\'Epoch\':%d, \'Format\':\'a/l\', \'Metrics\':[%.4f, %.4f]}' % \
-                          (epoch, accurracy, loss_ave)
+                log_str = '{\'Epoch\':%d, \'Format\':\'a/l/g\', \'Metrics\':[%.4f, %.4f, %.4f]}' % \
+                          (epoch, accurracy, loss_ave, gnorm_ave)
                 print(log_str)
                 with open(log_path, 'a+') as f:
                     f.write(log_str + '\n')
 
-                scheduler.step(accurracy)
+                scheduler.step(loss_ave)
                 for param_group in optim.param_groups:
                     print('learning rate:', param_group['lr'])
 
@@ -288,8 +293,7 @@ class Model(nn.Module):
         # inp = self.embedding_drop(True, seq)
         inp = self.embedding(seq)
         os = self.encoder(embs=inp, mask=1-mask, lens = lens)
-        rep = torch.cat([os[lens[b] - 1, b, :].unsqueeze(0) for b in range(bsz)],
-                         dim=0)
+        rep = os[lens - 1, range(bsz)]
         return rep, os
 
     def forward(self, seq):

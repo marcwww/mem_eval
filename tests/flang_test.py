@@ -85,6 +85,10 @@ if __name__ == '__main__':
 
     encoder = None
     decoder = None
+    if opt.enc_type == 'srnn':
+        encoder = nets.EncoderSRNN(idim=opt.edim,
+                                   cdim=opt.hdim,
+                                   dropout=opt.dropout)
 
     if opt.enc_type == 'ntm':
         encoder = nets.EncoderNTM(idim=opt.edim,

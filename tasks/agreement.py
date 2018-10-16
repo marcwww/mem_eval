@@ -145,7 +145,7 @@ def train(model, iters, opt, optim, scheduler):
             loss = criterion_lm(next_words.view(-1, model.num_words), sen[1:].view(-1))
             losses.append(loss.item())
             loss.backward()
-            clip_grad_norm(model.parameters(), opt.gclip)
+            gnorm = clip_grad_norm(model.parameters(), opt.gclip)
             optim.step()
 
             loss = {'clf_loss': loss.item()}
@@ -164,7 +164,7 @@ def train(model, iters, opt, optim, scheduler):
                 with open(log_path, 'a+') as f:
                     f.write(log_str + '\n')
 
-                scheduler.step(accurracy)
+                scheduler.step(loss_ave)
                 for param_group in optim.param_groups:
                     print('learning rate:', param_group['lr'])
 

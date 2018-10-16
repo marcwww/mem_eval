@@ -15,15 +15,71 @@ def model_opts(parser):
 def train_opts(parser):
     group = parser.add_argument_group('train')
     group.add_argument('-seed', type=int, default=1000)
+
+    # group.add_argument('-ftrain', type=str,
+    #        default=os.path.join(FLANG,
+    #                             'expr-ntrain2000-nvalid2000-ntest1000-dmax10-e1.train.txt'))
+    # group.add_argument('-fvalid', type=str,
+    #        default=os.path.join(FLANG,
+    #                             'expr-ntrain2000-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
+    # group.add_argument('-ftest', type=str,
+    #        default=os.path.join(FLANG,
+    #                             'expr-ntrain2000-nvalid2000-ntest1000-dmax10-e1.test.txt'))
+
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain2001-nvalid2000-ntest1000-dmax10-e1.train.txt'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain2001-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain2001-nvalid2000-ntest1000-dmax10-e1.test.txt'))
+
     group.add_argument('-ftrain', type=str,
                        default=os.path.join(FLANG,
-                                            'expr-ntrain5000-nvalid1000-ntest10000-dmax7-e1.train.txt'))
+                                            'expr-ntrain5000-nvalid2000-ntest1000-dmax10-e1.train.txt'))
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(FLANG,
-                                            'expr-ntrain5000-nvalid1000-ntest10000-dmax7-e1.valid.txt'))
+                                            'expr-ntrain5000-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FLANG,
-                                            'expr-ntrain5000-nvalid1000-ntest10000-dmax7-e1.test.txt'))
+                                            'expr-ntrain5000-nvalid2000-ntest1000-dmax10-e1.test.txt'))
+
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain5001-nvalid2000-ntest1000-dmax10-e1.train.txt'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain5001-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain5001-nvalid2000-ntest1000-dmax10-e1.test.txt'))
+
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain90001-nvalid10000-ntest1000-dmax10-e1.train.txt'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain90001-nvalid10000-ntest1000-dmax10-e1.valid.txt'))
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain10001-nvalid2000-ntest1000-dmax10-e1.train.txt'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain10001-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain10001-nvalid2000-ntest1000-dmax10-e1.test.txt'))
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain90000-nvalid10000-ntest1000-dmax10-e1.train.txt'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain90000-nvalid10000-ntest1000-dmax10-e1.valid.txt'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'expr-ntrain90000-nvalid10000-ntest1000-dmax10-e1.test.txt'))
 
     # group.add_argument('-ftrain', type=str,
     #                    default=os.path.join(FLANG,
@@ -38,13 +94,16 @@ def train_opts(parser):
     #                    default=os.path.join(FLANG,
     #                                         'expr-ntrain10000-ntest1000-dbound4-dtest6-e1.test.txt'))
 
-    group.add_argument('-fload', type=str, default='flang-overall-lstm-1538649039.model')
-    group.add_argument('-bsz', type=int, default=64)
-    group.add_argument('-lr', type=float, default=5e-3)
+    group.add_argument('-fload', type=str, default='flang-overall-lstm-1539049378.model')
+    group.add_argument('-bsz', type=int, default=32)
+    group.add_argument('-lr', type=float, default=1e-3)
+    # group.add_argument('-lr', type=float, default=5e-4)
     # group.add_argument('-lr', type=float, default=5e-5)
     group.add_argument('-wdecay', type=float, default=1.2e-6)
     # group.add_argument('-wdecay', type=float, default=0.0001)
     # group.add_argument('-lm_coef', type=float, default=1)
     # group.add_argument('-lm_coef', type=float, default=0.5)
     group.add_argument('-lm_coef', type=float, default=0)
-    group.add_argument('-gclip', type=float, default=5)
+    group.add_argument('-gclip', type=float, default=15)
+    # group.add_argument('-gclip', type=float, default=1)
+    group.add_argument('-seq_len_max', type=int, default=None)

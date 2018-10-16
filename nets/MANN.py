@@ -16,8 +16,8 @@ class MANNBaseEncoder(nn.Module):
         self.cdim = cdim
         self.N = N
         self.M = M
-        self.controller = nn.LSTM(idim + M, cdim, dropout=dropout)
-
+        self.controller = nn.LSTM(idim + M, cdim)
+        self.dropout = nn.Dropout(dropout)
         self._reset_controller()
 
         self.h0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
@@ -49,6 +49,7 @@ class MANNBaseEncoder(nn.Module):
 
     def forward(self, **input):
         embs = input['embs']
+        embs = self.dropout(embs)
         bsz = embs.shape[1]
 
         self.reset_read(bsz)
@@ -70,6 +71,7 @@ class MANNBaseEncoder(nn.Module):
             self.write(controller_outp, emb)
             r = self.read(controller_outp)
             o = torch.cat([controller_outp, r], dim=1)
+            o = self.dropout(o)
 
             hs.append(h)
             cs.append(c)

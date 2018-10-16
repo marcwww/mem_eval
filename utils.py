@@ -1,5 +1,6 @@
 import numpy as np
 from torch.nn.init import xavier_uniform_
+from torch.nn.init import kaiming_normal_
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -68,7 +69,27 @@ def avg_vector(i, n):
 def init_model(model):
     for p in model.parameters():
         if p.dim() > 1 and p.requires_grad:
-            xavier_uniform_(p)
+            # xavier_uniform_(p)
+            kaiming_normal_(p)
+
+class LayerNormalization(nn.Module):
+    # From: https://discuss.pytorch.org/t/lstm-with-layer-normalization/2150
+
+    def __init__(self, hidden_size, eps=1e-5):
+        super(LayerNormalization, self).__init__()
+
+        self.eps = eps
+        self.a2 = nn.Parameter(torch.ones(1, hidden_size), requires_grad=True)
+        self.b2 = nn.Parameter(torch.zeros(1, hidden_size), requires_grad=True)
+
+    def forward(self, z):
+        mu = torch.mean(z)
+        sigma = torch.std(z)
+
+        ln_out = (z - mu) / (sigma + self.eps)
+
+        ln_out = ln_out * self.a2 + self.b2
+        return ln_out
 
 def progress_bar(percent, loss, epoch):
     """Prints the progress until the next report."""

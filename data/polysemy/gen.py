@@ -58,7 +58,8 @@ def gen_samples(num, na_min, na_max, no_min, no_max):
 def gen_dataset(gen_train=True, gen_valid=True, gen_test=True):
     num_train = 5000
     num_valid = 2000
-    num_test = 2000
+    # num_test = 2000
+    num_test = 50000
     na_min = 1
     na_max = 5
     no_min = 8
@@ -81,8 +82,8 @@ def gen_dataset(gen_train=True, gen_valid=True, gen_test=True):
             for sample in samples:
                 f.write(sample + '\n')
 
-# gen_dataset(False, False, True)
-gen_dataset(True, True, True)
+gen_dataset(False, False, True)
+# gen_dataset(True, True, True)
 
 
 # n = 0

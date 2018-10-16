@@ -7,7 +7,7 @@ import argparse
 from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import polysemy, flang
+from tasks import polysemy, flang, listops
 import crash_on_ipy
 
 if __name__ == '__main__':
@@ -38,11 +38,17 @@ if __name__ == '__main__':
         train = flang.train
         Model = flang.Model
 
+    if opt.task == 'listops':
+        build_iters = listops.build_iters
+        train = listops.train
+        Model = listops.Model
+
     res_iters = build_iters(ftrain=opt.ftrain,
                             fvalid=opt.fvalid,
                             bsz=opt.bsz,
                             device=opt.gpu,
-                            sub_task=opt.sub_task)
+                            sub_task=opt.sub_task,
+                            seq_len_max=opt.seq_len_max)
 
     embedding = None
     embedding_enc = None
@@ -93,6 +99,10 @@ if __name__ == '__main__':
     encoder = None
     decoder = None
 
+    if opt.enc_type == 'srnn':
+        encoder = nets.EncoderSRNN(idim=opt.edim,
+                                   cdim=opt.hdim,
+                                   dropout=opt.dropout)
     if opt.enc_type == 'ntm':
         encoder = nets.EncoderNTM(idim=opt.edim,
                                 cdim=opt.hdim,
@@ -108,10 +118,7 @@ if __name__ == '__main__':
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                 cdim=opt.hdim,
-                                N=opt.N,
-                                M=opt.M,
                                 drop=opt.dropout)
-
     if opt.enc_type == 'alstm':
         encoder = nets.EncoderALSTM(idim=opt.edim,
                                 cdim=opt.hdim,
@@ -126,9 +133,20 @@ if __name__ == '__main__':
         model = Model(encoder, embedding, opt.dropout).to(device)
     utils.init_model(model)
 
+    # if opt.fload is not None:
+    #     model_fname = opt.fload
+    #     location = {'cuda:' + str(opt.gpu): 'cuda:' + str(opt.gpu)} if opt.gpu != -1 else 'cpu'
+    #     model_path = os.path.join(RES, model_fname)
+    #     # model_path = os.path.join('..', model_path)
+    #     model_dict = torch.load(model_path, map_location=location)
+    #     model.load_state_dict(model_dict)
+    #     print('Loaded from ' + model_path)
+
     optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
-                           lr=opt.lr,
-                           weight_decay=opt.wdecay)
+                           lr=opt.lr)
+    # optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
+    #                        lr=opt.lr,
+    #                        weight_decay=opt.wdecay)
     # optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()),
     #                        lr=opt.lr,
     #                        weight_decay=opt.wdecay)
@@ -138,7 +156,7 @@ if __name__ == '__main__':
     #                           lr=opt.lr,
     #                           weight_decay=opt.wdecay)
 
-    scheduler = ReduceLROnPlateau(optimizer, mode='max',factor=0.5, patience=10000)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min',factor=0.5, patience=10)
 
     param_str = utils.param_str(opt)
     for key, val in param_str.items():

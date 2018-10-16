@@ -17,15 +17,15 @@ def train_opts(parser):
     group.add_argument('-seed', type=int, default=1000)
     group.add_argument('-ftrain', type=str,
                        default=os.path.join(POLYSEMY,
-                                            'polysemy-ntrain5000-ntest2000-ntypes4-na1_5-no8_12.train.txt'))
+                                            'polysemy-min-ntrain5000-ntest2000-ntypes4-na1_5-no8_12.train.txt'))
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(POLYSEMY,
-                                            'polysemy-ntrain5000-ntest2000-ntypes4-na1_5-no8_12.valid.txt'))
+                                            'polysemy-min-ntrain5000-ntest2000-ntypes4-na1_5-no8_12.valid.txt'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(POLYSEMY,
-                                            'polysemy-ntrain5000-ntest2000-ntypes4-na1_5-no8_12.test.txt'))
+                                            'polysemy-min-ntrain5000-ntest2000-ntypes4-na1_5-no8_12.test.txt'))
 
-    group.add_argument('-fload', type=str, default='polysemy-overall-alstm-1538731456.model')
+    group.add_argument('-fload', type=str, default='polysemy-overall-alstm-1539273438.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=5e-3)
     # group.add_argument('-lr', type=float, default=5e-5)

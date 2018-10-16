@@ -15,8 +15,12 @@ PROP_ENTAIL = os.path.join(DATA, 'prop-entail')
 REWRITING = os.path.join(DATA, 'rewriting')
 SCAN = os.path.join(DATA, 'scan')
 PATTERN = os.path.join(DATA, 'pattern')
+LISTOPS = os.path.join(DATA, 'listops')
 FLANG = os.path.join(DATA, 'flang')
 AGREE = os.path.join(DATA, 'agreement')
 POLYSEMY = os.path.join(DATA, 'polysemy')
 
 INDICATOR = '<indicator>'
+
+T_REDUCE = 1
+T_SHIFT = 0

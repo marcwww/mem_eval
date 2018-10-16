@@ -268,7 +268,7 @@ def train(model, iters, opt, optim, scheduler):
                 with open(log_path, 'a+') as f:
                     f.write(log_str + '\n')
 
-                scheduler.step(accurracy)
+                scheduler.step(loss_ave)
                 for param_group in optim.param_groups:
                     print('learning rate:', param_group['lr'])
 
