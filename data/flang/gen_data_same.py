@@ -196,8 +196,9 @@ if __name__ == '__main__':
 
     # gen_data(200, 500, 4, 4, 1)
     # gen_data(10001, 2000, 1000, 10, 1)
+    gen_data(10000, 2000, 1000, 10, 1)
     # gen_data(2001, 2000, 1000, 10, 1)
-    gen_data(5000, 2000, 1000, 10, 1)
+    # gen_data(5000, 2000, 1000, 10, 1)
 
     # # exchange:
     # gen_data_partial(10000, 2, 1, 'exchange','train')

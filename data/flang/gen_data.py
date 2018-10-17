@@ -1,199 +1,90 @@
-import torchtext
-from macros import *
-from torchtext.data import Dataset
-import torch
-from torch import nn
-from torch.nn.utils import clip_grad_norm
 import numpy as np
-import utils
 import random
-import copy
-from sklearn.metrics import accuracy_score, \
-    precision_score, recall_score, f1_score
-import crash_on_ipy
 
-class CorrExprGenerator(object):
+MAX_DEPTH = 20
+PROB_LEAF = 0.25
+VALUES = range(1, 10)
+OPS_E = [0, 1]
+OPS_T = [2, 3]
+NTYPES = ['e', 't']
+OP_MAP = ['+', '-', '*', '/']
 
-    def __init__(self, d_bound):
-        self.d_bound = d_bound
+def gen_expr(depth, ntype):
 
-    def gen(self):
-        self.d_general = 0
-        return self.prod_E(0), self.d_general
+    if depth < MAX_DEPTH:
+        r = random.random()
+    else:
+        r = 1
 
-    def prod_I(self):
-        num = np.random.choice(10)
-        return str(num)
+    if r > PROB_LEAF:
+        if ntype == 'f':
+            value = random.choice(VALUES)
+            return value
+        elif ntype == 't':
+            return gen_expr(depth + 1, 'f')
+        elif ntype == 'e':
+            return gen_expr(depth + 1, 't')
 
-    def prod_T(self, d):
-        branch = np.random.choice(3)
-        if d > self.d_general:
-            self.d_general = d
-        if d >= self.d_bound:
-            return self.prod_I()
-
-        if branch == 0:
-            return ' '.join([self.prod_T(d + 1), '*', self.prod_F(d + 1)])
-        elif branch == 1:
-            return ' '.join([self.prod_T(d + 1), '/', self.prod_F(d + 1)])
+    else:
+        if ntype == 'e':
+            op = random.choice(OPS_E)
+            v1, v2 = gen_expr(depth + 2, 'e'), gen_expr(depth + 1, 't')
+            t = ((v1, OP_MAP[op]), v2)
+        elif ntype == 't':
+            op = random.choice(OPS_T)
+            v1, v2 = gen_expr(depth + 2, 't'), gen_expr(depth + 1, 'f')
+            t = ((v1, OP_MAP[op]), v2)
         else:
-            return self.prod_F(d + 1)
+            t = gen_expr(depth + 1, 'f')
 
-    def prod_E(self, d):
-        branch = np.random.choice(3)
-        if d > self.d_general:
-            self.d_general = d
-        if d >= self.d_bound:
-            return self.prod_I()
+    return t
 
-        if branch == 0:
-            return ' '.join([self.prod_E(d + 1), '+', self.prod_T(d + 1)])
-        elif branch == 1:
-            return ' '.join([self.prod_E(d + 1), '-', self.prod_T(d + 1)])
+def to_value(t):
+    if not isinstance(t, tuple):
+        return t
+
+    l = t[0]
+    r = t[1]
+    v1, op = (to_value(l[0]), l[1])
+    v2 = to_value(r)
+
+    return eval(''.join([str(v1), op, str(v2)]))
+
+def to_value_sd(sd_lst, node_lst):
+    if len(sd_lst) == 0:
+        node = node_lst[0]
+        v = node
+    else:
+        i = np.argmax(sd_lst)
+        child_l, v_l = to_value_sd(sd_lst[:i], node_lst[:i+1])
+        child_r, v_r = to_value_sd(sd_lst[i+1:], node_lst[i+1:])
+        node = (child_l, child_r)
+        if isinstance(v_l, tuple) and not isinstance(v_r, tuple):
+            v1, op = v_l[0], v_l[1]
+            v2 = v_r
+            v = str(eval(''.join([v1, op, v2])))
         else:
-            return self.prod_T(d + 1)
+            assert not isinstance(v_l, tuple) and not isinstance(v_r, tuple)
+            v = (v_l, v_r)
 
-    def prod_F(self, d):
-        branch = np.random.choice(2)
-        if d > self.d_general:
-            self.d_general = d
-        if d >= self.d_bound:
-            return self.prod_I()
+    return node, v
 
-        if branch == 0:
-            return self.prod_I()
-        else:
-            return ' '.join(['(', self.prod_E(d + 1), ')'])
+def to_sd(t):
+    if not isinstance(t, tuple):
+        d = []
+        h = 0
+    else:
+        l, r = t
+        d_l, h_l = to_sd(l)
+        d_r, h_r = to_sd(r)
+        h = max(h_l, h_r) + 1
+        d = d_l + [h] + d_r
 
-class IncorrExprGenerator(object):
-    def __init__(self, d_bound, e_bound):
-        self.d_bound = d_bound
-        self.e_bound = e_bound
+    return d, h
 
-    def gen(self):
-        self.e = 0
-        self.d_general = 0
-        expr = None
-        while self.e == 0:
-            expr = self.prod_E(0)
-        return expr, self.d_general, self.e
+def to_nlst(t):
+    return list(filter(lambda x: x not in ['(', ')', ',', '\'', ' '], str(t)))
 
-    def prod_I(self):
-        num = np.random.choice(10)
-        return str(num)
+def gen_tree():
+    return gen_expr(0, 'e')
 
-    def prod_T(self, d):
-        branch = np.random.choice(3)
-        error = np.random.choice(3)
-        if d > self.d_general:
-            self.d_general = d
-        if d >= self.d_bound:
-            return self.prod_I()
-        if self.e >= self.e_bound:
-            error = 0
-        if error != 0 and branch != 2:
-            # print('T', branch, error)
-            self.e += 1
-
-        if branch == 0:
-            if error == 0:
-                return ' '.join([self.prod_T(d + 1), '*', self.prod_F(d + 1)])
-            elif error == 1:
-                return ' '.join(['*', self.prod_T(d + 1), self.prod_F(d + 1)])
-            else:
-                return ' '.join([self.prod_T(d + 1), self.prod_F(d + 1), '*'])
-
-        elif branch == 1:
-            if error == 0:
-                return ' '.join([self.prod_T(d + 1), '/', self.prod_F(d + 1)])
-            elif error == 1:
-                return ' '.join(['/', self.prod_T(d + 1) , self.prod_F(d + 1)])
-            else:
-                return ' '.join([self.prod_T(d + 1), self.prod_F(d + 1), '/'])
-
-        else:
-            return self.prod_F(d + 1)
-
-    def prod_E(self, d):
-        branch = np.random.choice(3)
-        error = np.random.choice(3)
-        if d > self.d_general:
-            self.d_general = d
-        if d >= self.d_bound:
-            return self.prod_I()
-        if self.e >= self.e_bound:
-            error = 0
-        if error != 0 and branch != 2:
-            # print('E', branch, error)
-            self.e += 1
-
-        if branch == 0:
-            if error == 0:
-                return ' '.join([self.prod_E(d + 1), '+', self.prod_T(d + 1)])
-            elif error == 1:
-                return ' '.join(['+', self.prod_E(d + 1) , self.prod_T(d + 1)])
-            else:
-                return ' '.join([self.prod_E(d + 1), self.prod_T(d + 1), '+'])
-
-        elif branch == 1:
-            if error == 0:
-                return ' '.join([self.prod_E(d + 1), '-', self.prod_T(d + 1)])
-            elif error == 1:
-                return ' '.join(['-', self.prod_E(d + 1) , self.prod_T(d + 1)])
-            else:
-                return ' '.join([self.prod_E(d + 1), self.prod_T(d + 1), '-'])
-
-        else:
-            return self.prod_T(d + 1)
-
-    def prod_F(self, d):
-        branch = np.random.choice(2)
-        error = np.random.choice(4)
-        if d > self.d_general:
-            self.d_general = d
-        if d >= self.d_bound:
-            return self.prod_I()
-        if self.e >= self.e_bound:
-            error = 0
-        if error != 0 and branch != 0:
-            # print('F', branch, error)
-            self.e += 1
-
-        if branch == 0:
-            return self.prod_I()
-        else:
-            if error == 0:
-                return ' '.join(['(', self.prod_E(d + 1), ')'])
-            elif error == 1:
-                return ' '.join([self.prod_E(d + 1), '(' , ')'])
-            elif error == 2:
-                return ' '.join(['(', ')', self.prod_E(d + 1)])
-            else:
-                return ' '.join([ ')', self.prod_E(d + 1), '('])
-
-def gen_data(num, d_bound, e_bound, dataset_type):
-    igen = IncorrExprGenerator(d_bound, e_bound)
-    cgen = CorrExprGenerator(d_bound)
-    
-    with open(('expr-num%d-dbound%d-ebound%d.%s.txt' %
-               (num, d_bound, e_bound, dataset_type)), 'w') as f:
-
-        for i in range(num):
-            correct = np.random.choice(2)
-            if correct == 1:
-                expr, d = cgen.gen()
-                e = 0
-            else:
-                expr, d, e  = igen.gen()
-            f.write('\t'.join([expr, str(correct), str(d), str(e)]) + '\n')
-
-if __name__ == '__main__':
-    # for i in range(100):
-    #     print(expr_correct(2))
-    # igen = IncorrExprGenerator(5, 1)
-    # cgen = CorrExprGenerator(5)
-    # for i in range(100):
-    #     print(cgen.gen())
-
-    # gen_data(10000, 4, 1, 'train')
-    gen_data(1000, 10, 1, 'valid')

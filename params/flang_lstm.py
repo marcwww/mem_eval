@@ -38,13 +38,13 @@ def train_opts(parser):
 
     group.add_argument('-ftrain', type=str,
                        default=os.path.join(FLANG,
-                                            'expr-ntrain5000-nvalid2000-ntest1000-dmax10-e1.train.txt'))
+                                            'expr-ntrain10000-nvalid2000-ntest1000-dmax10-e1.train.txt'))
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(FLANG,
-                                            'expr-ntrain5000-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
+                                            'expr-ntrain10000-nvalid2000-ntest1000-dmax10-e1.valid.txt'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FLANG,
-                                            'expr-ntrain5000-nvalid2000-ntest1000-dmax10-e1.test.txt'))
+                                            'expr-ntrain10000-nvalid2000-ntest1000-dmax10-e1.test.txt'))
 
     # group.add_argument('-ftrain', type=str,
     #                    default=os.path.join(FLANG,
