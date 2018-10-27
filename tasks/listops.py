@@ -9,15 +9,18 @@ import numpy as np
 import utils
 from sklearn.metrics import accuracy_score, \
     precision_score, recall_score, f1_score
+from collections import defaultdict
 
 parenthesis = {'(', ')'}
 class Example(object):
 
     def __init__(self, seq, lbl):
         # self.seq = self.tokenizer(seq)
-        self.seq, self.transitions = \
+        self.seq, transitions = \
             ConvertBinaryBracketedSeq(seq.split())
         self.lbl = int(lbl)
+        self.depth = reconstruct_tree(transitions).d
+        self.transitions = transitions
 
     def tokenizer(self, seq):
         return list(filter(lambda x: x not in parenthesis, seq.split()))
@@ -30,7 +33,36 @@ def ConvertBinaryBracketedSeq(seq):
             if item != ")":
                 tokens.append(item)
             transitions.append(T_REDUCE if item == ")" else T_SHIFT)
+
     return tokens, transitions
+
+class node(object):
+    def __init__(self, idx, is_leaf, p=None, l=None, r=None, d=1):
+        self.idx = idx
+        self.p = p
+        self.l = l
+        self.r = r
+        self.d = d
+        self.is_leaf = is_leaf
+
+def reconstruct_tree(transitions):
+    stack = []
+    idx = 0
+    for act in transitions:
+        if act == T_SHIFT:
+            n = node(idx, True)
+            idx += 1
+            stack.append(n)
+        if act == T_REDUCE:
+            r = stack.pop(-1)
+            l = stack.pop(-1)
+            n = node(idx, False, p=None, l=l, r=r, d=max(r.d, l.d)+1)
+            idx += 1
+            l.p = n
+            r.p = n
+            stack.append(n)
+    assert len(stack) == 1
+    return stack[0]
 
 def load_examples(fname, seq_len_max=None):
     examples = []
@@ -59,19 +91,25 @@ def build_iters(**param):
     device = param['device']
 
     examples_train = load_examples(ftrain, seq_len_max)
-
+    depths_train = [e.depth for e in examples_train]
+    print('train depth maximum', max(depths_train))
     SEQ = torchtext.data.Field(sequential=True, use_vocab=True,
                                pad_token=PAD,
                                unk_token=UNK,
                                eos_token=EOS)
     LBL = torchtext.data.Field(sequential=False, use_vocab=False)
+    DEPTH = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('lbl', LBL)])
+                                            ('lbl', LBL),
+                                            ('depth', DEPTH)])
     SEQ.build_vocab(train)
     examples_valid = load_examples(fvalid)
+    depths_valid = [e.depth for e in examples_valid]
+    print('valid depth maximum', max(depths_valid))
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('lbl', LBL)])
+                                            ('lbl', LBL),
+                                            ('depth', DEPTH)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
                                          sort=False, repeat=False,
@@ -107,6 +145,37 @@ def valid(model, valid_iter):
     accuracy = accuracy_score(true_lst, pred_lst)
 
     return accuracy
+
+def valid_detail(model, valid_iter):
+    pred_dict= {}
+    true_dict = {}
+    nsamples = defaultdict(int)
+    acc = defaultdict(float)
+
+    with torch.no_grad():
+        model.eval()
+        for i, batch in enumerate(valid_iter):
+            seq, lbl, depth = batch.seq, batch.lbl, batch.depth
+            res= model(seq)
+            res_clf = res['res_clf']
+
+            pred = res_clf.max(dim=1)[1].cpu().numpy()
+            lbl = lbl.cpu().numpy()
+            for pred_b, lbl_b, depth_b in zip(pred, lbl, depth):
+                depth_b = depth_b.item()
+                # if depth_b > 49:
+                #     continue
+                if depth_b not in pred_dict:
+                    pred_dict[depth_b] = []
+                    true_dict[depth_b] = []
+                pred_dict[depth_b].append(pred_b)
+                true_dict[depth_b].append(lbl_b)
+                nsamples[depth_b] += 1
+
+    for depth in pred_dict.keys():
+        acc[depth] = accuracy_score(true_dict[depth], pred_dict[depth])
+
+    return acc, nsamples
 
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']

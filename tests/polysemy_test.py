@@ -107,8 +107,6 @@ if __name__ == '__main__':
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
-                                    N=opt.N,
-                                    M=opt.M,
                                     drop=opt.dropout)
 
     if opt.enc_type == 'alstm':

@@ -13,10 +13,11 @@ from sklearn.metrics import accuracy_score, \
 
 class Example(object):
 
-    def __init__(self, expr, ds, h):
+    def __init__(self, expr, ds, h, val):
         self.expr = self.tokenizer_expr(expr)
         self.ds = self.tokenizer_ds(ds)
         self.h = int(h)
+        self.val = int(val)
 
     def tokenizer_expr(self, seq):
         return seq.split()
@@ -29,9 +30,9 @@ def load_examples(fname):
 
     with open(fname, 'r') as f:
         for line in f:
-            expr, ds, h = \
+            expr, ds, h, val = \
                 line.strip().split('\t')
-            examples.append(Example(expr, ds, h))
+            examples.append(Example(expr, ds, h, val))
 
     return examples
 
@@ -39,6 +40,7 @@ def build_iters(**param):
 
     ftrain = param['ftrain']
     fvalid = param['fvalid']
+    ftest = None
     if 'ftest' in param:
         ftest = param['ftest']
 
@@ -53,20 +55,24 @@ def build_iters(**param):
                                eos_token=None)
     DS = torchtext.data.Field(sequential=True, use_vocab=False, pad_token=PAD_DS)
     H = torchtext.data.Field(sequential=False, use_vocab=False)
+    VAL = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('expr', EXPR),
                                             ('ds', DS),
-                                            ('h', H)])
+                                            ('h', H),
+                                            ('val', VAL)])
     EXPR.build_vocab(train)
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('expr', EXPR),
                                             ('ds', DS),
-                                            ('h', H)])
+                                            ('h', H),
+                                            ('val', VAL)])
     if 'ftest' in param:
         examples_test = load_examples(ftest)
         test = Dataset(examples_test, fields=[('expr', EXPR),
-                                                ('ds', DS),
-                                                ('h', H)])
+                                            ('ds', DS),
+                                            ('h', H),
+                                            ('val', VAL)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
                                          sort=False, repeat=False,
@@ -91,110 +97,62 @@ def build_iters(**param):
             'test_iter': test_iter,
             'SEQ': EXPR,
             'DS': DS,
-            'H': H}
-
-def valid_detail(model, valid_iter):
-    nt = defaultdict(int)
-    nc = defaultdict(int)
-    acc = defaultdict(float)
-    padding_idx = model.padding_idx
-    with torch.no_grad():
-        model.eval()
-        for i, batch in enumerate(valid_iter):
-            expr = batch.expr
-            mask_expr = expr.ne(padding_idx)
-            len_expr = mask_expr.sum(0)
-            ds_tar = batch.ds
-            h = batch.h
-
-            model.train()
-            model.zero_grad()
-            out = model(expr)
-            ds_pred = out['ds'].squeeze(-1)
-            dstmask = (ds_tar > PAD_DS)
-            len_ds = dstmask.sum(0)
-
-            for e, d_pred, d_tar, l_e, l_d, h_b in zip(expr.transpose(0, 1),
-                                                  ds_pred.transpose(0, 1),
-                                                  ds_tar.transpose(0, 1),
-                                                  len_expr, len_ds, h):
-                h_b = h_b.item()
-                e = list(e[:l_e].cpu().numpy())
-                d_pred = list(d_pred[:l_d].cpu().numpy())
-                d_tar = list(d_tar[:l_d].cpu().numpy())
-                try:
-                    tree_pred = utils.to_tree_sd(d_pred, e)
-                except:
-                    tree_pred = None
-                tree_tar = utils.to_tree_sd(d_tar, e)
-                if str(tree_pred) == str(tree_tar):
-                    nc[h_b] += 1
-                nt[h_b] += 1
-
-    for h in nc.keys():
-        acc[h] = nc[h]/nt[h]
-
-    return acc, nt
+            'H': H,
+            'VAL': VAL}
 
 def valid(model, valid_iter):
-    nt = 0
-    nc = 0
-    padding_idx = model.padding_idx
+    pred_lst = []
+    true_lst = []
+
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            expr = batch.expr
-            mask_expr = expr.ne(padding_idx)
-            len_expr = mask_expr.sum(0)
-            ds_tar = batch.ds
+            seq, lbl = batch.expr, batch.val
+            out = model(seq)
 
-            model.train()
-            model.zero_grad()
-            out = model(expr)
-            ds_pred = out['ds'].squeeze(-1)
-            dstmask = (ds_tar > PAD_DS)
-            len_ds = dstmask.sum(0)
+            pred = out.max(dim=1)[1].cpu().numpy()
+            lbl = lbl.cpu().numpy()
+            pred_lst.extend(pred)
+            true_lst.extend(lbl)
 
-            for e, d_pred, d_tar, l_e, l_d in zip(expr.transpose(0, 1),
-                                                  ds_pred.transpose(0, 1),
-                                                  ds_tar.transpose(0, 1),
-                                                  len_expr, len_ds):
-                e = list(e[:l_e].cpu().numpy())
-                d_pred = list(d_pred[:l_d].cpu().numpy())
-                d_tar = list(d_tar[:l_d].cpu().numpy())
-                try:
-                    tree_pred = utils.to_tree_sd(d_pred, e)
-                except:
-                    tree_pred = None
-                tree_tar = utils.to_tree_sd(d_tar, e)
-                if str(tree_pred) == str(tree_tar):
-                    nc += 1
-                nt += 1
+    accuracy = accuracy_score(true_lst, pred_lst)
 
-    return nc / nt
+    return accuracy
 
-def rankloss(input, target, mask, exp=False):
-    # input: (seq_len, bsz)
-    # target: (seq_len, bsz)
-    # mask: (seq_len, bsz)
-    input = input.transpose(0, 1)
-    target = target.transpose(0, 1)
-    mask = mask.transpose(0, 1)
-    diff = input[:, :, None] - input[:, None, :]
-    target_diff = ((target[:, :, None] - target[:, None, :]) > 0).float()
-    mask = mask[:, :, None] * mask[:, None, :] * target_diff
+def valid_detail(model, valid_iter):
+    pred_dict= {}
+    true_dict = {}
+    nsamples = defaultdict(int)
+    acc = defaultdict(float)
 
-    if exp:
-        loss = torch.exp(F.relu(target_diff - diff)) - 1
-    else:
-        loss = F.relu(target_diff - diff)
-    loss = (loss * mask).sum() / (mask.sum() + 1e-9)
+    with torch.no_grad():
+        model.eval()
+        for i, batch in enumerate(valid_iter):
+            seq, lbl, depth = batch.expr, batch.val, batch.h
+            res_clf = model(seq)
 
-    return loss
+            pred = res_clf.max(dim=1)[1].cpu().numpy()
+            lbl = lbl.cpu().numpy()
+            for pred_b, lbl_b, depth_b in zip(pred, lbl, depth):
+                depth_b = depth_b.item()
+                # if depth_b > 49:
+                #     continue
+                if depth_b not in pred_dict:
+                    pred_dict[depth_b] = []
+                    true_dict[depth_b] = []
+                pred_dict[depth_b].append(pred_b)
+                true_dict[depth_b].append(lbl_b)
+                nsamples[depth_b] += 1
+
+    for depth in pred_dict.keys():
+        acc[depth] = accuracy_score(true_dict[depth], pred_dict[depth])
+
+    return acc, nsamples
 
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
     valid_iter = iters['valid_iter']
+    criterion_clf = nn.CrossEntropyLoss()
 
     basename = "{}-{}-{}-{}".format(opt.task,
                                        opt.sub_task,
@@ -212,15 +170,12 @@ def train(model, iters, opt, optim, scheduler):
     for epoch in range(opt.nepoch):
         for i, batch in enumerate(train_iter):
             expr = batch.expr
-            ds_tar = batch.ds
+            val = batch.val
 
             model.train()
             model.zero_grad()
             out = model(expr)
-            ds_pred = out['ds'].squeeze(-1)
-            dstmask = (ds_tar > PAD_DS).float()
-
-            loss = rankloss(ds_pred, ds_tar, dstmask)
+            loss = criterion_clf(out, val)
             losses.append(loss.item())
 
             loss.backward()
@@ -267,14 +222,12 @@ class Model(nn.Module):
         self.padding_idx = embedding.padding_idx
         self.num_words = embedding.num_embeddings
         self.edrop = nn.Dropout(drop)
-        self.conv1d = nn.Sequential(nn.Dropout(drop),
-                                 nn.Conv1d(self.hdim, self.hdim, 2),
-                                 nn.ReLU())
-        self.to_ds = nn.Sequential(nn.Dropout(drop),
-                                 nn.Linear(self.hdim, self.hdim),
-                                 nn.ReLU(),
-                                 nn.Dropout(drop),
-                                 nn.Linear(self.hdim, 1))
+        self.rep2val = nn.Sequential(utils.LayerNormalization(self.hdim), nn.Dropout(drop),
+                                 nn.Linear(self.hdim, 16), nn.ReLU(),
+                                 utils.LayerNormalization(16), nn.Dropout(drop),
+                                 nn.Linear(16, 16), nn.ReLU(),
+                                 utils.LayerNormalization(16), nn.Dropout(drop),
+                                 nn.Linear(16, 10))
 
     def enc(self, seq):
         mask = seq.data.eq(self.padding_idx)
@@ -284,17 +237,14 @@ class Model(nn.Module):
         # inp = self.embedding_drop(True, seq)
         inp = self.embedding(seq)
         os = self.encoder(embs=inp, mask=1-mask, lens = lens)
-        # rep = os[lens - 1, range(bsz)]
-        return os
+        rep = os[lens - 1, range(bsz)]
+        return rep
 
     def forward(self, seq):
-        os = self.enc(seq)
-        os = os.permute(1, 2, 0) # (bsz, hdim, seq_len)
-        conv_os = self.conv1d(os)
-        conv_os = conv_os.permute(2, 0, 1) # (seq_len, bsz, hdim)
-        ds = self.to_ds(conv_os)
+        rep = self.enc(seq)
+        val = self.rep2val(rep)
 
-        return {'ds': ds}
+        return val
 
 
 

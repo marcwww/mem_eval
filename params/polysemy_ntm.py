@@ -35,3 +35,4 @@ def train_opts(parser):
     # group.add_argument('-lm_coef', type=float, default=0.5)
     group.add_argument('-lm_coef', type=float, default=0)
     group.add_argument('-gclip', type=float, default=5)
+    group.add_argument('-seq_len_max', type=int, default=100)

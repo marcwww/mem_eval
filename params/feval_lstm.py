@@ -13,19 +13,22 @@ def model_opts(parser):
 def train_opts(parser):
     group = parser.add_argument_group('train')
     group.add_argument('-seed', type=int, default=1000)
+
     group.add_argument('-ftrain', type=str,
-                       default=os.path.join(FLANG,
+                       default=os.path.join(FEVAL,
                                             'train_d30.tsv'))
     group.add_argument('-fvalid', type=str,
-                       default=os.path.join(FLANG,
+                       default=os.path.join(FEVAL,
                                             'valid_d30.tsv'))
     group.add_argument('-ftest', type=str,
-                       default=os.path.join(FLANG,
+                       default=os.path.join(FEVAL,
                                             'test_d30.tsv'))
 
-    group.add_argument('-fload', type=str, default='flang-overall-srnn-1540177548.model')
+    group.add_argument('-fload', type=str, default='feval-overall-lstm-1540388590.model')
     group.add_argument('-bsz', type=int, default=32)
-    group.add_argument('-lr', type=float, default=1e-3)
+    group.add_argument('-lr', type=float, default=5e-3)
+    # group.add_argument('-lr', type=float, default=1e-3)
+    # group.add_argument('-lr', type=float, default=5e-4)
     # group.add_argument('-lr', type=float, default=5e-5)
     group.add_argument('-wdecay', type=float, default=1.2e-6)
     # group.add_argument('-wdecay', type=float, default=0.0001)

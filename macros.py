@@ -11,12 +11,14 @@ SEP = '<sep>'
 DATA = 'data/'
 RTE = os.path.join(DATA, 'RTE')
 RES = 'res/'
+PAD_DS = 0
 PROP_ENTAIL = os.path.join(DATA, 'prop-entail')
 REWRITING = os.path.join(DATA, 'rewriting')
 SCAN = os.path.join(DATA, 'scan')
 PATTERN = os.path.join(DATA, 'pattern')
 LISTOPS = os.path.join(DATA, 'listops')
 FLANG = os.path.join(DATA, 'flang')
+FEVAL = os.path.join(DATA, 'feval')
 AGREE = os.path.join(DATA, 'agreement')
 POLYSEMY = os.path.join(DATA, 'polysemy')
 

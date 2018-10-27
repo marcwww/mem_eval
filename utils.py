@@ -110,6 +110,17 @@ def seq_lens(seq, padding_idx):
     lens = len_total - mask.sum(dim=0)
     return lens
 
+def to_tree_sd(sd_lst, node_lst):
+    if len(sd_lst) == 0:
+        node = node_lst[0]
+    else:
+        i = np.argmax(sd_lst)
+        child_l = to_tree_sd(sd_lst[:i], node_lst[:i+1])
+        child_r = to_tree_sd(sd_lst[i+1:], node_lst[i+1:])
+        node = (child_l, child_r)
+
+    return node
+
 class Attention(nn.Module):
     def __init__(self, cdim, odim):
         super(Attention, self).__init__()

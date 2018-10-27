@@ -5,7 +5,7 @@ import utils
 from params import opts
 import argparse
 from torch import nn
-from tasks import flang
+from tasks import feval
 import crash_on_ipy
 
 
@@ -22,13 +22,13 @@ if __name__ == '__main__':
 
     utils.init_seed(opt.seed)
 
-    assert opt.task == 'flang'
+    assert opt.task == 'feval'
 
-    train = flang.train
-    valid = flang.valid
-    build_iters = flang.build_iters
-    valid_detail = flang.valid_detail
-    Model = flang.Model
+    train = feval.train
+    valid = feval.valid
+    build_iters = feval.build_iters
+    valid_detail = feval.valid_detail
+    Model = feval.Model
 
     res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
                             fvalid=os.path.join('..', opt.fvalid),
@@ -113,11 +113,6 @@ if __name__ == '__main__':
                                     N=opt.N,
                                     M=opt.M,
                                     drop=opt.dropout)
-
-    if opt.enc_type == 'topnn':
-        encoder = nets.EncoderTOPNN(idim=opt.edim,
-                                cdim=opt.hdim,
-                                drop=opt.dropout)
 
     model = None
     if embedding is None:

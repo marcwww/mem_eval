@@ -1,18 +1,22 @@
 from macros import *
 from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
     polysemy_lstm, polysemy_alstm, polysemy_sarnn, polysemy_ntm, \
-    listops_lstm, listops_srnn, listops_alstm, listops_sarnn, listops_ntm
+    listops_lstm, listops_srnn, listops_alstm, listops_sarnn, listops_ntm, \
+    feval_lstm, feval_alstm, feval_sarnn, feval_srnn, feval_ntm, \
+    flang_topnn
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
     # group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
-    # group.add_argument('-enc_type', type=str, default='sarnn')
-    group.add_argument('-enc_type', type=str, default='lstm')
+    # group.add_argument('-enc_type', type=str, default='topnn')
+    group.add_argument('-enc_type', type=str, default='sarnn')
+    # group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
 
     # group.add_argument('-task', type=str, default='listops')
-    group.add_argument('-task', type=str, default='flang')
+    # group.add_argument('-task', type=str, default='flang')
+    group.add_argument('-task', type=str, default='feval')
     # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
 
@@ -20,7 +24,6 @@ def general_opts(parser):
     group.add_argument('-save_per', type=int, default=2)
     group.add_argument('-gpu', type=int, default=-1)
     group.add_argument('-test_level', type=int, default=1)
-
 
 def select_opt(opt, parser):
 
@@ -43,6 +46,10 @@ def select_opt(opt, parser):
     elif opt.task == 'flang' and opt.enc_type == 'ntm':
         flang_ntm.model_opts(parser)
         flang_ntm.train_opts(parser)
+
+    elif opt.task == 'flang' and opt.enc_type == 'topnn':
+        flang_topnn.model_opts(parser)
+        flang_topnn.train_opts(parser)
 
     elif opt.task == 'polysemy' and opt.enc_type == 'lstm':
         polysemy_lstm.model_opts(parser)
@@ -79,6 +86,22 @@ def select_opt(opt, parser):
     elif opt.task == 'listops' and opt.enc_type == 'ntm':
         listops_ntm.model_opts(parser)
         listops_ntm.train_opts(parser)
+
+    elif opt.task == 'feval' and opt.enc_type == 'lstm':
+        feval_lstm.model_opts(parser)
+        feval_lstm.train_opts(parser)
+    elif opt.task == 'feval' and opt.enc_type == 'alstm':
+        feval_alstm.model_opts(parser)
+        feval_alstm.train_opts(parser)
+    elif opt.task == 'feval' and opt.enc_type == 'sarnn':
+        feval_sarnn.model_opts(parser)
+        feval_sarnn.train_opts(parser)
+    elif opt.task == 'feval' and opt.enc_type == 'srnn':
+        feval_srnn.model_opts(parser)
+        feval_srnn.train_opts(parser)
+    elif opt.task == 'feval' and opt.enc_type == 'ntm':
+        feval_ntm.model_opts(parser)
+        feval_ntm.train_opts(parser)
 
     else:
         raise ModuleNotFoundError

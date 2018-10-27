@@ -71,6 +71,8 @@ class EncoderSARNN(MANNBaseEncoder):
         hid = controller_outp
         policy = self.policy(input)
         p_stay, p_push = torch.chunk(policy, 2, dim=1)
+        print('stay:', p_stay)
+        print('push:', p_push)
         self.update_stack(p_stay, p_push, hid)
 
     def reset_read(self, bsz):

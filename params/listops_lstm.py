@@ -23,7 +23,7 @@ def train_opts(parser):
                        default=os.path.join(LISTOPS,
                                             'test_d20s.tsv'))
 
-    group.add_argument('-fload', type=str, default=None)
+    group.add_argument('-fload', type=str, default='listops-overall-lstm-1539913777.model')
     group.add_argument('-bsz', type=int, default=32)
     # group.add_argument('-lr', type=float, default=0.5)
     # group.add_argument('-lr', type=float, default=1e-2)

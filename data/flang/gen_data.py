@@ -56,8 +56,12 @@ def to_value_sd(sd_lst, node_lst):
         v = node
     else:
         i = np.argmax(sd_lst)
+        # print(max(sd_lst))
         child_l, v_l = to_value_sd(sd_lst[:i], node_lst[:i+1])
         child_r, v_r = to_value_sd(sd_lst[i+1:], node_lst[i+1:])
+        # print(child_l)
+        # print(child_r)
+
         node = (child_l, child_r)
         if isinstance(v_l, tuple) and not isinstance(v_r, tuple):
             v1, op = v_l[0], v_l[1]
@@ -87,4 +91,15 @@ def to_nlst(t):
 
 def gen_tree():
     return gen_expr(0, 'e')
+
+
+nodes = '3 + 3 - 6 * 8 / 1 / 7 + 4 / 1 * 1 + 9 * 8 * 1 * 3 * 2 * 6 + 3'.split()
+ds = '1 2 3 7 1 2 3 4 5 6 8 9 1 2 3 4 10 11 1 2 3 4 5 6 7 8 9 10 12 13'.split()
+# ds = [int(d) for d in ds]
+ds = list(map(int, ds))
+# print(len(nodes))
+# print(len(ds))
+print(to_value_sd(ds, nodes))
+print(eval(''.join(nodes)))
+
 

@@ -5,7 +5,8 @@ import utils
 from params import opts
 import argparse
 from torch import nn
-from tasks import flang
+from tasks import listops
+import os
 import crash_on_ipy
 
 
@@ -22,20 +23,20 @@ if __name__ == '__main__':
 
     utils.init_seed(opt.seed)
 
-    assert opt.task == 'flang'
+    assert opt.task == 'listops'
 
-    train = flang.train
-    valid = flang.valid
-    build_iters = flang.build_iters
-    valid_detail = flang.valid_detail
-    Model = flang.Model
+    train = listops.train
+    valid = listops.valid
+    build_iters = listops.build_iters
+    valid_detail = listops.valid_detail
+    Model = listops.Model
 
     res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
                             fvalid=os.path.join('..', opt.fvalid),
-                            ftest=os.path.join('..', opt.ftest),
                             bsz=opt.bsz,
                             device=opt.gpu,
-                            sub_task=opt.sub_task)
+                            sub_task=opt.sub_task,
+                            seq_len_max=opt.seq_len_max)
 
     embedding = None
     embedding_enc = None
@@ -114,11 +115,6 @@ if __name__ == '__main__':
                                     M=opt.M,
                                     drop=opt.dropout)
 
-    if opt.enc_type == 'topnn':
-        encoder = nets.EncoderTOPNN(idim=opt.edim,
-                                cdim=opt.hdim,
-                                drop=opt.dropout)
-
     model = None
     if embedding is None:
         model = Model(encoder, opt.odim, opt.dropout).to(device)
@@ -140,8 +136,8 @@ if __name__ == '__main__':
         print(str(key) + ': ' + str(val))
 
     print('Valid result: \n', valid(model, res_iters['valid_iter']))
-    acc, nt = valid_detail(model, res_iters['test_iter'])
-    print('Test result: \n', sorted(acc.items()))
+    acc, nt = valid_detail(model, res_iters['valid_iter'])
+    print('Detailed valid result: \n', sorted(acc.items()))
     print('# samples under different h\'s:', sorted(nt.items()))
 
 

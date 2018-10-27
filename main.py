@@ -7,7 +7,8 @@ import argparse
 from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import polysemy, flang, listops
+from tasks import polysemy, flang, listops, feval
+from torch.nn.init import orthogonal_
 import crash_on_ipy
 
 if __name__ == '__main__':
@@ -37,6 +38,11 @@ if __name__ == '__main__':
         build_iters = flang.build_iters
         train = flang.train
         Model = flang.Model
+
+    if opt.task == 'feval':
+        build_iters = feval.build_iters
+        train = feval.train
+        Model = feval.Model
 
     if opt.task == 'listops':
         build_iters = listops.build_iters
@@ -126,12 +132,19 @@ if __name__ == '__main__':
                                 M=opt.M,
                                 drop=opt.dropout)
 
+    if opt.enc_type == 'topnn':
+        encoder = nets.EncoderTOPNN(idim=opt.edim,
+                                cdim=opt.hdim,
+                                drop=opt.dropout)
+
     model = None
     if embedding is None:
-        model = Model(encoder, opt.odim).to(device)
+        model = Model(encoder, embedding, opt.dropout).to(device)
     else:
         model = Model(encoder, embedding, opt.dropout).to(device)
     utils.init_model(model)
+    if opt.enc_type == 'topnn':
+        model.encoder.pos_embedding.weight = orthogonal_(model.encoder.pos_embedding.weight)
 
     # if opt.fload is not None:
     #     model_fname = opt.fload
@@ -156,7 +169,7 @@ if __name__ == '__main__':
     #                           lr=opt.lr,
     #                           weight_decay=opt.wdecay)
 
-    scheduler = ReduceLROnPlateau(optimizer, mode='min',factor=0.5, patience=10)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10)
 
     param_str = utils.param_str(opt)
     for key, val in param_str.items():
