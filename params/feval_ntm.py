@@ -26,7 +26,7 @@ def train_opts(parser):
                        default=os.path.join(FEVAL,
                                             'test_d30.tsv'))
 
-    group.add_argument('-fload', type=str, default=None)
+    group.add_argument('-fload', type=str, default='feval-overall-ntm-1540650703.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

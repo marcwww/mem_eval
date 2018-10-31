@@ -35,15 +35,17 @@ class EncoderLSTM(nn.Module):
         hs = []
         cs = []
         os = []
-        os, (h, c) = self.controller(embs, (h, c))
-        # for emb in embs:
-        #     controller_outp, (h, c) = self.controller(emb.unsqueeze(0), (h, c))
-        #     o = self.dropout(controller_outp)
-        #
-        #     hs.append(h)
-        #     cs.append(c)
-        #     os.append(o)
+        # os, (h, c) = self.controller(embs, (h, c))
+        for emb in embs:
+            controller_outp, (h, c) = self.controller(emb.unsqueeze(0), (h, c))
+            o = self.dropout(controller_outp)
 
-        # os = torch.cat(os, dim=0)
+            hs.append(h)
+            cs.append(c)
+            os.append(o)
+
+        os = torch.cat(os, dim=0)
+        cs = torch.cat(cs, dim=0)
+        np.savetxt('lstm_cells.txt', cs[:, 0].cpu().numpy())
 
         return os

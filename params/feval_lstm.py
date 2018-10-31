@@ -25,7 +25,7 @@ def train_opts(parser):
                                             'test_d30.tsv'))
 
     group.add_argument('-fload', type=str, default='feval-overall-lstm-1540388590.model')
-    group.add_argument('-bsz', type=int, default=32)
+    group.add_argument('-bsz', type=int, default=1)
     group.add_argument('-lr', type=float, default=5e-3)
     # group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

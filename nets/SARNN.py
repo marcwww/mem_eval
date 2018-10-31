@@ -70,9 +70,15 @@ class EncoderSARNN(MANNBaseEncoder):
         # ctrl_info: (bsz, 3 + nstack * M)
         hid = controller_outp
         policy = self.policy(input)
+        val, pos = torch.topk(policy[0], k=1)
+        pos = pos.item()
+        val = val.item()
+        if pos <= 5:
+            print('stay after pop %d times with confidence %.3f' % (pos, val))
+        else:
+            print('push after pop %d times with confidence %.3f' % (pos-6, val))
+
         p_stay, p_push = torch.chunk(policy, 2, dim=1)
-        print('stay:', p_stay)
-        print('push:', p_push)
         self.update_stack(p_stay, p_push, hid)
 
     def reset_read(self, bsz):

@@ -78,6 +78,8 @@ class MANNBaseEncoder(nn.Module):
             os.append(o.unsqueeze(0))
 
         os = torch.cat(os, dim=0)
+        cs = torch.cat(cs, dim=0)
+        np.savetxt('sarnn_cells.txt', cs[:, 0].cpu().numpy())
 
         return os
 

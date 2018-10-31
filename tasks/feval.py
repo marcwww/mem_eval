@@ -103,15 +103,20 @@ def build_iters(**param):
 def valid(model, valid_iter):
     pred_lst = []
     true_lst = []
+    itos = ['<unk>', '<pad>', '/', '*', '-', '+', '3', '4', '9', '5', '8', '6', '7', '2', '1']
 
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
             seq, lbl = batch.expr, batch.val
+            # print('expr:', ' '.join([itos[ch.item()] for ch in seq[:, 0]]))
             out = model(seq)
 
             pred = out.max(dim=1)[1].cpu().numpy()
             lbl = lbl.cpu().numpy()
+            # assert pred == lbl
+            # if i>1:
+            #     exit()
             pred_lst.extend(pred)
             true_lst.extend(lbl)
 
