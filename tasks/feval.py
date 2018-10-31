@@ -10,6 +10,7 @@ import utils
 from collections import defaultdict
 from sklearn.metrics import accuracy_score, \
     precision_score, recall_score, f1_score
+import json
 
 class Example(object):
 
@@ -41,8 +42,12 @@ def build_iters(**param):
     ftrain = param['ftrain']
     fvalid = param['fvalid']
     ftest = None
+    fanaly = None
     if 'ftest' in param:
         ftest = param['ftest']
+
+    if 'fanaly' in param:
+        fanaly = param['fanaly']
 
     bsz = param['bsz']
     device = param['device']
@@ -67,9 +72,19 @@ def build_iters(**param):
                                             ('ds', DS),
                                             ('h', H),
                                             ('val', VAL)])
+
+    test = None
     if 'ftest' in param:
         examples_test = load_examples(ftest)
         test = Dataset(examples_test, fields=[('expr', EXPR),
+                                            ('ds', DS),
+                                            ('h', H),
+                                            ('val', VAL)])
+
+    analy = None
+    if 'fanaly' in param:
+        examples_analy  = load_examples(fanaly)
+        analy = Dataset(examples_analy, fields=[('expr', EXPR),
                                             ('ds', DS),
                                             ('h', H),
                                             ('val', VAL)])
@@ -91,10 +106,19 @@ def build_iters(**param):
                                              sort_key=lambda x: len(x.expr),
                                              sort_within_batch=True,
                                              device=device)
+    analy_iter = None
+    if 'fanaly' in param:
+        analy_iter = torchtext.data.Iterator(analy, batch_size=bsz,
+                                             sort=False, repeat=False,
+                                             sort_key=lambda x: len(x.expr),
+                                             sort_within_batch=True,
+                                             device=device)
+
 
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
             'test_iter': test_iter,
+            'analy_iter': analy_iter,
             'SEQ': EXPR,
             'DS': DS,
             'H': H,
@@ -117,6 +141,39 @@ def valid(model, valid_iter):
             # assert pred == lbl
             # if i>1:
             #     exit()
+            pred_lst.extend(pred)
+            true_lst.extend(lbl)
+
+    accuracy = accuracy_score(true_lst, pred_lst)
+
+    return accuracy
+
+def test_analy(model, analy_iter):
+    pred_lst = []
+    true_lst = []
+    fanalysis = model.encoder.fanalysis
+    itos = ['<unk>', '<pad>', '/', '*', '-', '+', '3', '4', '9', '5', '8', '6', '7', '2', '1']
+
+    with torch.no_grad():
+        model.eval()
+        for i, batch in enumerate(analy_iter):
+            seq, lbl = batch.expr, batch.val
+            out = model(seq)
+
+            pred = out.max(dim=1)[1].cpu().numpy()
+            lbl = lbl.cpu().numpy()
+
+            is_correct = 1 if (pred[0] == lbl[0]) else 0
+            # if i == 0:
+            #     exit()
+            expr = [itos[ch.item()] for ch in seq[:, 0]]
+            line = {'expr': expr, 'is_correct': is_correct}
+            line = json.dumps(line)
+            print(line)
+            print(line, file=fanalysis)
+            # print('expr:', ' '.join([itos[ch.item()] for ch in seq[:, 0]]))
+            # print('expr:', ' '.join([itos[ch.item()] for ch in seq[:, 0]]), file=fanalysis)
+
             pred_lst.extend(pred)
             true_lst.extend(lbl)
 

@@ -9,6 +9,7 @@ EOS = '<eos>'
 SOS = '<sos>'
 SEP = '<sep>'
 DATA = 'data/'
+ANALYSIS = 'analysis/'
 RTE = os.path.join(DATA, 'RTE')
 RES = 'res/'
 PAD_DS = 0

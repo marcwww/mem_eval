@@ -7,6 +7,7 @@ import utils
 from .MANN import MANNBaseEncoder
 from torch.nn.utils.rnn import pack_padded_sequence as pack, \
     pad_packed_sequence as unpack
+import json
 
 class EncoderSARNN(MANNBaseEncoder):
     def __init__(self,
@@ -68,18 +69,35 @@ class EncoderSARNN(MANNBaseEncoder):
         # r: (bsz, M)
         # controller_outp: (bsz, cdim)
         # ctrl_info: (bsz, 3 + nstack * M)
-        hid = controller_outp
-        policy = self.policy(input)
-        val, pos = torch.topk(policy[0], k=1)
-        pos = pos.item()
-        val = val.item()
-        if pos <= 5:
-            print('stay after pop %d times with confidence %.3f' % (pos, val))
-        else:
-            print('push after pop %d times with confidence %.3f' % (pos-6, val))
+        def _write(self, controller_outp, input):
+            hid = controller_outp
+            policy = self.policy(input)
+            p_stay, p_push = torch.chunk(policy, 2, dim=1)
+            self.update_stack(p_stay, p_push, hid)
 
-        p_stay, p_push = torch.chunk(policy, 2, dim=1)
-        self.update_stack(p_stay, p_push, hid)
+            return policy
+
+        policy = _write(self, controller_outp, input)
+
+        if self.analysis_mode:
+            assert 'fanalysis' in dir(self)
+            assert policy.shape[0] == 1
+
+            val, pos = torch.topk(policy[0], k=1)
+            pos = pos.item()
+            val = val.item()
+            line = {'all': policy[0].cpu().numpy().tolist(), 'max_pos': pos, 'max_val': val}
+            line = json.dumps(line)
+            if pos <= 5:
+                print(line)
+                print(line, file=self.fanalysis)
+                # print('stay after pop %d times with confidence %.3f' % (pos, val))
+                # print('stay after pop %d times with confidence %.3f' % (pos, val), file=self.fanalysis)
+            else:
+                print(line)
+                print(line, file=self.fanalysis)
+                # print('push after pop %d times with confidence %.3f' % (pos - 6, val))
+                # print('push after pop %d times with confidence %.3f' % (pos-6, val), file=self.fanalysis)
 
     def reset_read(self, bsz):
         pass

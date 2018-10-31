@@ -8,6 +8,7 @@ import logging
 import random
 import time
 from torch.autograd import Variable
+from macros import *
 
 LOGGER = logging.getLogger(__name__)
 
@@ -264,6 +265,20 @@ class fixMaskEmbeddedDropout(nn.Module):
         if draw_mask or self.training == False:
             self._setweights()
         return self.e.forward(*args)
+
+class analy(object):
+
+    def __init__(self, model, fname):
+        self.model = model
+        self.fname = fname
+
+    def __enter__(self):
+        self.model.analysis_mode = True
+        self.model.fanalysis = open(self.fname, 'w')
+
+    def __exit__(self, *args):
+        self.model.analysis_mode = False
+        self.model.fanalysis.close()
 
 if __name__ == '__main__':
     up, down = shift_matrix(3)
