@@ -6,6 +6,7 @@ from torch.nn import functional as F
 import utils
 from torch.nn.utils.rnn import pack_padded_sequence as pack, \
     pad_packed_sequence as unpack
+import json
 
 class MANNBaseEncoder(nn.Module):
 
@@ -48,6 +49,31 @@ class MANNBaseEncoder(nn.Module):
         raise NotImplementedError
 
     def forward(self, **input):
+
+        def _calc_gates(self, inp, h, c):
+
+            w_ih = self.controller.weight_ih_l0
+            w_hh = self.controller.weight_hh_l0
+            b_ih = self.controller.bias_ih_l0
+            b_hh = self.controller.bias_hh_l0
+
+            w = torch.cat([w_ih, w_hh], dim=-1)
+            x = torch.cat([inp, h], dim=-1)
+            b = b_ih + b_hh
+
+            out_linear = w.matmul(x.squeeze(0).squeeze(0)) + b
+
+            # out_linear = F.linear(x, w, b)
+            i, f, g, o = torch.split(out_linear, self.cdim, dim=-1)
+            i = F.sigmoid(i)
+            f = F.sigmoid(f)
+            g = F.tanh(g)
+            o = F.sigmoid(o)
+            c_new = f * c + i * g
+            h_new = o * F.tanh(c_new)
+
+            return i, f, g, o, c_new, h_new
+
         embs = input['embs']
         embs = self.dropout(embs)
         bsz = embs.shape[1]
@@ -63,8 +89,21 @@ class MANNBaseEncoder(nn.Module):
         hs = []
         cs = []
         os = []
-        for emb in embs:
+        for t, emb in enumerate(embs):
             controller_inp = torch.cat([emb, r], dim=1).unsqueeze(0)
+            if 'analysis_mode' in dir(self) and self.analysis_mode:
+                assert 'flstm' in dir(self)
+                i, f, g, o, c_new, h_new = _calc_gates(self, controller_inp, h, c)
+                line = {'type':'gates',
+                        't': t,
+                        'i':i.cpu().numpy().tolist(),
+                        'f':f.cpu().numpy().tolist(),
+                        'g':g.cpu().numpy().tolist(),
+                        'o':o.cpu().numpy().tolist()}
+                line = json.dumps(line)
+                print(line)
+                print(line, file=self.flstm)
+
             controller_outp, (h, c) = self.controller(controller_inp, (h, c))
             controller_outp = controller_outp.squeeze(0)
 
@@ -79,7 +118,7 @@ class MANNBaseEncoder(nn.Module):
 
         os = torch.cat(os, dim=0)
         cs = torch.cat(cs, dim=0)
-        np.savetxt('sarnn_cells.txt', cs[:, 0].cpu().numpy())
+            # np.savetxt('sarnn_cells.txt', cs[:, 0].cpu().numpy())
 
         return os
 

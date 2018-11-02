@@ -137,6 +137,13 @@ if __name__ == '__main__':
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
 
-    fname = os.path.join('..', os.path.join(ANALYSIS, 'analy_%s.txt' % opt.enc_type))
-    with analy(model.encoder, fname):
-        test_analy(model, res_iters['analy_iter'])
+    fname_dict = {}
+    fanaly_name = opt.fanaly.split('/')[-1].split('.')[0]
+    if opt.enc_type in MANNS:
+        fenc = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s.txt' % (opt.task, fanaly_name, opt.enc_type)))
+        fname_dict['f' + opt.enc_type] = fenc
+    flstm = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s_lstm.txt' % (opt.task, fanaly_name, opt.enc_type)))
+    fname_dict['flstm'] = flstm
+
+    with analy(model.encoder, fname_dict):
+        test_analy(model, res_iters['analy_iter'], opt.enc_type)

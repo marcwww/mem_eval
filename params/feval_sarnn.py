@@ -26,9 +26,18 @@ def train_opts(parser):
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FEVAL,
                                             'test_d30.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_d5.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_d7.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_d10.tsv'))
     group.add_argument('-fanaly', type=str,
                        default=os.path.join(FEVAL,
-                                            'analy_d30.tsv'))
+                                            'analy_d10_mono.tsv'))
 
     group.add_argument('-fload', type=str, default='feval-overall-sarnn-1540522028.model')
     group.add_argument('-bsz', type=int, default=32)

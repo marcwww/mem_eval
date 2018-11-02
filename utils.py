@@ -268,17 +268,20 @@ class fixMaskEmbeddedDropout(nn.Module):
 
 class analy(object):
 
-    def __init__(self, model, fname):
+    def __init__(self, model, fnames_dict):
         self.model = model
-        self.fname = fname
+        self.fnames_dict = fnames_dict
 
     def __enter__(self):
         self.model.analysis_mode = True
-        self.model.fanalysis = open(self.fname, 'w')
+        for name in self.fnames_dict:
+            setattr(self.model, name, open(self.fnames_dict[name], 'w'))
 
     def __exit__(self, *args):
         self.model.analysis_mode = False
-        self.model.fanalysis.close()
+        for name in self.fnames_dict:
+            f = getattr(self.model, name)
+            f.close()
 
 if __name__ == '__main__':
     up, down = shift_matrix(3)

@@ -79,23 +79,26 @@ class EncoderSARNN(MANNBaseEncoder):
 
         policy = _write(self, controller_outp, input)
 
-        if self.analysis_mode:
-            assert 'fanalysis' in dir(self)
+        if 'analysis_mode' in dir(self) and self.analysis_mode:
+            assert 'fsarnn' in dir(self)
             assert policy.shape[0] == 1
 
             val, pos = torch.topk(policy[0], k=1)
             pos = pos.item()
             val = val.item()
-            line = {'all': policy[0].cpu().numpy().tolist(), 'max_pos': pos, 'max_val': val}
+            line = {'type':'actions',
+                    'all': policy[0].cpu().numpy().tolist(),
+                    'max_pos': pos,
+                    'max_val': val}
             line = json.dumps(line)
             if pos <= 5:
                 print(line)
-                print(line, file=self.fanalysis)
+                print(line, file=self.fsarnn)
                 # print('stay after pop %d times with confidence %.3f' % (pos, val))
                 # print('stay after pop %d times with confidence %.3f' % (pos, val), file=self.fanalysis)
             else:
                 print(line)
-                print(line, file=self.fanalysis)
+                print(line, file=self.fsarnn)
                 # print('push after pop %d times with confidence %.3f' % (pos - 6, val))
                 # print('push after pop %d times with confidence %.3f' % (pos-6, val), file=self.fanalysis)
 

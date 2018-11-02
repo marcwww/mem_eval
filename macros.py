@@ -23,6 +23,7 @@ FEVAL = os.path.join(DATA, 'feval')
 AGREE = os.path.join(DATA, 'agreement')
 POLYSEMY = os.path.join(DATA, 'polysemy')
 
+MANNS = ['sarnn', 'alstm', 'ntm']
 INDICATOR = '<indicator>'
 
 T_REDUCE = 1
