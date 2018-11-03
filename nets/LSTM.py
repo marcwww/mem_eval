@@ -1,6 +1,8 @@
 import numpy as np
 from torch import nn
 import torch
+from torch.nn import functional as F
+import json
 
 class EncoderLSTM(nn.Module):
 
@@ -25,6 +27,31 @@ class EncoderLSTM(nn.Module):
                 nn.init.uniform(p, -stdev, stdev)
 
     def forward(self, **input):
+
+        def _calc_gates(self, inp, h, c):
+
+            w_ih = self.controller.weight_ih_l0
+            w_hh = self.controller.weight_hh_l0
+            b_ih = self.controller.bias_ih_l0
+            b_hh = self.controller.bias_hh_l0
+
+            w = torch.cat([w_ih, w_hh], dim=-1)
+            x = torch.cat([inp, h], dim=-1)
+            b = b_ih + b_hh
+
+            out_linear = w.matmul(x.squeeze(0).squeeze(0)) + b
+
+            # out_linear = F.linear(x, w, b)
+            i, f, g, o = torch.split(out_linear, self.cdim, dim=-1)
+            i = F.sigmoid(i)
+            f = F.sigmoid(f)
+            g = F.tanh(g)
+            o = F.sigmoid(o)
+            c_new = f * c + i * g
+            h_new = o * F.tanh(c_new)
+
+            return i, f, g, o, c_new, h_new
+
         embs = input['embs']
         embs = self.dropout(embs)
         bsz = embs.shape[1]
@@ -36,8 +63,21 @@ class EncoderLSTM(nn.Module):
         cs = []
         os = []
         # os, (h, c) = self.controller(embs, (h, c))
-        for emb in embs:
+        for t, emb in enumerate(embs):
             controller_outp, (h, c) = self.controller(emb.unsqueeze(0), (h, c))
+            if 'analysis_mode' in dir(self) and self.analysis_mode:
+                assert 'flstm' in dir(self)
+                i, f, g, o, c_new, h_new = _calc_gates(self, emb.unsqueeze(0), h, c)
+                line = {'type':'gates',
+                        't': t,
+                        'i':i.cpu().numpy().tolist(),
+                        'f':f.cpu().numpy().tolist(),
+                        'g':g.cpu().numpy().tolist(),
+                        'o':o.cpu().numpy().tolist()}
+                line = json.dumps(line)
+                print(line)
+                print(line, file=self.flstm)
+
             o = self.dropout(controller_outp)
 
             hs.append(h)
@@ -46,6 +86,6 @@ class EncoderLSTM(nn.Module):
 
         os = torch.cat(os, dim=0)
         cs = torch.cat(cs, dim=0)
-        np.savetxt('lstm_cells.txt', cs[:, 0].cpu().numpy())
+        # np.savetxt('lstm_cells.txt', cs[:, 0].cpu().numpy())
 
         return os

@@ -10,8 +10,8 @@ def general_opts(parser):
     # group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
-    group.add_argument('-enc_type', type=str, default='sarnn')
-    # group.add_argument('-enc_type', type=str, default='lstm')
+    # group.add_argument('-enc_type', type=str, default='sarnn')
+    group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
 
     # group.add_argument('-task', type=str, default='listops')

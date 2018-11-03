@@ -23,9 +23,13 @@ def train_opts(parser):
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(FEVAL,
                                             'valid_d30.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test_d30.tsv'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FEVAL,
-                                            'test_d30.tsv'))
+                                            'test_d30_mono.tsv'))
+
     # group.add_argument('-fanaly', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'analy_d5.tsv'))
