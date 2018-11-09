@@ -26,9 +26,12 @@ def train_opts(parser):
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'test_d30.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test_d30_mono.tsv'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FEVAL,
-                                            'test_d30_mono.tsv'))
+                                            'test_d30_ef.tsv'))
 
     # group.add_argument('-fanaly', type=str,
     #                    default=os.path.join(FEVAL,
@@ -39,9 +42,18 @@ def train_opts(parser):
     # group.add_argument('-fanaly', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'analy_d10.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_d10_mono.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_d23_ne10.tsv'))
     group.add_argument('-fanaly', type=str,
                        default=os.path.join(FEVAL,
-                                            'analy_d10_mono.tsv'))
+                                            'analy_clustering.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_clustering_plus_minus.tsv'))
 
     group.add_argument('-fload', type=str, default='feval-overall-sarnn-1540522028.model')
     group.add_argument('-bsz', type=int, default=32)

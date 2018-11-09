@@ -4,6 +4,7 @@ import torch
 from macros import *
 from torch.nn import functional as F
 import utils
+import json
 from torch.nn.utils.rnn import pack_padded_sequence as pack, \
     pad_packed_sequence as unpack
 from .MANN import MANNBaseEncoder
@@ -163,10 +164,29 @@ class EncoderNTM(MANNBaseEncoder):
 
     def read(self, controller_outp):
         r, self.rstate = self.rhead(controller_outp, self.rstate)
+
+        if 'analysis_mode' in dir(self) and self.analysis_mode:
+            assert 'fntm' in dir(self)
+            assert self.rstate.shape[0] == 1
+            line = {'type': 'read',
+                    'w': self.rstate[0].cpu().numpy().tolist()}
+            line = json.dumps(line)
+            print(line)
+            print(line, file=self.fntm)
+
         return r
 
     def write(self, controller_outp, input):
         self.wstate = self.whead(controller_outp, self.wstate)
+
+        if 'analysis_mode' in dir(self) and self.analysis_mode:
+            assert 'fntm' in dir(self)
+            assert self.rstate.shape[0] == 1
+            line = {'type': 'write',
+                    'w': self.wstate[0].cpu().numpy().tolist()}
+            line = json.dumps(line)
+            print(line)
+            print(line, file=self.fntm)
 
 
 

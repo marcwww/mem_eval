@@ -140,8 +140,15 @@ if __name__ == '__main__':
         print(str(key) + ': ' + str(val))
 
     print('Valid result: \n', valid(model, res_iters['valid_iter']))
-    acc, nt = valid_detail(model, res_iters['test_iter'])
+    acc, nt, incorrect_predicts = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
     print('Test result: \n', sorted(acc.items()))
     print('# samples under different h\'s:', sorted(nt.items()))
 
+    fincorrect = os.path.join(os.path.join('..', RES),
+                              'incor-%s-%s-%d.txt' % ('flang', opt.enc_type, utils.time_int()))
+    with open(fincorrect, 'w') as f:
+        for idx, line in enumerate(incorrect_predicts):
+            line = '\t'.join([str(idx)] + list(line)) + '\n'
+            f.write(line)
+    print('Saved to %s' % fincorrect)
 

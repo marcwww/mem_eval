@@ -72,8 +72,8 @@ class EncoderSARNN(MANNBaseEncoder):
         def _write(self, controller_outp, input):
             hid = controller_outp
             policy = self.policy(input)
-            p_stay, p_push = torch.chunk(policy, 2, dim=1)
-            self.update_stack(p_stay, p_push, hid)
+            p_push, p_stay = torch.chunk(policy, 2, dim=1)
+            self.update_stack(p_push, p_stay, hid)
 
             return policy
 
@@ -89,7 +89,8 @@ class EncoderSARNN(MANNBaseEncoder):
             line = {'type':'actions',
                     'all': policy[0].cpu().numpy().tolist(),
                     'max_pos': pos,
-                    'max_val': val}
+                    'max_val': val,
+                    'mem': self.mem[0].cpu().numpy().tolist()}
             line = json.dumps(line)
             if pos <= 5:
                 print(line)

@@ -184,22 +184,27 @@ def test_analy(model, analy_iter, enc):
 
     return accuracy
 
-def valid_detail(model, valid_iter):
+def valid_detail(model, itos, valid_iter):
     pred_dict= {}
     true_dict = {}
     nsamples = defaultdict(int)
     acc = defaultdict(float)
+    incorrect_predicts = []
 
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            seq, lbl, depth = batch.expr, batch.val, batch.h
+            seq, lbl, depth, ds, h = batch.expr, batch.val, batch.h, batch.ds, batch.h
             res_clf = model(seq)
 
             pred = res_clf.max(dim=1)[1].cpu().numpy()
             lbl = lbl.cpu().numpy()
-            for pred_b, lbl_b, depth_b in zip(pred, lbl, depth):
+            seq = seq.transpose(0, 1)
+            ds = ds.transpose(0, 1)
+            for seq_b, pred_b, lbl_b, depth_b, ds_b, h_b in zip(seq, pred, lbl, depth, ds, h):
                 depth_b = depth_b.item()
+                pred_b = pred_b.item()
+                h_b = h_b.item()
                 # if depth_b > 49:
                 #     continue
                 if depth_b not in pred_dict:
@@ -209,10 +214,17 @@ def valid_detail(model, valid_iter):
                 true_dict[depth_b].append(lbl_b)
                 nsamples[depth_b] += 1
 
+                if pred_b != lbl_b:
+                    expr = ' '.join([itos[ch.item()] for ch in seq_b if itos[ch] != PAD])
+                    ds_b = ' '.join([str(d) for d in list(ds_b.cpu().numpy()) if d != PAD_DS])
+                    lbl_b = str(lbl_b)
+                    h_b = str(h_b)
+                    incorrect_predicts.append((expr, ds_b, lbl_b, h_b))
+
     for depth in pred_dict.keys():
         acc[depth] = accuracy_score(true_dict[depth], pred_dict[depth])
 
-    return acc, nsamples
+    return acc, nsamples, incorrect_predicts
 
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']

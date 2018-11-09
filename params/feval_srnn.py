@@ -20,11 +20,14 @@ def train_opts(parser):
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(FEVAL,
                                             'valid_d30.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test_d30.tsv'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FEVAL,
-                                            'test_d30.tsv'))
+                                            'test_d30_ef.tsv'))
 
-    group.add_argument('-fload', type=str, default='feval-overall-srnn-1540391590.model')
+    group.add_argument('-fload', type=str, default='flang-overall-srnn-1541471559.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

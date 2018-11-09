@@ -7,6 +7,7 @@ import utils
 from .MANN import MANNBaseEncoder
 from torch.nn.utils.rnn import pack_padded_sequence as pack, \
     pad_packed_sequence as unpack
+import json
 
 class EncoderALSTM(MANNBaseEncoder):
     def __init__(self,
@@ -21,18 +22,28 @@ class EncoderALSTM(MANNBaseEncoder):
 
     def read(self, controller_outp):
         bsz = controller_outp.shape[0]
-        if len(self.mem) > 0:
+        if len(self.mem) > 1:
         # mem: (seq_len, bsz, cdim)
-            mem = torch.cat(self.mem, dim=1)
-            c = self.atten(controller_outp, mem)
+            # previous N-1 cells
+            mem = torch.cat(self.mem[:self.N - 1], dim=1)
+            c, a = self.atten(controller_outp, mem)
         else:
             c = self.zero.expand(bsz, self.M)
+
+        if 'analysis_mode' in dir(self) and self.analysis_mode:
+            assert 'falstm' in dir(self)
+            assert a.shape[0] == 1
+            line = {'type': 'attention',
+                    'a': a[0].cpu().numpy().tolist()}
+            line = json.dumps(line)
+            print(line)
+            print(line, file=self.falstm)
 
         return c
 
     def write(self, controller_outp, r):
         self.mem.append(controller_outp.unsqueeze(1))
-        if len(self.mem) > self.N:
+        if len(self.mem) > self.N + 1:
             self.mem.pop(0)
 
     def reset_read(self, bsz):

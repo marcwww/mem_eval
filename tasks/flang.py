@@ -93,11 +93,13 @@ def build_iters(**param):
             'DS': DS,
             'H': H}
 
-def valid_detail(model, valid_iter):
+def valid_detail(model, itos, valid_iter):
     nt = defaultdict(int)
     nc = defaultdict(int)
     acc = defaultdict(float)
     padding_idx = model.padding_idx
+    incorrect_predicts = []
+
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
@@ -107,8 +109,6 @@ def valid_detail(model, valid_iter):
             ds_tar = batch.ds
             h = batch.h
 
-            model.train()
-            model.zero_grad()
             out = model(expr)
             ds_pred = out['ds'].squeeze(-1)
             dstmask = (ds_tar > PAD_DS)
@@ -129,12 +129,17 @@ def valid_detail(model, valid_iter):
                 tree_tar = utils.to_tree_sd(d_tar, e)
                 if str(tree_pred) == str(tree_tar):
                     nc[h_b] += 1
+                else:
+                    expr = ' '.join([itos[ch.item()] for ch in e if itos[ch] != PAD])
+                    ds_b = ' '.join([str(d) for d in d_tar if d != PAD_DS])
+                    incorrect_predicts.append((expr, ds_b, str(h_b)))
+
                 nt[h_b] += 1
 
     for h in nc.keys():
         acc[h] = nc[h]/nt[h]
 
-    return acc, nt
+    return acc, nt, incorrect_predicts
 
 def valid(model, valid_iter):
     nt = 0
@@ -148,8 +153,6 @@ def valid(model, valid_iter):
             len_expr = mask_expr.sum(0)
             ds_tar = batch.ds
 
-            model.train()
-            model.zero_grad()
             out = model(expr)
             ds_pred = out['ds'].squeeze(-1)
             dstmask = (ds_tar > PAD_DS)

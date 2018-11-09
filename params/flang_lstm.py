@@ -2,8 +2,8 @@ from macros import *
 
 def model_opts(parser):
     group = parser.add_argument_group('model')
-    group.add_argument('-edim', type=int, default=50)
-    group.add_argument('-hdim', type=int, default=50)
+    group.add_argument('-edim', type=int, default=100)
+    group.add_argument('-hdim', type=int, default=100)
     group.add_argument('-odim', type=int, default=8)
     group.add_argument('-dropout', type=float, default=0.1)
 
@@ -20,11 +20,14 @@ def train_opts(parser):
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(FLANG,
                                             'valid_d30.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FLANG,
+    #                                         'test_d30.tsv'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FLANG,
-                                            'test_d30.tsv'))
+                                            'test_d30_ef.tsv'))
 
-    group.add_argument('-fload', type=str, default='flang-overall-lstm-1540020132.model')
+    group.add_argument('-fload', type=str, default='flang-overall-lstm-1541409561.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

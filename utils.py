@@ -141,7 +141,7 @@ class Attention(nn.Module):
         # c: (bsz, hdim)
         c = c.sum(1).squeeze(-1)
         r = self.c2r(c)
-        return r
+        return r, a[:,:,0,0]
 
 def get_ms():
     """Returns the current time in miliseconds."""
