@@ -9,7 +9,7 @@ def model_opts(parser):
 
     group.add_argument('-fix_emb', default=False, action='store_true')
     group.add_argument('-emb_type', type=str, default='dense')
-    group.add_argument('-N', type=int, default=5)
+    group.add_argument('-N', type=int, default=30)
     group.add_argument('-M', type=int, default=100)
 
 def train_opts(parser):

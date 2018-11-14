@@ -7,8 +7,8 @@ import argparse
 from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import polysemy, flang, listops, feval
-from torch.nn.init import orthogonal_
+from tasks import polysemy, flang, listops, feval, bisenti
+from torch.nn.init import orthogonal_, uniform_
 import crash_on_ipy
 
 if __name__ == '__main__':
@@ -48,6 +48,11 @@ if __name__ == '__main__':
         build_iters = listops.build_iters
         train = listops.train
         Model = listops.Model
+
+    if opt.task == 'bisenti':
+        build_iters = bisenti.build_iters
+        train = bisenti.train
+        Model = bisenti.Model
 
     res_iters = build_iters(ftrain=opt.ftrain,
                             fvalid=opt.fvalid,
@@ -137,6 +142,11 @@ if __name__ == '__main__':
                                 cdim=opt.hdim,
                                 drop=opt.dropout)
 
+    if opt.enc_type == 'vecave':
+        encoder = nets.EncoderVecAVE(idim=opt.edim,
+                                cdim=opt.hdim,
+                                drop=opt.dropout)
+
     model = None
     if embedding is None:
         model = Model(encoder, embedding, opt.dropout).to(device)
@@ -145,6 +155,13 @@ if __name__ == '__main__':
     utils.init_model(model)
     if opt.enc_type == 'topnn':
         model.encoder.pos_embedding.weight = orthogonal_(model.encoder.pos_embedding.weight)
+
+    if opt.task == 'bisenti':
+        model.embedding.weight = uniform_(model.embedding.weight, -0.0001, 0.0001)
+        # model.embedding.weight.data.copy_(SEQ.vocab.vectors)
+        # model.embedding.weight.requires_grad = False
+
+
 
     # if opt.fload is not None:
     #     model_fname = opt.fload

@@ -20,6 +20,7 @@ PATTERN = os.path.join(DATA, 'pattern')
 LISTOPS = os.path.join(DATA, 'listops')
 FLANG = os.path.join(DATA, 'flang')
 FEVAL = os.path.join(DATA, 'feval')
+BISENTI = os.path.join(DATA, 'bisenti')
 AGREE = os.path.join(DATA, 'agreement')
 POLYSEMY = os.path.join(DATA, 'polysemy')
 

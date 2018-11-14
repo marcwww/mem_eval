@@ -3,7 +3,8 @@ from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
     polysemy_lstm, polysemy_alstm, polysemy_sarnn, polysemy_ntm, \
     listops_lstm, listops_srnn, listops_alstm, listops_sarnn, listops_ntm, \
     feval_lstm, feval_alstm, feval_sarnn, feval_srnn, feval_ntm, \
-    flang_topnn
+    flang_topnn, \
+    bisenti_srnn, bisenti_sarnn, bisenti_lstm, bisenti_vecave
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
@@ -11,12 +12,14 @@ def general_opts(parser):
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
     # group.add_argument('-enc_type', type=str, default='sarnn')
+    group.add_argument('-enc_type', type=str, default='vecave')
     # group.add_argument('-enc_type', type=str, default='lstm')
-    group.add_argument('-enc_type', type=str, default='alstm')
+    # group.add_argument('-enc_type', type=str, default='alstm')
 
     # group.add_argument('-task', type=str, default='listops')
     # group.add_argument('-task', type=str, default='flang')
-    group.add_argument('-task', type=str, default='feval')
+    group.add_argument('-task', type=str, default='bisenti')
+    # group.add_argument('-task', type=str, default='feval')
     # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
 
@@ -90,18 +93,38 @@ def select_opt(opt, parser):
     elif opt.task == 'feval' and opt.enc_type == 'lstm':
         feval_lstm.model_opts(parser)
         feval_lstm.train_opts(parser)
+
     elif opt.task == 'feval' and opt.enc_type == 'alstm':
         feval_alstm.model_opts(parser)
         feval_alstm.train_opts(parser)
+
     elif opt.task == 'feval' and opt.enc_type == 'sarnn':
         feval_sarnn.model_opts(parser)
         feval_sarnn.train_opts(parser)
+
     elif opt.task == 'feval' and opt.enc_type == 'srnn':
         feval_srnn.model_opts(parser)
         feval_srnn.train_opts(parser)
+
     elif opt.task == 'feval' and opt.enc_type == 'ntm':
         feval_ntm.model_opts(parser)
         feval_ntm.train_opts(parser)
+
+    elif opt.task == 'bisenti' and opt.enc_type == 'srnn':
+        bisenti_srnn.model_opts(parser)
+        bisenti_srnn.train_opts(parser)
+
+    elif opt.task == 'bisenti' and opt.enc_type == 'sarnn':
+        bisenti_sarnn.model_opts(parser)
+        bisenti_sarnn.train_opts(parser)
+
+    elif opt.task == 'bisenti' and opt.enc_type == 'lstm':
+        bisenti_lstm.model_opts(parser)
+        bisenti_lstm.train_opts(parser)
+
+    elif opt.task == 'bisenti' and opt.enc_type == 'vecave':
+        bisenti_vecave.model_opts(parser)
+        bisenti_vecave.train_opts(parser)
 
     else:
         raise ModuleNotFoundError
