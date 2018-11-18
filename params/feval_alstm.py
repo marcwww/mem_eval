@@ -9,7 +9,7 @@ def model_opts(parser):
 
     group.add_argument('-fix_emb', default=False, action='store_true')
     group.add_argument('-emb_type', type=str, default='dense')
-    group.add_argument('-N', type=int, default=30)
+    group.add_argument('-N', type=int, default=20)
     group.add_argument('-M', type=int, default=100)
 
 def train_opts(parser):
@@ -35,7 +35,7 @@ def train_opts(parser):
                        default=os.path.join(FEVAL,
                                             'analy_d23_ne10.tsv'))
 
-    group.add_argument('-fload', type=str, default='feval-overall-alstm-1541730796.model')
+    group.add_argument('-fload', type=str, default='feval-overall-alstm-1541953421.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

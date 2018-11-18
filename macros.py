@@ -20,9 +20,11 @@ PATTERN = os.path.join(DATA, 'pattern')
 LISTOPS = os.path.join(DATA, 'listops')
 FLANG = os.path.join(DATA, 'flang')
 FEVAL = os.path.join(DATA, 'feval')
-BISENTI = os.path.join(DATA, 'bisenti')
+SST2 = os.path.join(DATA, 'sst2')
+SST5 = os.path.join(DATA, 'sst5')
 AGREE = os.path.join(DATA, 'agreement')
 POLYSEMY = os.path.join(DATA, 'polysemy')
+SR = os.path.join(DATA, 'sr')
 
 MANNS = ['sarnn', 'alstm', 'ntm']
 INDICATOR = '<indicator>'

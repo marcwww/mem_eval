@@ -12,7 +12,7 @@ import crash_on_ipy
 
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='flang_test.py',
+        ArgumentParser(description='listops_test.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)

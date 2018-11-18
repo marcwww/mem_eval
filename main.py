@@ -7,7 +7,7 @@ import argparse
 from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import polysemy, flang, listops, feval, bisenti
+from tasks import polysemy, flang, listops, feval, sst2, sst5, sr
 from torch.nn.init import orthogonal_, uniform_
 import crash_on_ipy
 
@@ -49,17 +49,28 @@ if __name__ == '__main__':
         train = listops.train
         Model = listops.Model
 
-    if opt.task == 'bisenti':
-        build_iters = bisenti.build_iters
-        train = bisenti.train
-        Model = bisenti.Model
+    if opt.task == 'sst2':
+        build_iters = sst2.build_iters
+        train = sst2.train
+        Model = sst2.Model
+
+    if opt.task == 'sst5':
+        build_iters = sst5.build_iters
+        train = sst5.train
+        Model = sst5.Model
+
+    if opt.task == 'sr':
+        build_iters = sr.build_iters
+        train = sr.train
+        Model = sr.Model
 
     res_iters = build_iters(ftrain=opt.ftrain,
                             fvalid=opt.fvalid,
                             bsz=opt.bsz,
                             device=opt.gpu,
                             sub_task=opt.sub_task,
-                            seq_len_max=opt.seq_len_max)
+                            seq_len_max=opt.seq_len_max,
+                            emb_type=opt.emb_type)
 
     embedding = None
     embedding_enc = None
@@ -106,6 +117,12 @@ if __name__ == '__main__':
             one_hot_mtrx = utils.one_hot_matrix(TAR.vocab.stoi, device, opt.edim)
             embedding_dec.weight.data.copy_(one_hot_mtrx)
             embedding_dec.weight.requires_grad = False
+
+    elif opt.emb_type == 'dense':
+        pass
+    else:
+        embedding.weight.data.copy_(SEQ.vocab.vectors)
+        embedding.weight.requires_grad = False
 
     encoder = None
     decoder = None
@@ -156,12 +173,8 @@ if __name__ == '__main__':
     if opt.enc_type == 'topnn':
         model.encoder.pos_embedding.weight = orthogonal_(model.encoder.pos_embedding.weight)
 
-    if opt.task == 'bisenti':
-        model.embedding.weight = uniform_(model.embedding.weight, -0.0001, 0.0001)
-        # model.embedding.weight.data.copy_(SEQ.vocab.vectors)
-        # model.embedding.weight.requires_grad = False
-
-
+    if opt.task in ['sst2', 'sst5'] and opt.emb_type == 'dense':
+        embedding.weight = uniform_(embedding.weight, -0.0001, 0.0001)
 
     # if opt.fload is not None:
     #     model_fname = opt.fload
@@ -185,8 +198,8 @@ if __name__ == '__main__':
     #                           alpha=0.95,
     #                           lr=opt.lr,
     #                           weight_decay=opt.wdecay)
-
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10)
+    patience = opt.patience if hasattr(opt, 'patience') else 10
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=patience)
 
     param_str = utils.param_str(opt)
     for key, val in param_str.items():

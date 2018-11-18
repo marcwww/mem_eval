@@ -2,51 +2,40 @@ import nets
 from macros import *
 import torch
 import utils
-import opts
+from params import opts
 import argparse
 from torch import nn
-from tasks import agreement
+from tasks import sst5
 import crash_on_ipy
 
 
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='agreement_test.py',
+        ArgumentParser(description='sst5_test.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
+    opts.general_opts(parser)
+    opt = parser.parse_args()
 
-    opts.model_opts(parser)
-    opts.train_opts(parser)
+    parser = opts.select_opt(opt, parser)
     opt = parser.parse_args()
 
     utils.init_seed(opt.seed)
 
-    assert opt.task == 'agreement'
+    assert opt.task == 'sst5'
 
-    build_iters = agreement.build_iters
-    build_iters_test = agreement.build_iters_test
-    train = agreement.train
-    valid = agreement.valid
-    Model = agreement.Model
+    train = sst5.train
+    valid = sst5.valid
+    build_iters = sst5.build_iters
+    valid_detail = sst5.valid_detail
+    Model = sst5.Model
 
-    param_iter = {'ftrain': os.path.join('..', opt.ftrain),
-                  'fvalid': os.path.join('..', opt.fvalid),
-                  'bsz': opt.bsz,
-                  'device': opt.gpu,
-                  'sub_task': opt.sub_task,
-                  'num_batches_train': opt.num_batches_train,
-                  'num_batches_valid': opt.num_batches_valid,
-                  'min_len_train': opt.min_len_train,
-                  'min_len_valid': opt.min_len_valid,
-                  'max_len_train': opt.max_len_train,
-                  'max_len_valid': opt.max_len_valid,
-                  'repeat_min_train': opt.repeat_min_train,
-                  'repeat_max_train': opt.repeat_max_train,
-                  'repeat_min_valid': opt.repeat_min_valid,
-                  'repeat_max_valid': opt.repeat_max_valid,
-                  'seq_width': opt.seq_width}
-
-    res_iters = build_iters(param_iter)
+    res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
+                            fvalid=os.path.join('..', opt.fvalid),
+                            ftest=os.path.join('..', opt.ftest),
+                            bsz=opt.bsz,
+                            device=opt.gpu,
+                            sub_task=opt.sub_task)
 
     embedding = None
     embedding_enc = None
@@ -96,39 +85,40 @@ if __name__ == '__main__':
 
     encoder = None
     decoder = None
+    if opt.enc_type == 'srnn':
+        encoder = nets.EncoderSRNN(idim=opt.edim,
+                                   cdim=opt.hdim,
+                                   dropout=opt.dropout)
 
     if opt.enc_type == 'ntm':
         encoder = nets.EncoderNTM(idim=opt.edim,
-                                  cdim=opt.hdim,
-                                  N=opt.N,
-                                  M=opt.M,
-                                  dropout=opt.dropout)
+                                    cdim=opt.hdim,
+                                    N=opt.N,
+                                    M=opt.M,
+                                    drop=opt.dropout)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    idrop=opt.idrop,
-                                    odrop=opt.odrop)
+                                    drop=opt.dropout)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
-                                    N=opt.N,
-                                    M=opt.M,
-                                   dropout=opt.dropout)
+                                    drop=opt.dropout)
 
     if opt.enc_type == 'alstm':
         encoder = nets.EncoderALSTM(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    dropout=opt.dropout)
+                                    drop=opt.dropout)
 
     model = None
     if embedding is None:
-        model = Model(encoder, opt.odim, opt.edrop).to(device)
+        model = Model(encoder, opt.odim, opt.dropout).to(device)
     else:
-        model = Model(encoder, embedding, opt.edrop).to(device)
+        model = Model(encoder, embedding, opt.dropout).to(device)
     utils.init_model(model)
 
     if opt.fload is not None:
@@ -144,21 +134,16 @@ if __name__ == '__main__':
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
 
-    print('Valid result: ', valid(model, res_iters['valid_iter']))
+    print('Valid result: \n', valid(model, res_iters['valid_iter']))
+    print('Test result(whole): \n', valid(model, res_iters['test_iter']))
+    acc, nt, incorrect_predicts = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
+    print('Test result: \n', sorted(acc.items()))
+    print('# samples under different h\'s:', sorted(nt.items()))
 
-    ftests = []
-    for i in range(6):
-        ftest = os.path.join(AGREE, 'test.%d.tsv' % i)
-        ftest = os.path.join('..', ftest)
-        ftests.append(ftest)
-
-    iters_tests = build_iters_test(ftests, SEQ, opt.bsz, opt.gpu)
-    accus = []
-    for n, iters_test in enumerate(iters_tests):
-        if n == 0:
-            continue
-        accu = valid(model, iters_test)
-        accus.append(str(accu))
-
-    print('Test result: %s' % (', '.join(accus)))
+    fincorrect = os.path.join(os.path.join('..', RES),
+                              'incor-%s-%s-%d.txt' % ('feval', opt.enc_type, utils.time_int()))
+    with open(fincorrect, 'w') as f:
+        for idx, line in enumerate(incorrect_predicts):
+            line = '\t'.join([str(idx)] + list(line)) + '\n'
+            f.write(line)
 

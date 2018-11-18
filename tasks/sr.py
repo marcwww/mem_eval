@@ -14,26 +14,23 @@ import json
 
 class Example(object):
 
-    def __init__(self, seq, ds, h, lbl):
+    def __init__(self, seq, pn, pv, lbl):
         self.seq = self.tokenizer_expr(seq)
-        self.ds = self.tokenizer_ds(ds)
-        self.h = int(h)
-        self.lbl = int(lbl)
+        self.pn = [pn]
+        self.pv = [pv]
+        self.lbl = 1 if lbl == 'TRUE' else 0
 
     def tokenizer_expr(self, seq):
         return seq.split()
-
-    def tokenizer_ds(self, ds):
-        return [int(d) for d in ds.split()]
 
 def load_examples(fname):
     examples = []
 
     with open(fname, 'r') as f:
         for line in f:
-            expr, ds, h, val = \
+            lbl, _, seq, pn, pv = \
                 line.strip().split('\t')
-            examples.append(Example(expr, ds, h, val))
+            examples.append(Example(seq, pn, pv, lbl))
 
     return examples
 
@@ -41,6 +38,7 @@ def build_iters(**param):
 
     ftrain = param['ftrain']
     fvalid = param['fvalid']
+    emb_type = param['emb_type']
     ftest = None
     fanaly = None
     if 'ftest' in param:
@@ -58,37 +56,36 @@ def build_iters(**param):
                                pad_token=PAD,
                                unk_token=UNK,
                                eos_token=None)
-    DS = torchtext.data.Field(sequential=True, use_vocab=False, pad_token=PAD_DS)
-    H = torchtext.data.Field(sequential=False, use_vocab=False)
     LBL = torchtext.data.Field(sequential=False, use_vocab=False)
 
     train = Dataset(examples_train, fields=[('seq', SEQ),
-                                            ('ds', DS),
-                                            ('h', H),
+                                            ('pn', SEQ),
+                                            ('pv', SEQ),
                                             ('lbl', LBL)])
     SEQ.build_vocab(train)
-    # SEQ.vocab.load_vectors('glove.twitter.27B.25d')
+    if emb_type not in ['one-hot', 'dense']:
+        SEQ.vocab.load_vectors(emb_type)
 
     examples_valid = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('seq', SEQ),
-                                            ('ds', DS),
-                                            ('h', H),
+                                            ('pn', SEQ),
+                                            ('pv', SEQ),
                                             ('lbl', LBL)])
 
     test = None
     if 'ftest' in param:
         examples_test = load_examples(ftest)
         test = Dataset(examples_test, fields=[('seq', SEQ),
-                                            ('ds', DS),
-                                            ('h', H),
+                                            ('pn', SEQ),
+                                            ('pv', SEQ),
                                             ('lbl', LBL)])
 
     analy = None
     if 'fanaly' in param:
         examples_analy  = load_examples(fanaly)
         analy = Dataset(examples_analy, fields=[('seq', SEQ),
-                                            ('ds', DS),
-                                            ('h', H),
+                                            ('pn', SEQ),
+                                            ('pv', SEQ),
                                             ('lbl', LBL)])
 
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
@@ -122,8 +119,6 @@ def build_iters(**param):
             'test_iter': test_iter,
             'analy_iter': analy_iter,
             'SEQ': SEQ,
-            'DS': DS,
-            'H': H,
             'LBL': LBL}
 
 def valid(model, valid_iter):
@@ -133,9 +128,9 @@ def valid(model, valid_iter):
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
-            seq, lbl = batch.seq, batch.lbl
+            seq, pn, pv, lbl = batch.seq, batch.pn, batch.pv, batch.lbl
             # print('expr:', ' '.join([itos[ch.item()] for ch in seq[:, 0]]))
-            out = model(seq)
+            out = model(seq, pn, pv)
 
             pred = out.max(dim=1)[1].cpu().numpy()
             lbl = lbl.cpu().numpy()
@@ -247,11 +242,13 @@ def train(model, iters, opt, optim, scheduler):
     for epoch in range(opt.nepoch):
         for i, batch in enumerate(train_iter):
             seq = batch.seq
+            pn = batch.pn
+            pv = batch.pv
             lbl = batch.lbl
 
             model.train()
             model.zero_grad()
-            out = model(seq)
+            out = model(seq, pn, pv)
             loss = criterion_clf(out, lbl)
             losses.append(loss.item())
 
@@ -300,26 +297,33 @@ class Model(nn.Module):
         self.num_words = embedding.num_embeddings
         self.edrop = nn.Dropout(drop)
 
-        self.rep2val = nn.Sequential(utils.LayerNormalization(self.hdim), nn.Dropout(drop),
+        self.rep2val = nn.Sequential(nn.Linear(self.hdim + self.embedding.embedding_dim * 2, self.hdim),
+                                 utils.LayerNormalization(self.hdim), nn.Dropout(drop),
                                  nn.Linear(self.hdim, 16), nn.ReLU(),
                                  utils.LayerNormalization(16), nn.Dropout(drop),
                                  nn.Linear(16, 16), nn.ReLU(),
                                  utils.LayerNormalization(16), nn.Dropout(drop),
                                  nn.Linear(16, 2))
+        self.emb2inp = nn.Linear(embedding.embedding_dim, embedding.embedding_dim)
 
-    def enc(self, seq):
+    def enc(self, seq, pn, pv):
         mask = seq.data.eq(self.padding_idx)
         len_total, bsz = seq.shape
         lens = len_total - mask.sum(dim=0)
 
         # inp = self.embedding_drop(True, seq)
-        inp = self.embedding(seq)
+        inp = self.emb2inp(self.embedding(seq))
         os = self.encoder(embs=inp, mask=1-mask, lens = lens)
         rep = os[lens - 1, range(bsz)]
+
+        pn = self.emb2inp(self.embedding(pn))
+        pv = self.emb2inp(self.embedding(pv))
+        rep = torch.cat([rep, pn[0], pv[0]], dim=-1)
+
         return rep
 
-    def forward(self, seq):
-        rep = self.enc(seq)
+    def forward(self, seq, pn, pv):
+        rep = self.enc(seq, pn, pv)
         val = self.rep2val(rep)
 
         return val

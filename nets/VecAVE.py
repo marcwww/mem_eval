@@ -20,7 +20,8 @@ class EncoderVecAVE(nn.Module):
         mask = input['mask']
         embs = embs * mask.float().unsqueeze(-1)
         embs = self.dropout(embs)
-        inps = self.emb2inp(embs)
+        # inps = self.emb2inp(embs)
+        inps = embs
         seq_len, bsz, edim = inps.shape
         res = torch.sum(inps, dim=0) / lens.float().unsqueeze(-1)
         # res = torch.max(embs, dim=0)[0]

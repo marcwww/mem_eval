@@ -4,21 +4,25 @@ from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
     listops_lstm, listops_srnn, listops_alstm, listops_sarnn, listops_ntm, \
     feval_lstm, feval_alstm, feval_sarnn, feval_srnn, feval_ntm, \
     flang_topnn, \
-    bisenti_srnn, bisenti_sarnn, bisenti_lstm, bisenti_vecave
+    sst2_srnn, sst2_sarnn, sst2_lstm, sst2_vecave, \
+    sst5_srnn, sst5_lstm, sst5_sarnn, sst5_alstm, sst5_ntm, \
+    sr_lstm, sr_alstm, sr_sarnn, sr_ntm, sr_srnn
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
     # group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
-    # group.add_argument('-enc_type', type=str, default='sarnn')
-    group.add_argument('-enc_type', type=str, default='vecave')
+    group.add_argument('-enc_type', type=str, default='sarnn')
+    # group.add_argument('-enc_type', type=str, default='vecave')
     # group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
 
     # group.add_argument('-task', type=str, default='listops')
     # group.add_argument('-task', type=str, default='flang')
-    group.add_argument('-task', type=str, default='bisenti')
+    # group.add_argument('-task', type=str, default='sst2')
+    # group.add_argument('-task', type=str, default='sst5')
+    group.add_argument('-task', type=str, default='sr')
     # group.add_argument('-task', type=str, default='feval')
     # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
@@ -110,21 +114,61 @@ def select_opt(opt, parser):
         feval_ntm.model_opts(parser)
         feval_ntm.train_opts(parser)
 
-    elif opt.task == 'bisenti' and opt.enc_type == 'srnn':
-        bisenti_srnn.model_opts(parser)
-        bisenti_srnn.train_opts(parser)
+    elif opt.task == 'sst2' and opt.enc_type == 'srnn':
+        sst2_srnn.model_opts(parser)
+        sst2_srnn.train_opts(parser)
 
-    elif opt.task == 'bisenti' and opt.enc_type == 'sarnn':
-        bisenti_sarnn.model_opts(parser)
-        bisenti_sarnn.train_opts(parser)
+    elif opt.task == 'sst2' and opt.enc_type == 'sarnn':
+        sst2_sarnn.model_opts(parser)
+        sst2_sarnn.train_opts(parser)
 
-    elif opt.task == 'bisenti' and opt.enc_type == 'lstm':
-        bisenti_lstm.model_opts(parser)
-        bisenti_lstm.train_opts(parser)
+    elif opt.task == 'sst2' and opt.enc_type == 'lstm':
+        sst2_lstm.model_opts(parser)
+        sst2_lstm.train_opts(parser)
 
-    elif opt.task == 'bisenti' and opt.enc_type == 'vecave':
-        bisenti_vecave.model_opts(parser)
-        bisenti_vecave.train_opts(parser)
+    elif opt.task == 'sst2' and opt.enc_type == 'vecave':
+        sst2_vecave.model_opts(parser)
+        sst2_vecave.train_opts(parser)
+
+    elif opt.task == 'sst5' and opt.enc_type == 'srnn':
+        sst5_srnn.model_opts(parser)
+        sst5_srnn.train_opts(parser)
+
+    elif opt.task == 'sst5' and opt.enc_type == 'lstm':
+        sst5_lstm.model_opts(parser)
+        sst5_lstm.train_opts(parser)
+
+    elif opt.task == 'sst5' and opt.enc_type == 'sarnn':
+        sst5_sarnn.model_opts(parser)
+        sst5_sarnn.train_opts(parser)
+
+    elif opt.task == 'sst5' and opt.enc_type == 'alstm':
+        sst5_alstm.model_opts(parser)
+        sst5_alstm.train_opts(parser)
+
+    elif opt.task == 'sst5' and opt.enc_type == 'ntm':
+        sst5_ntm.model_opts(parser)
+        sst5_ntm.train_opts(parser)
+
+    elif opt.task == 'sr' and opt.enc_type == 'lstm':
+        sr_lstm.model_opts(parser)
+        sr_lstm.train_opts(parser)
+
+    elif opt.task == 'sr' and opt.enc_type == 'alstm':
+        sr_alstm.model_opts(parser)
+        sr_alstm.train_opts(parser)
+
+    elif opt.task == 'sr' and opt.enc_type == 'sarnn':
+        sr_sarnn.model_opts(parser)
+        sr_sarnn.train_opts(parser)
+
+    elif opt.task == 'sr' and opt.enc_type == 'srnn':
+        sr_srnn.model_opts(parser)
+        sr_srnn.train_opts(parser)
+
+    elif opt.task == 'sr' and opt.enc_type == 'ntm':
+        sr_ntm.model_opts(parser)
+        sr_ntm.train_opts(parser)
 
     else:
         raise ModuleNotFoundError
