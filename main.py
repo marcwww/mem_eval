@@ -173,7 +173,7 @@ if __name__ == '__main__':
     if opt.enc_type == 'topnn':
         model.encoder.pos_embedding.weight = orthogonal_(model.encoder.pos_embedding.weight)
 
-    if opt.task in ['sst2', 'sst5'] and opt.emb_type == 'dense':
+    if opt.task in ['sst2', 'sst5', 'sr'] and opt.emb_type == 'dense':
         embedding.weight = uniform_(embedding.weight, -0.0001, 0.0001)
 
     # if opt.fload is not None:

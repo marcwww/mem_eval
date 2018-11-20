@@ -22,13 +22,13 @@ def train_opts(parser):
 
     group.add_argument('-ftrain', type=str,
                        default=os.path.join(SR,
-                                            'train.txt'))
+                                            'train.1seq.txt'))
     group.add_argument('-fvalid', type=str,
                        default=os.path.join(SR,
-                                            'test.txt'))
+                                            'test.1seq.txt'))
     group.add_argument('-ftest', type=str,
                        default=os.path.join(SR,
-                                            'test.txt'))
+                                            'test.1seq.txt'))
 
     group.add_argument('-fload', type=str, default=None)
     group.add_argument('-bsz', type=int, default=32)

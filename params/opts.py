@@ -10,10 +10,10 @@ from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
-    # group.add_argument('-enc_type', type=str, default='ntm')
+    group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
-    group.add_argument('-enc_type', type=str, default='sarnn')
+    # group.add_argument('-enc_type', type=str, default='sarnn')
     # group.add_argument('-enc_type', type=str, default='vecave')
     # group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
@@ -22,8 +22,8 @@ def general_opts(parser):
     # group.add_argument('-task', type=str, default='flang')
     # group.add_argument('-task', type=str, default='sst2')
     # group.add_argument('-task', type=str, default='sst5')
-    group.add_argument('-task', type=str, default='sr')
-    # group.add_argument('-task', type=str, default='feval')
+    # group.add_argument('-task', type=str, default='sr')
+    group.add_argument('-task', type=str, default='feval')
     # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
 

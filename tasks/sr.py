@@ -297,8 +297,14 @@ class Model(nn.Module):
         self.num_words = embedding.num_embeddings
         self.edrop = nn.Dropout(drop)
 
-        self.rep2val = nn.Sequential(nn.Linear(self.hdim + self.embedding.embedding_dim * 2, self.hdim),
-                                 utils.LayerNormalization(self.hdim), nn.Dropout(drop),
+        # self.rep2val = nn.Sequential(nn.Linear(self.hdim + self.embedding.embedding_dim * 2, self.hdim),
+        #                          utils.LayerNormalization(self.hdim), nn.Dropout(drop),
+        #                          nn.Linear(self.hdim, 16), nn.ReLU(),
+        #                          utils.LayerNormalization(16), nn.Dropout(drop),
+        #                          nn.Linear(16, 16), nn.ReLU(),
+        #                          utils.LayerNormalization(16), nn.Dropout(drop),
+        #                          nn.Linear(16, 2))
+        self.rep2val = nn.Sequential(utils.LayerNormalization(self.hdim), nn.Dropout(drop),
                                  nn.Linear(self.hdim, 16), nn.ReLU(),
                                  utils.LayerNormalization(16), nn.Dropout(drop),
                                  nn.Linear(16, 16), nn.ReLU(),
@@ -311,14 +317,9 @@ class Model(nn.Module):
         len_total, bsz = seq.shape
         lens = len_total - mask.sum(dim=0)
 
-        # inp = self.embedding_drop(True, seq)
         inp = self.emb2inp(self.embedding(seq))
         os = self.encoder(embs=inp, mask=1-mask, lens = lens)
         rep = os[lens - 1, range(bsz)]
-
-        pn = self.emb2inp(self.embedding(pn))
-        pv = self.emb2inp(self.embedding(pv))
-        rep = torch.cat([rep, pn[0], pv[0]], dim=-1)
 
         return rep
 

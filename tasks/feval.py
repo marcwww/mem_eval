@@ -26,21 +26,28 @@ class Example(object):
     def tokenizer_ds(self, ds):
         return [int(d) for d in ds.split()]
 
-def load_examples(fname):
+def load_examples(fname, seq_len_max=None):
     examples = []
+    ndiscard = 0
 
     with open(fname, 'r') as f:
         for line in f:
             expr, ds, h, val = \
                 line.strip().split('\t')
-            examples.append(Example(expr, ds, h, val))
+            # examples.append(Example(expr, ds, h, val))
 
+            if seq_len_max == None or len(expr.split()) <= seq_len_max:
+                examples.append(Example(expr, ds, h, val))
+            else:
+                ndiscard += 1
+        print('Discarding %d samples' % ndiscard)
     return examples
 
 def build_iters(**param):
 
     ftrain = param['ftrain']
     fvalid = param['fvalid']
+    seq_len_max = param['seq_len_max']
     ftest = None
     fanaly = None
     if 'ftest' in param:
@@ -52,7 +59,7 @@ def build_iters(**param):
     bsz = param['bsz']
     device = param['device']
 
-    examples_train = load_examples(ftrain)
+    examples_train = load_examples(ftrain, seq_len_max)
 
     EXPR = torchtext.data.Field(sequential=True, use_vocab=True,
                                pad_token=PAD,
