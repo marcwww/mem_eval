@@ -11,6 +11,7 @@ def model_opts(parser):
     group.add_argument('-emb_type', type=str, default='dense')
     group.add_argument('-N', type=int, default=10)
     group.add_argument('-M', type=int, default=100)
+    group.add_argument('-read_first', action='store_true', default=True)
 
 def train_opts(parser):
     group = parser.add_argument_group('train')

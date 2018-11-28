@@ -35,7 +35,8 @@ if __name__ == '__main__':
                             ftest=os.path.join('..', opt.ftest),
                             bsz=opt.bsz,
                             device=opt.gpu,
-                            sub_task=opt.sub_task)
+                            sub_task=opt.sub_task,
+                            seq_len_max=opt.seq_len_max)
 
     embedding = None
     embedding_enc = None
@@ -95,13 +96,15 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
@@ -112,7 +115,8 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
 
     model = None
     if embedding is None:

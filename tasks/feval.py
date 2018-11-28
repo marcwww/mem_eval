@@ -155,11 +155,11 @@ def valid(model, valid_iter):
 
     return accuracy
 
-def test_analy(model, analy_iter, enc):
+def test_analy(model, itos, analy_iter, enc):
     pred_lst = []
     true_lst = []
     fanalysis = getattr(model.encoder, 'f' + enc)
-    itos = ['<unk>', '<pad>', '/', '*', '-', '+', '3', '4', '9', '5', '8', '6', '7', '2', '1']
+    # itos = ['<unk>', '<pad>', '/', '*', '-', '+', '3', '4', '9', '5', '8', '6', '7', '2', '1']
 
     with torch.no_grad():
         model.eval()

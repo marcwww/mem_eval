@@ -5,7 +5,7 @@ def model_opts(parser):
     group.add_argument('-edim', type=int, default=300)
     group.add_argument('-hdim', type=int, default=300)
     group.add_argument('-odim', type=int, default=8)
-    group.add_argument('-dropout', type=float, default=0.2)
+    group.add_argument('-dropout', type=float, default=0.3)
 
     group.add_argument('-fix_emb', default=False, action='store_true')
     # group.add_argument('-emb_type', type=str, default='dense')
@@ -16,6 +16,7 @@ def model_opts(parser):
     # group.add_argument('-N', type=int, default=20)
     # group.add_argument('-N', type=int, default=30)
     group.add_argument('-M', type=int, default=300)
+    group.add_argument('-read_first', action='store_true', default=True)
 
 def train_opts(parser):
     group = parser.add_argument_group('train')
@@ -36,8 +37,8 @@ def train_opts(parser):
 
     group.add_argument('-fload', type=str, default=None)
     # group.add_argument('-bsz', type=int, default=32)
-    group.add_argument('-bsz', type=int, default=256)
-    # group.add_argument('-bsz', type=int, default=64)
+    # group.add_argument('-bsz', type=int, default=256)
+    group.add_argument('-bsz', type=int, default=64)
     # group.add_argument('-lr', type=float, default=1e-4)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

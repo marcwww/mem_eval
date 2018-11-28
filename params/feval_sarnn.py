@@ -11,7 +11,10 @@ def model_opts(parser):
     group.add_argument('-emb_type', type=str, default='dense')
     group.add_argument('-N', type=int, default=10)
     # group.add_argument('-N', type=int, default=30)
+    # group.add_argument('-M', type=int, default=20)
     group.add_argument('-M', type=int, default=100)
+    group.add_argument('-read_first', action='store_true', default=False)
+    # group.add_argument('-read_first', action='store_true', default=True)
 
 def train_opts(parser):
     group = parser.add_argument_group('train')
@@ -35,6 +38,10 @@ def train_opts(parser):
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'test_d30_mono.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test_d30.parenthesis.tsv'))
+
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FEVAL,
                                             'test_d30_ef.tsv'))
@@ -51,19 +58,20 @@ def train_opts(parser):
     # group.add_argument('-fanaly', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'analy_d10_mono.tsv'))
-    # group.add_argument('-fanaly', type=str,
-    #                    default=os.path.join(FEVAL,
-    #                                         'analy_d23_ne10.tsv'))
     group.add_argument('-fanaly', type=str,
                        default=os.path.join(FEVAL,
-                                            'analy_clustering.tsv'))
+                                            'analy_d23_ne10.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_clustering.tsv'))
     # group.add_argument('-fanaly', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'analy_clustering_plus_minus.tsv'))
 
-    group.add_argument('-fload', type=str, default='feval-overall-sarnn-1540522028.model')
+    group.add_argument('-fload', type=str, default='feval-overall-sarnn-1542679900.model')
     # group.add_argument('-bsz', type=int, default=32)
-    group.add_argument('-bsz', type=int, default=128)
+    # group.add_argument('-bsz', type=int, default=128)
+    group.add_argument('-bsz', type=int, default=64)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)
     # group.add_argument('-lr', type=float, default=5e-5)

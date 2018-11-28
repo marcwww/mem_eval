@@ -38,7 +38,8 @@ if __name__ == '__main__':
                             fanaly=os.path.join('..', opt.fanaly),
                             bsz=1,
                             device=opt.gpu,
-                            sub_task=opt.sub_task)
+                            sub_task=opt.sub_task,
+                            seq_len_max=opt.seq_len_max)
 
     embedding = None
     embedding_enc = None
@@ -98,13 +99,15 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
@@ -115,7 +118,8 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
 
     model = None
     if embedding is None:
@@ -146,4 +150,4 @@ if __name__ == '__main__':
     fname_dict['flstm'] = flstm
 
     with analy(model.encoder, fname_dict):
-        test_analy(model, res_iters['analy_iter'], opt.enc_type)
+        test_analy(model, SEQ.vocab.itos, res_iters['analy_iter'], opt.enc_type)

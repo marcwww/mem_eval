@@ -136,13 +136,15 @@ if __name__ == '__main__':
                                   cdim=opt.hdim,
                                   N=opt.N,
                                   M=opt.M,
-                                  drop=opt.dropout)
+                                  drop=opt.dropout,
+                                  read_first=opt.read_first)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                    cdim=opt.hdim,
@@ -152,7 +154,8 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
 
     if opt.enc_type == 'topnn':
         encoder = nets.EncoderTOPNN(idim=opt.edim,

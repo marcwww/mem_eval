@@ -22,10 +22,12 @@ class Example(object):
         self. dfct = int(dfct)
 
     def tokenizer_expr(self, seq):
-        return seq.split()
+        # return seq.split()
+        return list(reversed(seq.split()))
 
     def tokenizer_ds(self, ds):
-        return [int(d) for d in ds.split()]
+        # return [int(d) for d in ds.split()]
+        return list(reversed([int(d) for d in ds.split()]))
 
 def load_examples(fname):
     examples = []
@@ -34,6 +36,7 @@ def load_examples(fname):
         for line in f:
             expr, ds, h, val, dfct = \
                 line.strip().split('\t')
+
             examples.append(Example(expr, ds, h, val, dfct))
 
     return examples

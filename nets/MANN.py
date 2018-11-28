@@ -10,7 +10,7 @@ import json
 
 class MANNBaseEncoder(nn.Module):
 
-    def __init__(self, idim, cdim, N, M, dropout):
+    def __init__(self, idim, cdim, N, M, dropout, read_first):
         super(MANNBaseEncoder, self).__init__()
         self.idim = idim
         self.odim = cdim + M
@@ -20,6 +20,7 @@ class MANNBaseEncoder(nn.Module):
         self.controller = nn.LSTM(idim + M, cdim)
         self.dropout = nn.Dropout(dropout)
         self._reset_controller()
+        self.read_first = read_first
 
         self.h0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
         self.c0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
@@ -107,8 +108,13 @@ class MANNBaseEncoder(nn.Module):
             controller_outp, (h, c) = self.controller(controller_inp, (h, c))
             controller_outp = controller_outp.squeeze(0)
 
-            self.write(controller_outp, emb)
-            r = self.read(controller_outp)
+            if self.read_first:
+                r = self.read(controller_outp)
+                self.write(controller_outp, emb)
+            else:
+                self.write(controller_outp, emb)
+                r = self.read(controller_outp)
+
             o = torch.cat([controller_outp, r], dim=1)
             o = self.dropout(o)
 
