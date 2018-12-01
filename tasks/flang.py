@@ -94,6 +94,21 @@ def build_iters(**param):
             'H': H}
 
 def valid_detail(model, itos, valid_iter):
+
+    def num_extrem_vals(ds):
+        res = 0
+        for i, d in enumerate(ds):
+            if i == 0:
+                if d > ds[1]:
+                    res += 1
+            elif i == len(ds) - 1:
+                if d > ds[-2]:
+                    res += 1
+            elif d > ds[i - 1] and d > ds[i + 1]:
+                res += 1
+
+        return res
+
     nt = defaultdict(int)
     nc = defaultdict(int)
     acc = defaultdict(float)
@@ -118,6 +133,8 @@ def valid_detail(model, itos, valid_iter):
                                                   ds_pred.transpose(0, 1),
                                                   ds_tar.transpose(0, 1),
                                                   len_expr, len_ds, h):
+                ne = num_extrem_vals(d_tar[:l_d])
+
                 h_b = h_b.item()
                 e = list(e[:l_e].cpu().numpy())
                 d_pred = list(d_pred[:l_d].cpu().numpy())
@@ -128,16 +145,16 @@ def valid_detail(model, itos, valid_iter):
                     tree_pred = None
                 tree_tar = utils.to_tree_sd(d_tar, e)
                 if str(tree_pred) == str(tree_tar):
-                    nc[h_b] += 1
+                    nc[ne] += 1
                 else:
                     expr = ' '.join([itos[ch.item()] for ch in e if itos[ch] != PAD])
                     ds_b = ' '.join([str(d) for d in d_tar if d != PAD_DS])
-                    incorrect_predicts.append((expr, ds_b, str(h_b)))
+                    incorrect_predicts.append((expr, ds_b, str(ne)))
 
-                nt[h_b] += 1
+                nt[ne] += 1
 
-    for h in nc.keys():
-        acc[h] = nc[h]/nt[h]
+    for ne in nc.keys():
+        acc[ne] = nc[ne]/nt[ne]
 
     return acc, nt, incorrect_predicts
 

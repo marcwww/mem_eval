@@ -144,10 +144,12 @@ if __name__ == '__main__':
     fname_dict = {}
     fanaly_name = opt.fanaly.split('/')[-1].split('.')[0]
     if opt.enc_type in MANNS:
-        fenc = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s.txt' % (opt.task, fanaly_name, opt.enc_type)))
+        fenc = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s-%d.txt' % (opt.task, fanaly_name, opt.enc_type, utils.time_int())))
         fname_dict['f' + opt.enc_type] = fenc
-    flstm = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s_lstm.txt' % (opt.task, fanaly_name, opt.enc_type)))
+    flstm = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s_lstm-%d.txt' % (opt.task, fanaly_name, opt.enc_type, utils.time_int())))
     fname_dict['flstm'] = flstm
 
     with analy(model.encoder, fname_dict):
         test_analy(model, SEQ.vocab.itos, res_iters['analy_iter'], opt.enc_type)
+
+    print('Saved to', fname_dict)

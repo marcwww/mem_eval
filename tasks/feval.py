@@ -192,6 +192,21 @@ def test_analy(model, itos, analy_iter, enc):
     return accuracy
 
 def valid_detail(model, itos, valid_iter):
+
+    def num_extrem_vals(ds):
+        res = 0
+        for i, d in enumerate(ds):
+            if i == 0:
+                if d > ds[1]:
+                    res += 1
+            elif i == len(ds) - 1:
+                if d > ds[-2]:
+                    res += 1
+            elif d > ds[i - 1] and d > ds[i + 1]:
+                res += 1
+
+        return res
+
     pred_dict= {}
     true_dict = {}
     nsamples = defaultdict(int)
@@ -208,18 +223,24 @@ def valid_detail(model, itos, valid_iter):
             lbl = lbl.cpu().numpy()
             seq = seq.transpose(0, 1)
             ds = ds.transpose(0, 1)
-            for seq_b, pred_b, lbl_b, depth_b, ds_b, h_b in zip(seq, pred, lbl, depth, ds, h):
-                depth_b = depth_b.item()
+            bsz, len_total = ds.shape
+            mask_ds = ds.eq(PAD_DS)
+            lens_ds = len_total - mask_ds.sum(1)
+
+            for seq_b, pred_b, lbl_b, depth_b, ds_b, h_b, lens_b in zip(seq, pred, lbl, depth, ds, h, lens_ds):
+                ne = num_extrem_vals(ds_b[:lens_b])
+
+                # depth_b = depth_b.item()
                 pred_b = pred_b.item()
                 h_b = h_b.item()
                 # if depth_b > 49:
                 #     continue
-                if depth_b not in pred_dict:
-                    pred_dict[depth_b] = []
-                    true_dict[depth_b] = []
-                pred_dict[depth_b].append(pred_b)
-                true_dict[depth_b].append(lbl_b)
-                nsamples[depth_b] += 1
+                if ne not in pred_dict:
+                    pred_dict[ne] = []
+                    true_dict[ne] = []
+                pred_dict[ne].append(pred_b)
+                true_dict[ne].append(lbl_b)
+                nsamples[ne] += 1
 
                 if pred_b != lbl_b:
                     expr = ' '.join([itos[ch.item()] for ch in seq_b if itos[ch] != PAD])
@@ -228,8 +249,8 @@ def valid_detail(model, itos, valid_iter):
                     h_b = str(h_b)
                     incorrect_predicts.append((expr, ds_b, lbl_b, h_b))
 
-    for depth in pred_dict.keys():
-        acc[depth] = accuracy_score(true_dict[depth], pred_dict[depth])
+    for ne in pred_dict.keys():
+        acc[ne] = accuracy_score(true_dict[ne], pred_dict[ne])
 
     return acc, nsamples, incorrect_predicts
 

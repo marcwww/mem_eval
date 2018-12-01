@@ -10,6 +10,14 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
+      <webServer id="cf15f2f6-ebab-40bd-b6de-d856f2460a79" name="59" url="http://172.18.31.59">
+        <fileTransfer host="172.18.31.59" port="22" rootFolder="/home/snwang/exps_wkx" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>
