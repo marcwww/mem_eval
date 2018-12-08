@@ -10,6 +10,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tasks import polysemy, flang, listops, feval, sst2, sst5, sr
 from torch.nn.init import orthogonal_, uniform_
 import crash_on_ipy
+import sys
 
 if __name__ == '__main__':
     parser = argparse. \
@@ -17,9 +18,17 @@ if __name__ == '__main__':
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
-    opt = parser.parse_args()
+    if '-task' in sys.argv:
+        task = sys.argv[sys.argv.index('-task') + 1]
+    else:
+        task = parser._option_string_actions['-task'].default
 
-    parser = opts.select_opt(opt, parser)
+    if '-enc_type' in sys.argv:
+        enc_type = sys.argv[sys.argv.index('-enc_type') + 1]
+    else:
+        enc_type = parser._option_string_actions['-enc_type'].default
+
+    parser = opts.select_opt(task, enc_type, parser)
     opt = parser.parse_args()
 
     utils.init_seed(opt.seed)
@@ -179,14 +188,14 @@ if __name__ == '__main__':
     if opt.task in ['sst2', 'sst5', 'sr'] and opt.emb_type == 'dense':
         embedding.weight = uniform_(embedding.weight, -0.0001, 0.0001)
 
-    # if opt.fload is not None:
-    #     model_fname = opt.fload
-    #     location = {'cuda:' + str(opt.gpu): 'cuda:' + str(opt.gpu)} if opt.gpu != -1 else 'cpu'
-    #     model_path = os.path.join(RES, model_fname)
-    #     # model_path = os.path.join('..', model_path)
-    #     model_dict = torch.load(model_path, map_location=location)
-    #     model.load_state_dict(model_dict)
-    #     print('Loaded from ' + model_path)
+    if opt.fload is not None and opt.continue_training:
+        model_fname = opt.fload
+        location = {'cuda:' + str(opt.gpu): 'cuda:' + str(opt.gpu)} if opt.gpu != -1 else 'cpu'
+        model_path = os.path.join(RES, model_fname)
+        # model_path = os.path.join('..', model_path)
+        model_dict = torch.load(model_path, map_location=location)
+        model.load_state_dict(model_dict)
+        print('Loaded from ' + model_path)
 
     optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
                            lr=opt.lr)

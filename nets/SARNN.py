@@ -56,11 +56,15 @@ class EncoderSARNN(MANNBaseEncoder):
         # pushed: (bsz, M)
         pushed = self.hid2pushed(hid)
         # pushed: (bsz, N+1, 1, M)
-        pushed = pushed.unsqueeze(1).unsqueeze(1).expand(bsz, self.N + 1, 1, self.M)
-        m_push = torch.cat([pushed, m_stay[:, :, :-1]], dim=2)
+        pushed_expanded = pushed.unsqueeze(1).unsqueeze(1).expand(bsz, self.N + 1, 1, self.M)
+        m_push = torch.cat([pushed_expanded, m_stay[:, :, :-1]], dim=2)
+        mem_new_stay = (m_stay * p_stay).sum(dim=1)
+        mem_new_push = (m_push * p_push).sum(dim=1)
 
-        mem_new = (m_stay * p_stay).sum(dim=1) + (m_push * p_push).sum(dim=1)
+        # mem_new = (m_stay * p_stay).sum(dim=1) + (m_push * p_push).sum(dim=1)
+        mem_new = mem_new_stay + mem_new_push
         self.mem = mem_new
+        return mem_new_stay, mem_new_push, m_stay, m_push, pushed
 
     def read(self, controller_outp):
         r = self.mem[:, 0]
@@ -70,15 +74,12 @@ class EncoderSARNN(MANNBaseEncoder):
         # r: (bsz, M)
         # controller_outp: (bsz, cdim)
         # ctrl_info: (bsz, 3 + nstack * M)
-        def _write(self, controller_outp, input):
-            hid = controller_outp
-            policy = self.policy(input)
-            p_push, p_stay = torch.chunk(policy, 2, dim=1)
+
+        hid = controller_outp
+        policy = self.policy(input)
+        p_push, p_stay = torch.chunk(policy, 2, dim=1)
+        mem_stay, mem_push, m_stay, m_push, pushed = \
             self.update_stack(p_push, p_stay, hid)
-
-            return policy
-
-        policy = _write(self, controller_outp, input)
 
         if 'analysis_mode' in dir(self) and self.analysis_mode:
             assert 'fsarnn' in dir(self)
@@ -91,15 +92,24 @@ class EncoderSARNN(MANNBaseEncoder):
                     'all': policy[0].cpu().numpy().tolist(),
                     'max_pos': pos,
                     'max_val': val,
-                    'mem': self.mem[0].cpu().numpy().tolist()}
+                    'mem': self.mem[0].cpu().numpy().tolist(),
+                    'mem_stay': mem_stay[0].cpu().numpy().tolist(),
+                    'mem_push': mem_push[0].cpu().numpy().tolist(),
+                    'hid': hid[0].cpu().numpy().tolist(),
+                    'pushed': pushed[0].cpu().numpy().tolist()}
+            for i, m_push_i in enumerate(m_push[0]):
+                line['mem_push_%d' % i] = m_push_i.cpu().numpy().tolist()
+            for i, m_stay_i in enumerate(m_stay[0]):
+                line['mem_stay_%d' % i] = m_stay_i.cpu().numpy().tolist()
+
             line = json.dumps(line)
             if pos <= 5:
-                print(line)
+                # print(line)
                 print(line, file=self.fsarnn)
                 # print('stay after pop %d times with confidence %.3f' % (pos, val))
                 # print('stay after pop %d times with confidence %.3f' % (pos, val), file=self.fanalysis)
             else:
-                print(line)
+                # print(line)
                 print(line, file=self.fsarnn)
                 # print('push after pop %d times with confidence %.3f' % (pos - 6, val))
                 # print('push after pop %d times with confidence %.3f' % (pos-6, val), file=self.fanalysis)

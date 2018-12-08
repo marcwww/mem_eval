@@ -251,8 +251,11 @@ def valid_detail(model, itos, valid_iter):
 
     for ne in pred_dict.keys():
         acc[ne] = accuracy_score(true_dict[ne], pred_dict[ne])
+    true_whole = [lbl for ne in true_dict.keys() for lbl in true_dict[ne]]
+    pred_whole = [pred for ne in pred_dict.keys() for pred in pred_dict[ne]]
+    acc_total = accuracy_score(true_whole, pred_whole)
 
-    return acc, nsamples, incorrect_predicts
+    return acc, nsamples, incorrect_predicts, acc_total
 
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']

@@ -7,6 +7,7 @@ import argparse
 from torch import nn
 from tasks import flang
 import crash_on_ipy
+import sys
 
 
 if __name__ == '__main__':
@@ -15,9 +16,17 @@ if __name__ == '__main__':
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
-    opt = parser.parse_args()
+    if '-task' in sys.argv:
+        task = sys.argv[sys.argv.index('-task') + 1]
+    else:
+        task = parser._option_string_actions['-task'].default
 
-    parser = opts.select_opt(opt, parser)
+    if '-enc_type' in sys.argv:
+        enc_type = sys.argv[sys.argv.index('-enc_type') + 1]
+    else:
+        enc_type = parser._option_string_actions['-enc_type'].default
+
+    parser = opts.select_opt(task, enc_type, parser)
     opt = parser.parse_args()
 
     utils.init_seed(opt.seed)
@@ -143,7 +152,8 @@ if __name__ == '__main__':
         print(str(key) + ': ' + str(val))
 
     print('Valid result: \n', valid(model, res_iters['valid_iter']))
-    acc, nt, incorrect_predicts = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
+    acc, nt, incorrect_predicts, acc_total = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
+    print('Test result total:', acc_total)
     print('Test result: \n', sorted(acc.items()))
     print('# samples under different h\'s:', sorted(nt.items()))
 

@@ -26,7 +26,7 @@ def train_opts(parser):
                        default=os.path.join(FLANG,
                                             'test_d30_ef.tsv'))
 
-    group.add_argument('-fload', type=str, default='flang-overall-srnn-1541466642.model')
+    group.add_argument('-fload', type=str, default='flang-overall-srnn-1543813298.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-5)

@@ -10,6 +10,7 @@ import utils
 from collections import defaultdict
 from sklearn.metrics import accuracy_score, \
     precision_score, recall_score, f1_score
+import json
 
 class Example(object):
 
@@ -42,6 +43,9 @@ def build_iters(**param):
     if 'ftest' in param:
         ftest = param['ftest']
 
+    if 'fanaly' in param:
+        fanaly = param['fanaly']
+
     bsz = param['bsz']
     device = param['device']
 
@@ -68,6 +72,13 @@ def build_iters(**param):
                                                 ('ds', DS),
                                                 ('h', H)])
 
+    analy = None
+    if 'fanaly' in param:
+        examples_analy = load_examples(fanaly)
+        analy = Dataset(examples_analy, fields=[('expr', EXPR),
+                                                ('ds', DS),
+                                                ('h', H)])
+
     train_iter = torchtext.data.Iterator(train, batch_size=bsz,
                                          sort=False, repeat=False,
                                          sort_key=lambda x: len(x.expr),
@@ -78,6 +89,13 @@ def build_iters(**param):
                                          sort_key=lambda x: len(x.expr),
                                          sort_within_batch=True,
                                          device=device)
+    analy_iter = None
+    if 'fanaly' in param:
+        analy_iter = torchtext.data.Iterator(analy, batch_size=bsz,
+                                             sort=False, repeat=False,
+                                             sort_key=lambda x: len(x.expr),
+                                             sort_within_batch=True,
+                                             device=device)
     test_iter = None
     if 'ftest' in param:
         test_iter = torchtext.data.Iterator(test, batch_size=bsz,
@@ -89,6 +107,7 @@ def build_iters(**param):
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
             'test_iter': test_iter,
+            'analy_iter': analy_iter,
             'SEQ': EXPR,
             'DS': DS,
             'H': H}
@@ -145,18 +164,20 @@ def valid_detail(model, itos, valid_iter):
                     tree_pred = None
                 tree_tar = utils.to_tree_sd(d_tar, e)
                 if str(tree_pred) == str(tree_tar):
-                    nc[ne] += 1
+                    nc[h_b] += 1
                 else:
                     expr = ' '.join([itos[ch.item()] for ch in e if itos[ch] != PAD])
                     ds_b = ' '.join([str(d) for d in d_tar if d != PAD_DS])
-                    incorrect_predicts.append((expr, ds_b, str(ne)))
+                    incorrect_predicts.append((expr, ds_b, str(h_b)))
 
-                nt[ne] += 1
+                nt[h_b] += 1
 
-    for ne in nc.keys():
-        acc[ne] = nc[ne]/nt[ne]
+    for h_b in nc.keys():
+        acc[h_b] = nc[h_b]/nt[h_b]
 
-    return acc, nt, incorrect_predicts
+    acc_total = sum([nc[h] for h in nc.keys()])/sum([nt[h] for h in nt.keys()])
+
+    return acc, nt, incorrect_predicts, acc_total
 
 def valid(model, valid_iter):
     nt = 0
@@ -190,6 +211,53 @@ def valid(model, valid_iter):
                 if str(tree_pred) == str(tree_tar):
                     nc += 1
                 nt += 1
+
+    return nc / nt
+
+def test_analy(model, itos, analy_iter, enc):
+    nt = 0
+    nc = 0
+    padding_idx = model.padding_idx
+    fanalysis = getattr(model.encoder, 'f' + enc)
+
+    with torch.no_grad():
+        model.eval()
+        for i, batch in enumerate(analy_iter):
+            expr = batch.expr
+            mask_expr = expr.ne(padding_idx)
+            len_expr = mask_expr.sum(0)
+            ds_tar = batch.ds
+
+            out = model(expr)
+            ds_pred = out['ds'].squeeze(-1)
+            dstmask = (ds_tar > PAD_DS)
+            len_ds = dstmask.sum(0)
+
+            for e, d_pred, d_tar, l_e, l_d in zip(expr.transpose(0, 1),
+                                                  ds_pred.transpose(0, 1),
+                                                  ds_tar.transpose(0, 1),
+                                                  len_expr, len_ds):
+                e = list(e[:l_e].cpu().numpy())
+                d_pred = list(d_pred[:l_d].cpu().numpy())
+                d_tar = list(d_tar[:l_d].cpu().numpy())
+                try:
+                    tree_pred = utils.to_tree_sd(d_pred, e)
+                except:
+                    tree_pred = None
+                tree_tar = utils.to_tree_sd(d_tar, e)
+                if str(tree_pred) == str(tree_tar):
+                    nc += 1
+                nt += 1
+
+                is_correct = 1 if str(tree_pred) == str(tree_tar) else 0
+                expr = [itos[ch.item()] for ch in expr[:, 0]]
+                line = {'type': 'input',
+                        'idx': i,
+                        'expr': expr,
+                        'is_correct': is_correct}
+                line = json.dumps(line)
+                print(line)
+                print(line, file=fanalysis)
 
     return nc / nt
 

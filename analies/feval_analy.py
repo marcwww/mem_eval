@@ -8,7 +8,7 @@ from torch import nn
 from tasks import feval
 from utils import analy
 import crash_on_ipy
-
+import sys
 
 if __name__ == '__main__':
     parser = argparse. \
@@ -16,9 +16,17 @@ if __name__ == '__main__':
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
-    opt = parser.parse_args()
+    if '-task' in sys.argv:
+        task = sys.argv[sys.argv.index('-task') + 1]
+    else:
+        task = parser._option_string_actions['-task'].default
 
-    parser = opts.select_opt(opt, parser)
+    if '-enc_type' in sys.argv:
+        enc_type = sys.argv[sys.argv.index('-enc_type') + 1]
+    else:
+        enc_type = parser._option_string_actions['-enc_type'].default
+
+    parser = opts.select_opt(task, enc_type, parser)
     opt = parser.parse_args()
 
     utils.init_seed(opt.seed)

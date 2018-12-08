@@ -5,13 +5,15 @@ import utils
 from params import opts
 import argparse
 from torch import nn
-from tasks import feval
+from tasks import flang
+from utils import analy
 import crash_on_ipy
 import sys
 
+
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='feval_test.py',
+        ArgumentParser(description='flang_test.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
@@ -28,18 +30,22 @@ if __name__ == '__main__':
     parser = opts.select_opt(task, enc_type, parser)
     opt = parser.parse_args()
 
-    assert opt.task == 'feval'
+    utils.init_seed(opt.seed)
 
-    train = feval.train
-    valid = feval.valid
-    build_iters = feval.build_iters
-    valid_detail = feval.valid_detail
-    Model = feval.Model
+    assert opt.task == 'flang'
+
+    train = flang.train
+    valid = flang.valid
+    test_analy = flang.test_analy
+
+    build_iters = flang.build_iters
+    valid_detail = flang.valid_detail
+    Model = flang.Model
 
     res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
                             fvalid=os.path.join('..', opt.fvalid),
-                            ftest=os.path.join('..', opt.ftest),
-                            bsz=opt.bsz,
+                            fanaly=os.path.join('..', opt.fanaly),
+                            bsz=1,
                             device=opt.gpu,
                             sub_task=opt.sub_task,
                             seq_len_max=opt.seq_len_max)
@@ -144,16 +150,15 @@ if __name__ == '__main__':
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
 
-    print('Valid result: \n', valid(model, res_iters['valid_iter']))
-    acc, nt, incorrect_predicts, acc_total = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
-    print('Test result total: \n', acc_total)
-    print('Test result: \n', sorted(acc.items()))
-    print('# samples under different ne\'s:', sorted(nt.items()))
+    fname_dict = {}
+    fanaly_name = opt.fanaly.split('/')[-1].split('.')[0]
+    if opt.enc_type in MANNS:
+        fenc = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s-%d.txt' % (opt.task, fanaly_name, opt.enc_type, utils.time_int())))
+        fname_dict['f' + opt.enc_type] = fenc
+    flstm = os.path.join('..', os.path.join(ANALYSIS, '%s-%s-%s_lstm-%d.txt' % (opt.task, fanaly_name, opt.enc_type, utils.time_int())))
+    fname_dict['flstm'] = flstm
 
-    fincorrect = os.path.join(os.path.join('..', RES),
-                              'incor-%s-%s-%d.txt' % ('feval', opt.enc_type, utils.time_int()))
-    with open(fincorrect, 'w') as f:
-        for idx, line in enumerate(incorrect_predicts):
-            line = '\t'.join([str(idx)] + list(line)) + '\n'
-            f.write(line)
+    with analy(model.encoder, fname_dict):
+        test_analy(model, SEQ.vocab.itos, res_iters['analy_iter'], opt.enc_type)
 
+    print('Saved to', fname_dict)

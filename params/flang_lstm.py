@@ -26,8 +26,11 @@ def train_opts(parser):
     group.add_argument('-ftest', type=str,
                        default=os.path.join(FLANG,
                                             'test_d30_ef.tsv'))
+    group.add_argument('-fanaly', type=str,
+                       default=os.path.join(FLANG,
+                                            'analy_d23_ne10.tsv'))
 
-    group.add_argument('-fload', type=str, default='flang-overall-lstm-1541409561.model')
+    group.add_argument('-fload', type=str, default='flang-overall-lstm-1543814061.model')
     group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-lr', type=float, default=1e-3)
     # group.add_argument('-lr', type=float, default=5e-4)

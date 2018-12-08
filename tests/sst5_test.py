@@ -7,7 +7,7 @@ import argparse
 from torch import nn
 from tasks import sst5
 import crash_on_ipy
-
+import sys
 
 if __name__ == '__main__':
     parser = argparse. \
@@ -15,9 +15,17 @@ if __name__ == '__main__':
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
-    opt = parser.parse_args()
+    if '-task' in sys.argv:
+        task = sys.argv[sys.argv.index('-task') + 1]
+    else:
+        task = parser._option_string_actions['-task'].default
 
-    parser = opts.select_opt(opt, parser)
+    if '-enc_type' in sys.argv:
+        enc_type = sys.argv[sys.argv.index('-enc_type') + 1]
+    else:
+        enc_type = parser._option_string_actions['-enc_type'].default
+
+    parser = opts.select_opt(task, enc_type, parser)
     opt = parser.parse_args()
 
     utils.init_seed(opt.seed)
@@ -35,7 +43,7 @@ if __name__ == '__main__':
                             ftest=os.path.join('..', opt.ftest),
                             bsz=opt.bsz,
                             device=opt.gpu,
-                            sub_task=opt.sub_task)
+                            emb_type=opt.emb_type)
 
     embedding = None
     embedding_enc = None
@@ -95,13 +103,15 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'sarnn':
         encoder = nets.EncoderSARNN(idim=opt.edim,
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
     if opt.enc_type == 'lstm':
         encoder = nets.EncoderLSTM(idim=opt.edim,
                                     cdim=opt.hdim,
@@ -112,7 +122,13 @@ if __name__ == '__main__':
                                     cdim=opt.hdim,
                                     N=opt.N,
                                     M=opt.M,
-                                    drop=opt.dropout)
+                                    drop=opt.dropout,
+                                    read_first=opt.read_first)
+
+    if opt.enc_type == 'topnn':
+        encoder = nets.EncoderTOPNN(idim=opt.edim,
+                                cdim=opt.hdim,
+                                drop=opt.dropout)
 
     model = None
     if embedding is None:

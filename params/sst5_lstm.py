@@ -8,8 +8,8 @@ def model_opts(parser):
     group.add_argument('-dropout', type=float, default=0.3)
 
     group.add_argument('-fix_emb', default=False, action='store_true')
-    # group.add_argument('-emb_type', type=str, default='dense')
-    group.add_argument('-emb_type', type=str, default='glove.840B.300d')
+    group.add_argument('-emb_type', type=str, default='dense')
+    # group.add_argument('-emb_type', type=str, default='glove.840B.300d')
 
 def train_opts(parser):
     group = parser.add_argument_group('train')
@@ -31,7 +31,7 @@ def train_opts(parser):
                        default=os.path.join(SST5,
                                             'test.sst5.txt'))
 
-    group.add_argument('-fload', type=str, default='sst5-overall-lstm-1542342646.model')
+    group.add_argument('-fload', type=str, default='sst5-overall-lstm-1542344270.model')
     # group.add_argument('-bsz', type=int, default=64)
     group.add_argument('-bsz', type=int, default=256)
     # group.add_argument('-lr', type=float, default=1e-4)

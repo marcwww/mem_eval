@@ -32,141 +32,144 @@ def general_opts(parser):
     group.add_argument('-gpu', type=int, default=-1)
     group.add_argument('-test_level', type=int, default=1)
 
-def select_opt(opt, parser):
+    group.add_argument('-continue_training',
+                       action='store_true', default=False)
 
-    if opt.task == 'flang' and opt.enc_type == 'lstm':
+def select_opt(task, enc_type, parser):
+
+    if task == 'flang' and enc_type == 'lstm':
         flang_lstm.model_opts(parser)
         flang_lstm.train_opts(parser)
 
-    elif opt.task == 'flang' and opt.enc_type == 'srnn':
+    elif task == 'flang' and enc_type == 'srnn':
         flang_srnn.model_opts(parser)
         flang_srnn.train_opts(parser)
 
-    elif opt.task == 'flang' and opt.enc_type == 'alstm':
+    elif task == 'flang' and enc_type == 'alstm':
         flang_alstm.model_opts(parser)
         flang_alstm.train_opts(parser)
 
-    elif opt.task == 'flang' and opt.enc_type == 'sarnn':
+    elif task == 'flang' and enc_type == 'sarnn':
         flang_sarnn.model_opts(parser)
         flang_sarnn.train_opts(parser)
 
-    elif opt.task == 'flang' and opt.enc_type == 'ntm':
+    elif task == 'flang' and enc_type == 'ntm':
         flang_ntm.model_opts(parser)
         flang_ntm.train_opts(parser)
 
-    elif opt.task == 'flang' and opt.enc_type == 'topnn':
+    elif task == 'flang' and enc_type == 'topnn':
         flang_topnn.model_opts(parser)
         flang_topnn.train_opts(parser)
 
-    elif opt.task == 'polysemy' and opt.enc_type == 'lstm':
+    elif task == 'polysemy' and enc_type == 'lstm':
         polysemy_lstm.model_opts(parser)
         polysemy_lstm.train_opts(parser)
 
-    elif opt.task == 'polysemy' and opt.enc_type == 'alstm':
+    elif task == 'polysemy' and enc_type == 'alstm':
         polysemy_alstm.model_opts(parser)
         polysemy_alstm.train_opts(parser)
 
-    elif opt.task == 'polysemy' and opt.enc_type == 'sarnn':
+    elif task == 'polysemy' and enc_type == 'sarnn':
         polysemy_sarnn.model_opts(parser)
         polysemy_sarnn.train_opts(parser)
 
-    elif opt.task == 'polysemy' and opt.enc_type == 'ntm':
+    elif task == 'polysemy' and enc_type == 'ntm':
         polysemy_ntm.model_opts(parser)
         polysemy_ntm.train_opts(parser)
 
-    elif opt.task == 'listops' and opt.enc_type == 'srnn':
+    elif task == 'listops' and enc_type == 'srnn':
         listops_srnn.model_opts(parser)
         listops_srnn.train_opts(parser)
 
-    elif opt.task == 'listops' and opt.enc_type == 'lstm':
+    elif task == 'listops' and enc_type == 'lstm':
         listops_lstm.model_opts(parser)
         listops_lstm.train_opts(parser)
 
-    elif opt.task == 'listops' and opt.enc_type == 'alstm':
+    elif task == 'listops' and enc_type == 'alstm':
         listops_alstm.model_opts(parser)
         listops_alstm.train_opts(parser)
 
-    elif opt.task == 'listops' and opt.enc_type == 'sarnn':
+    elif task == 'listops' and enc_type == 'sarnn':
         listops_sarnn.model_opts(parser)
         listops_sarnn.train_opts(parser)
 
-    elif opt.task == 'listops' and opt.enc_type == 'ntm':
+    elif task == 'listops' and enc_type == 'ntm':
         listops_ntm.model_opts(parser)
         listops_ntm.train_opts(parser)
 
-    elif opt.task == 'feval' and opt.enc_type == 'lstm':
+    elif task == 'feval' and enc_type == 'lstm':
         feval_lstm.model_opts(parser)
         feval_lstm.train_opts(parser)
 
-    elif opt.task == 'feval' and opt.enc_type == 'alstm':
+    elif task == 'feval' and enc_type == 'alstm':
         feval_alstm.model_opts(parser)
         feval_alstm.train_opts(parser)
 
-    elif opt.task == 'feval' and opt.enc_type == 'sarnn':
+    elif task == 'feval' and enc_type == 'sarnn':
         feval_sarnn.model_opts(parser)
         feval_sarnn.train_opts(parser)
 
-    elif opt.task == 'feval' and opt.enc_type == 'srnn':
+    elif task == 'feval' and enc_type == 'srnn':
         feval_srnn.model_opts(parser)
         feval_srnn.train_opts(parser)
 
-    elif opt.task == 'feval' and opt.enc_type == 'ntm':
+    elif task == 'feval' and enc_type == 'ntm':
         feval_ntm.model_opts(parser)
         feval_ntm.train_opts(parser)
 
-    elif opt.task == 'sst2' and opt.enc_type == 'srnn':
+    elif task == 'sst2' and enc_type == 'srnn':
         sst2_srnn.model_opts(parser)
         sst2_srnn.train_opts(parser)
 
-    elif opt.task == 'sst2' and opt.enc_type == 'sarnn':
+    elif task == 'sst2' and enc_type == 'sarnn':
         sst2_sarnn.model_opts(parser)
         sst2_sarnn.train_opts(parser)
 
-    elif opt.task == 'sst2' and opt.enc_type == 'lstm':
+    elif task == 'sst2' and enc_type == 'lstm':
         sst2_lstm.model_opts(parser)
         sst2_lstm.train_opts(parser)
 
-    elif opt.task == 'sst2' and opt.enc_type == 'vecave':
+    elif task == 'sst2' and enc_type == 'vecave':
         sst2_vecave.model_opts(parser)
         sst2_vecave.train_opts(parser)
 
-    elif opt.task == 'sst5' and opt.enc_type == 'srnn':
+    elif task == 'sst5' and enc_type == 'srnn':
         sst5_srnn.model_opts(parser)
         sst5_srnn.train_opts(parser)
 
-    elif opt.task == 'sst5' and opt.enc_type == 'lstm':
+    elif task == 'sst5' and enc_type == 'lstm':
         sst5_lstm.model_opts(parser)
         sst5_lstm.train_opts(parser)
 
-    elif opt.task == 'sst5' and opt.enc_type == 'sarnn':
+    elif task == 'sst5' and enc_type == 'sarnn':
         sst5_sarnn.model_opts(parser)
         sst5_sarnn.train_opts(parser)
 
-    elif opt.task == 'sst5' and opt.enc_type == 'alstm':
+    elif task == 'sst5' and enc_type == 'alstm':
         sst5_alstm.model_opts(parser)
         sst5_alstm.train_opts(parser)
 
-    elif opt.task == 'sst5' and opt.enc_type == 'ntm':
+    elif task == 'sst5' and enc_type == 'ntm':
         sst5_ntm.model_opts(parser)
         sst5_ntm.train_opts(parser)
 
-    elif opt.task == 'sr' and opt.enc_type == 'lstm':
+    elif task == 'sr' and enc_type == 'lstm':
         sr_lstm.model_opts(parser)
         sr_lstm.train_opts(parser)
 
-    elif opt.task == 'sr' and opt.enc_type == 'alstm':
+    elif task == 'sr' and enc_type == 'alstm':
         sr_alstm.model_opts(parser)
         sr_alstm.train_opts(parser)
 
-    elif opt.task == 'sr' and opt.enc_type == 'sarnn':
+    elif task == 'sr' and enc_type == 'sarnn':
         sr_sarnn.model_opts(parser)
         sr_sarnn.train_opts(parser)
 
-    elif opt.task == 'sr' and opt.enc_type == 'srnn':
+    elif task == 'sr' and enc_type == 'srnn':
         sr_srnn.model_opts(parser)
         sr_srnn.train_opts(parser)
 
-    elif opt.task == 'sr' and opt.enc_type == 'ntm':
+    elif task == 'sr' and enc_type == 'ntm':
         sr_ntm.model_opts(parser)
         sr_ntm.train_opts(parser)
 

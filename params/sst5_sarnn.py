@@ -36,7 +36,7 @@ def train_opts(parser):
                        default=os.path.join(SST5,
                                             'test.sst5.txt'))
 
-    group.add_argument('-fload', type=str, default=None)
+    group.add_argument('-fload', type=str, default='sst5-overall-sarnn-1542380047.model')
     # group.add_argument('-bsz', type=int, default=32)
     group.add_argument('-bsz', type=int, default=256)
     # group.add_argument('-bsz', type=int, default=64)
