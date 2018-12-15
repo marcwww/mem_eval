@@ -188,8 +188,108 @@ def test_analy(model, itos, analy_iter, enc):
             true_lst.extend(lbl)
 
     accuracy = accuracy_score(true_lst, pred_lst)
-
     return accuracy
+
+def valid_mmc(model, itos, valid_iter):
+
+    def MMC(nlst, sdlst):
+        def combine(a0, a1):
+            def unfinised(n):
+                return isinstance(n, list) or isinstance(n, tuple)
+
+            if unfinised(a0):
+                if a1 == ')':
+                    lp, num = a0
+                    assert lp == '('
+                    return num
+                else:
+                    num, op = a0
+                    try:
+                        return eval(''.join([str(num), op, str(a1)]))
+                    except:
+                        return -1
+            else:
+                return (a0, a1)
+
+        N = 0
+        mmc = 0
+        mem = []
+        mem.append((nlst[0], sdlst[0]))
+
+        for n, sd in zip(nlst[1:], sdlst[1:] + [10000]):
+            while sd > mem[-1][1]:
+                a0, sd0 = mem.pop()
+                n = combine(a0, n)
+                if len(mem) == 0:
+                    break
+            mem.append((n, sd))
+            if len(mem) > mmc:
+                mmc = len(mem)
+
+        assert len(mem) == 1
+        return mmc
+
+    pred_dict= {}
+    true_dict = {}
+    nsamples = defaultdict(int)
+    acc = defaultdict(float)
+    incorrect_predicts = []
+
+    PAD_EXPR = None
+    for i, word in enumerate(itos):
+        if word == PAD:
+            PAD_EXPR = i
+
+    with torch.no_grad():
+        model.eval()
+        for i, batch in enumerate(valid_iter):
+            seq, lbl, depth, ds, h = batch.expr, batch.val, batch.h, batch.ds, batch.h
+            res_clf = model(seq)
+
+            pred = res_clf.max(dim=1)[1].cpu().numpy()
+            lbl = lbl.cpu().numpy()
+            seq = seq.transpose(0, 1)
+            bsz, len_total = seq.shape
+            mask_seq = seq.eq(PAD_EXPR)
+            lens_seq = len_total - mask_seq.sum(1)
+
+            ds = ds.transpose(0, 1)
+            bsz, len_total = ds.shape
+            mask_ds = ds.eq(PAD_DS)
+            lens_ds = len_total - mask_ds.sum(1)
+
+            for seq_b, pred_b, lbl_b, depth_b, ds_b, h_b, ld_b, ls_b in\
+                    zip(seq, pred, lbl, depth, ds, h, lens_ds, lens_seq):
+                nlst = list(map(lambda x:itos[x], seq_b[:ls_b]))
+                sdlst = list(ds_b[:ld_b].cpu().data.numpy())
+                mmc = MMC(nlst, sdlst)
+
+                # depth_b = depth_b.item()
+                pred_b = pred_b.item()
+                h_b = h_b.item()
+                # if depth_b > 49:
+                #     continue
+                if mmc not in pred_dict:
+                    pred_dict[mmc] = []
+                    true_dict[mmc] = []
+                pred_dict[mmc].append(pred_b)
+                true_dict[mmc].append(lbl_b)
+                nsamples[mmc] += 1
+
+                if pred_b != lbl_b:
+                    expr = ' '.join([itos[ch.item()] for ch in seq_b if itos[ch] != PAD])
+                    ds_b = ' '.join([str(d) for d in list(ds_b.cpu().numpy()) if d != PAD_DS])
+                    lbl_b = str(lbl_b)
+                    h_b = str(h_b)
+                    incorrect_predicts.append((expr, ds_b, lbl_b, h_b))
+
+    for mmc in pred_dict.keys():
+        acc[mmc] = accuracy_score(true_dict[mmc], pred_dict[mmc])
+    true_whole = [lbl for mmc in true_dict.keys() for lbl in true_dict[mmc]]
+    pred_whole = [pred for mmc in pred_dict.keys() for pred in pred_dict[mmc]]
+    acc_total = accuracy_score(true_whole, pred_whole)
+
+    return acc, nsamples, incorrect_predicts, acc_total
 
 def valid_detail(model, itos, valid_iter):
 

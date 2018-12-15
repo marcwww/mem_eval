@@ -2,8 +2,8 @@ from macros import *
 
 def model_opts(parser):
     group = parser.add_argument_group('model')
-    group.add_argument('-edim', type=int, default=300)
-    group.add_argument('-hdim', type=int, default=300)
+    group.add_argument('-edim', type=int, default=30)
+    group.add_argument('-hdim', type=int, default=30)
     group.add_argument('-odim', type=int, default=8)
     group.add_argument('-dropout', type=float, default=0.3)
 
@@ -31,7 +31,7 @@ def train_opts(parser):
                        default=os.path.join(SST5,
                                             'test.sst5.txt'))
 
-    group.add_argument('-fload', type=str, default='sst5-overall-lstm-1542344270.model')
+    group.add_argument('-fload', type=str, default='sst5-overall-lstm-1544590736.model')
     # group.add_argument('-bsz', type=int, default=64)
     group.add_argument('-bsz', type=int, default=256)
     # group.add_argument('-lr', type=float, default=1e-4)

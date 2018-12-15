@@ -5,13 +5,13 @@ import utils
 from params import opts
 import argparse
 from torch import nn
-from tasks import sst5
+from tasks import feval
 import crash_on_ipy
 import sys
 
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='sst5_test.py',
+        ArgumentParser(description='feval_test_ne.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)
@@ -28,22 +28,21 @@ if __name__ == '__main__':
     parser = opts.select_opt(task, enc_type, parser)
     opt = parser.parse_args()
 
-    utils.init_seed(opt.seed)
+    assert opt.task == 'feval'
 
-    assert opt.task == 'sst5'
-
-    train = sst5.train
-    valid = sst5.valid
-    build_iters = sst5.build_iters
-    valid_detail = sst5.valid_detail
-    Model = sst5.Model
+    train = feval.train
+    valid = feval.valid
+    build_iters = feval.build_iters
+    valid_detail = feval.valid_mmc
+    Model = feval.Model
 
     res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
                             fvalid=os.path.join('..', opt.fvalid),
                             ftest=os.path.join('..', opt.ftest),
                             bsz=opt.bsz,
                             device=opt.gpu,
-                            emb_type=opt.emb_type)
+                            sub_task=opt.sub_task,
+                            seq_len_max=opt.seq_len_max)
 
     embedding = None
     embedding_enc = None
@@ -125,11 +124,6 @@ if __name__ == '__main__':
                                     drop=opt.dropout,
                                     read_first=opt.read_first)
 
-    if opt.enc_type == 'topnn':
-        encoder = nets.EncoderTOPNN(idim=opt.edim,
-                                cdim=opt.hdim,
-                                drop=opt.dropout)
-
     model = None
     if embedding is None:
         model = Model(encoder, opt.odim, opt.dropout).to(device)
@@ -152,9 +146,9 @@ if __name__ == '__main__':
 
     print('Valid result: \n', valid(model, res_iters['valid_iter']))
     acc, nt, incorrect_predicts, acc_total = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
-    print('Test result(whole): \n', acc_total)
+    print('Test result total: \n', acc_total)
     print('Test result: \n', sorted(acc.items()))
-    print('# samples under different h\'s:', sorted(nt.items()))
+    print('# samples under different mmc\'s:', sorted(nt.items()))
 
     fincorrect = os.path.join(os.path.join('..', RES),
                               'incor-%s-%s-%d.txt' % ('feval', opt.enc_type, utils.time_int()))

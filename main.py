@@ -197,14 +197,19 @@ if __name__ == '__main__':
         model.load_state_dict(model_dict)
         print('Loaded from ' + model_path)
 
-    optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
-                           lr=opt.lr)
+
+    if opt.optim == 'adam':
+        optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
+                               lr=opt.lr)
     # optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
     #                        lr=opt.lr,
     #                        weight_decay=opt.wdecay)
     # optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()),
     #                        lr=opt.lr,
     #                        weight_decay=opt.wdecay)
+    if opt.optim == 'rmsprop':
+        optimizer = optim.RMSprop(params=filter(lambda p: p.requires_grad, model.parameters()),
+                                  lr=opt.lr)
     # optimizer = optim.RMSprop(params=filter(lambda p: p.requires_grad, model.parameters()),
     #                           momentum=0.9,
     #                           alpha=0.95,

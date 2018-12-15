@@ -99,7 +99,7 @@ class NTMReadHead(nn.Module):
         self.fc_read = nn.Linear(cdim, sum(self.read_lens))
         self.init_state = nn.Parameter(torch.zeros(N),
                                        requires_grad=False)
-        self.init_state[0] = 1
+        # self.init_state[0] = 1
 
     def create_new_state(self, bsz):
         return self.init_state.expand(bsz, self.N)
@@ -128,7 +128,7 @@ class NTMWriteHead(nn.Module):
         self.fc_write = nn.Linear(cdim, sum(self.write_lens))
         self.init_state = nn.Parameter(torch.zeros(N),
                                        requires_grad=False)
-        self.init_state[0] = 1
+        # self.init_state[0] = 1
 
     def create_new_state(self, bsz):
         return self.init_state.expand(bsz, self.N)

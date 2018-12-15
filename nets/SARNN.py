@@ -92,15 +92,16 @@ class EncoderSARNN(MANNBaseEncoder):
                     'all': policy[0].cpu().numpy().tolist(),
                     'max_pos': pos,
                     'max_val': val,
-                    'mem': self.mem[0].cpu().numpy().tolist(),
-                    'mem_stay': mem_stay[0].cpu().numpy().tolist(),
-                    'mem_push': mem_push[0].cpu().numpy().tolist(),
-                    'hid': hid[0].cpu().numpy().tolist(),
-                    'pushed': pushed[0].cpu().numpy().tolist()}
-            for i, m_push_i in enumerate(m_push[0]):
-                line['mem_push_%d' % i] = m_push_i.cpu().numpy().tolist()
-            for i, m_stay_i in enumerate(m_stay[0]):
-                line['mem_stay_%d' % i] = m_stay_i.cpu().numpy().tolist()
+                    'mem': self.mem[0].cpu().numpy().tolist()}
+
+            # line['mem_stay'] = mem_stay[0].cpu().numpy().tolist()
+            # line['mem_push'] = mem_push[0].cpu().numpy().tolist()
+            # line['hid'] = hid[0].cpu().numpy().tolist()
+            # line['pushed'] = pushed[0].cpu().numpy().tolist()
+            # for i, m_push_i in enumerate(m_push[0]):
+            #     line['mem_push_%d' % i] = m_push_i.cpu().numpy().tolist()
+            # for i, m_stay_i in enumerate(m_stay[0]):
+            #     line['mem_stay_%d' % i] = m_stay_i.cpu().numpy().tolist()
 
             line = json.dumps(line)
             if pos <= 5:

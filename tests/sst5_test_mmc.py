@@ -35,7 +35,7 @@ if __name__ == '__main__':
     train = sst5.train
     valid = sst5.valid
     build_iters = sst5.build_iters
-    valid_detail = sst5.valid_detail
+    valid_detail = sst5.valid_mmc
     Model = sst5.Model
 
     res_iters = build_iters(ftrain=os.path.join('..', opt.ftrain),
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     acc, nt, incorrect_predicts, acc_total = valid_detail(model, SEQ.vocab.itos, res_iters['test_iter'])
     print('Test result(whole): \n', acc_total)
     print('Test result: \n', sorted(acc.items()))
-    print('# samples under different h\'s:', sorted(nt.items()))
+    print('# samples under different mmc\'s:', sorted(nt.items()))
 
     fincorrect = os.path.join(os.path.join('..', RES),
                               'incor-%s-%s-%d.txt' % ('feval', opt.enc_type, utils.time_int()))

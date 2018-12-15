@@ -11,7 +11,7 @@ import sys
 
 if __name__ == '__main__':
     parser = argparse. \
-        ArgumentParser(description='feval_test.py',
+        ArgumentParser(description='feval_test_ne.py',
                        formatter_class=argparse.
                        ArgumentDefaultsHelpFormatter)
     opts.general_opts(parser)

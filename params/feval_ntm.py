@@ -37,6 +37,17 @@ def train_opts(parser):
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'test_d30.pn1.tsv'))
+
+    group.add_argument('-ftrain', type=str,
+                       default=os.path.join(FEVAL,
+                                            'train_d30.pn1.more.tsv'))
+    group.add_argument('-fvalid', type=str,
+                       default=os.path.join(FEVAL,
+                                            'valid_d30.pn1.more.tsv'))
+    group.add_argument('-ftest', type=str,
+                       default=os.path.join(FEVAL,
+                                            'test_d30.pn1.more.tsv'))
+
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'test_d30.pn1.easy.tsv'))
@@ -44,12 +55,12 @@ def train_opts(parser):
     #                    default=os.path.join(FEVAL,
     #                                         'test_d30.pn1.hard.tsv'))
 
-    group.add_argument('-ftrain', type=str,
-                       default=os.path.join(FEVAL,
-                                            'train_d30.tsv'))
-    group.add_argument('-fvalid', type=str,
-                       default=os.path.join(FEVAL,
-                                            'valid_d30.tsv'))
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'train_d30.tsv'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'valid_d30.tsv'))
     # group.add_argument('-ftrain', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'train_d30.parenthesis.tsv'))
@@ -58,25 +69,34 @@ def train_opts(parser):
     #                                         'valid_d30.parenthesis.tsv'))
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
+    #                                         'test_d30.parenthesis.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
     #                                         'test_d30.tsv'))
-    group.add_argument('-ftest', type=str,
-                       default=os.path.join(FEVAL,
-                                            'test_d30_ef.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test_d30_ef.tsv'))
     # group.add_argument('-fanaly', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'analy_d10.tsv'))
+    # group.add_argument('-fanaly', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'analy_d23_ne10.tsv'))
     group.add_argument('-fanaly', type=str,
                        default=os.path.join(FEVAL,
-                                            'analy_d23_ne10.tsv'))
+                                            'change_numerals.txt'))
 
-    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1542682215.model')
+    group.add_argument('-fload', type=str, default='feval-overall-ntm-1542682215.model')
     # group.add_argument('-fload', type=str, default='feval-overall-ntm-1540650703.model')
-    group.add_argument('-fload', type=str, default='feval-overall-ntm-1544185320.model')
+    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1544185320.model')
+    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1544293591.model')
+    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1542697944.model')
 
     group.add_argument('-bsz', type=int, default=32)
     # group.add_argument('-bsz', type=int, default=4)
     # group.add_argument('-bsz', type=int, default=256)
-    group.add_argument('-lr', type=float, default=1e-3)
+    # group.add_argument('-lr', type=float, default=1e-3)
+    group.add_argument('-lr', type=float, default=1e-4)
     # group.add_argument('-lr', type=float, default=5e-4)
     # group.add_argument('-lr', type=float, default=5e-5)
     group.add_argument('-wdecay', type=float, default=1.2e-6)
