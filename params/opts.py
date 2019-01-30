@@ -13,9 +13,9 @@ def general_opts(parser):
     # group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
-    # group.add_argument('-enc_type', type=str, default='sarnn')
+    group.add_argument('-enc_type', type=str, default='sarnn')
     # group.add_argument('-enc_type', type=str, default='vecave')
-    group.add_argument('-enc_type', type=str, default='lstm')
+    # group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
 
     # group.add_argument('-task', type=str, default='listops')
@@ -27,7 +27,8 @@ def general_opts(parser):
     # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
 
-    group.add_argument('-optim', type=str, default='rmsprop')
+    # group.add_argument('-optim', type=str, default='rmsprop')
+    group.add_argument('-optim', type=str, default='adam')
     group.add_argument('-nepoch', type=int, default=100)
     group.add_argument('-save_per', type=int, default=2)
     group.add_argument('-gpu', type=int, default=-1)

@@ -190,6 +190,79 @@ def test_analy(model, itos, analy_iter, enc):
     accuracy = accuracy_score(true_lst, pred_lst)
     return accuracy
 
+def MSU(nlst, modd=True):
+    VALUES = range(1, 10)
+    NUMERALS = list(map(str, VALUES)) + ['0']
+    OP_MAP = ['+', '-', '*', '/']
+    OPS = OP_MAP
+
+    def m10eval(op, a0, a1):
+        if op == '/':
+            res = int(a0) // int(a1) if not modd else int(a0) % int(a1)
+        else:
+            res = eval(a0 + op + a1)
+        res = res % 10
+        return str(res)
+
+    def reducible(mem, ninp):
+        if len(mem) < 2:
+            return False
+
+        top, sec = mem[0], mem[1]
+        if top in OPS and sec in NUMERALS:
+            return True
+        elif top in NUMERALS and sec[0] in NUMERALS and sec[1] in OPS:
+            if sec[1] in ['+', '-'] and ninp not in ['*', '/']:
+                return True
+            if sec[1] in ['*', '/']:
+                return True
+            return False
+        elif top == ')' and sec[0] == '(' and sec[1] in NUMERALS:
+            return True
+        elif top in NUMERALS and sec == '(' and ninp == ')':
+            return True
+
+        return False
+
+    def reduce(mem):
+        top = mem.pop(0)
+        sec = mem.pop(0)
+
+        if top in OPS and sec in NUMERALS:
+            reduced = (sec, top)
+        elif top in NUMERALS and sec[0] in NUMERALS and sec[1] in OPS:
+            reduced = m10eval(sec[1], sec[0], top)
+        elif top == ')' and sec[0] == '(' and sec[1] in NUMERALS:
+            reduced = sec[1]
+        elif top in NUMERALS and sec == '(':
+            reduced = (sec, top)
+        else:
+            raise NotImplementedError
+
+        return reduced
+
+    stack = []
+    reduce_lst = []
+    msu = 0
+    for t, n in enumerate(nlst):
+        stack.insert(0, n)
+        if len(stack) > msu:
+            msu = len(stack)
+        # reduce_lst.append(0)
+        if t != len(nlst) - 1:
+            ninp = nlst[t + 1]
+        else:
+            ninp = None
+
+        r = 0
+        while reducible(stack, ninp):
+            stack.insert(0, reduce(stack))
+            r += 1
+            # reduce_lst.append(1)
+        reduce_lst.append(r)
+
+    return msu
+
 def valid_mmc(model, itos, valid_iter):
 
     def MMC(nlst, sdlst):
@@ -262,7 +335,8 @@ def valid_mmc(model, itos, valid_iter):
                     zip(seq, pred, lbl, depth, ds, h, lens_ds, lens_seq):
                 nlst = list(map(lambda x:itos[x], seq_b[:ls_b]))
                 sdlst = list(ds_b[:ld_b].cpu().data.numpy())
-                mmc = MMC(nlst, sdlst)
+                # mmc = MMC(nlst, sdlst)
+                mmc = MSU(nlst)
 
                 # depth_b = depth_b.item()
                 pred_b = pred_b.item()
@@ -395,30 +469,31 @@ def train(model, iters, opt, optim, scheduler):
 
             utils.progress_bar(i / len(train_iter), loss, epoch)
 
-            if (i + 1) % int(1 / 4 * len(train_iter)) == 0:
+            # valid:
+            # if (i + 1) % int(1 / 4 * len(train_iter)) == 0:
                 # print('\r')
-                loss_ave = np.array(losses).sum() / len(losses)
-                gnorm_ave = np.array(gnorms).sum() / len(gnorms)
-                losses = []
-                gnorms = []
-                accurracy = \
-                    valid(model, valid_iter)
-                log_str = '{\'Epoch\':%d, \'Format\':\'a/l/g\', \'Metrics\':[%.4f, %.4f, %.4f]}' % \
-                          (epoch, accurracy, loss_ave, gnorm_ave)
-                print(log_str)
-                with open(log_path, 'a+') as f:
-                    f.write(log_str + '\n')
+        loss_ave = np.array(losses).sum() / len(losses)
+        gnorm_ave = np.array(gnorms).sum() / len(gnorms)
+        losses = []
+        gnorms = []
+        accurracy = \
+            valid(model, valid_iter)
+        log_str = '{\'Epoch\':%d, \'Format\':\'a/l/g\', \'Metrics\':[%.4f, %.4f, %.4f]}' % \
+                  (epoch, accurracy, loss_ave, gnorm_ave)
+        print(log_str)
+        with open(log_path, 'a+') as f:
+            f.write(log_str + '\n')
 
-                scheduler.step(loss_ave)
-                for param_group in optim.param_groups:
-                    print('learning rate:', param_group['lr'])
+        scheduler.step(loss_ave)
+        for param_group in optim.param_groups:
+            print('learning rate:', param_group['lr'])
 
-                if accurracy > best_performance:
-                    best_performance = accurracy
-                    model_fname = basename + ".model"
-                    save_path = os.path.join(RES, model_fname)
-                    print('Saving to ' + save_path)
-                    torch.save(model.state_dict(), save_path)
+        if accurracy > best_performance:
+            best_performance = accurracy
+            model_fname = basename + ".model"
+            save_path = os.path.join(RES, model_fname)
+            print('Saving to ' + save_path)
+            torch.save(model.state_dict(), save_path)
 
 class Model(nn.Module):
 
