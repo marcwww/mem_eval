@@ -10,10 +10,10 @@ from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
-    # group.add_argument('-enc_type', type=str, default='ntm')
+    group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
-    group.add_argument('-enc_type', type=str, default='sarnn')
+    # group.add_argument('-enc_type', type=str, default='sarnn')
     # group.add_argument('-enc_type', type=str, default='vecave')
     # group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')
@@ -29,7 +29,7 @@ def general_opts(parser):
 
     # group.add_argument('-optim', type=str, default='rmsprop')
     group.add_argument('-optim', type=str, default='adam')
-    group.add_argument('-nepoch', type=int, default=100)
+    group.add_argument('-nepoch', type=int, default=1000)
     group.add_argument('-save_per', type=int, default=2)
     group.add_argument('-gpu', type=int, default=-1)
     group.add_argument('-test_level', type=int, default=1)

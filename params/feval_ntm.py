@@ -5,14 +5,14 @@ def model_opts(parser):
     group.add_argument('-edim', type=int, default=100)
     group.add_argument('-hdim', type=int, default=100)
     group.add_argument('-odim', type=int, default=8)
-    # group.add_argument('-dropout', type=float, default=0.1)
-    group.add_argument('-dropout', type=float, default=0)
+    group.add_argument('-dropout', type=float, default=0.1)
+    # group.add_argument('-dropout', type=float, default=0)
 
     group.add_argument('-fix_emb', default=False, action='store_true')
     group.add_argument('-emb_type', type=str, default='dense')
     # group.add_argument('-N', type=int, default=2)
-    group.add_argument('-N', type=int, default=5)
-    # group.add_argument('-N', type=int, default=10)
+    # group.add_argument('-N', type=int, default=5)
+    group.add_argument('-N', type=int, default=10)
     group.add_argument('-M', type=int, default=100)
     group.add_argument('-read_first', action='store_true', default=True)
     # group.add_argument('-read_first', action='store_true', default=False)
@@ -49,15 +49,25 @@ def train_opts(parser):
     #                    default=os.path.join(FEVAL,
     #                                         'test.pa1.mmc3.txt'))
 
-    group.add_argument('-ftrain', type=str,
-                       default=os.path.join(FEVAL,
-                                            'train_d30.pn1.more.tsv'))
-    group.add_argument('-fvalid', type=str,
-                       default=os.path.join(FEVAL,
-                                            'valid_d30.pn1.more.tsv'))
-    group.add_argument('-ftest', type=str,
-                       default=os.path.join(FEVAL,
-                                            'test_d30.pn1.more.tsv'))
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'train.msu456.tsv'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'valid.msu456.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test.msu456.tsv'))
+
+    # group.add_argument('-ftrain', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'train_d30.pn1.more.tsv'))
+    # group.add_argument('-fvalid', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'valid_d30.pn1.more.tsv'))
+    # group.add_argument('-ftest', type=str,
+    #                    default=os.path.join(FEVAL,
+    #                                         'test_d30.pn1.more.tsv'))
 
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
@@ -72,15 +82,15 @@ def train_opts(parser):
     # group.add_argument('-fvalid', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'valid_d30.tsv'))
-    # group.add_argument('-ftrain', type=str,
-    #                    default=os.path.join(FEVAL,
-    #                                         'train_d30.parenthesis.tsv'))
-    # group.add_argument('-fvalid', type=str,
-    #                    default=os.path.join(FEVAL,
-    #                                         'valid_d30.parenthesis.tsv'))
-    # group.add_argument('-ftest', type=str,
-    #                    default=os.path.join(FEVAL,
-    #                                         'test_d30.parenthesis.tsv'))
+    group.add_argument('-ftrain', type=str,
+                       default=os.path.join(FEVAL,
+                                            'train_d30.parenthesis.tsv'))
+    group.add_argument('-fvalid', type=str,
+                       default=os.path.join(FEVAL,
+                                            'valid_d30.parenthesis.tsv'))
+    group.add_argument('-ftest', type=str,
+                       default=os.path.join(FEVAL,
+                                            'test_d30.parenthesis.tsv'))
     # group.add_argument('-ftest', type=str,
     #                    default=os.path.join(FEVAL,
     #                                         'test_d30.tsv'))
@@ -97,11 +107,12 @@ def train_opts(parser):
                        default=os.path.join(FEVAL,
                                             'change_numerals.txt'))
 
+    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1548861263.model')
     # group.add_argument('-fload', type=str, default='feval-overall-ntm-1542682215.model')
     # group.add_argument('-fload', type=str, default='feval-overall-ntm-1540650703.model')
-    group.add_argument('-fload', type=str, default='feval-overall-ntm-1544185320.model')
+    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1544185320.model')
     # group.add_argument('-fload', type=str, default='feval-overall-ntm-1544293591.model')
-    # group.add_argument('-fload', type=str, default='feval-overall-ntm-1542697944.model')
+    group.add_argument('-fload', type=str, default='feval-overall-ntm-1542697944.model')
     # group.add_argument('-fload', type=str, default='feval-overall-ntm-1545496071.model')
 
     group.add_argument('-bsz', type=int, default=32)

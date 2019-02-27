@@ -29,6 +29,7 @@ class Example(object):
 def load_examples(fname, seq_len_max=None):
     examples = []
     ndiscard = 0
+    lens = []
 
     with open(fname, 'r') as f:
         for line in f:
@@ -38,10 +39,13 @@ def load_examples(fname, seq_len_max=None):
 
             if seq_len_max == None or len(expr.split()) <= seq_len_max:
                 examples.append(Example(expr, ds, h, val))
+                lens.append(len(expr))
             else:
                 ndiscard += 1
         print('Discarding %d samples' % ndiscard)
-    return examples
+
+    len_ave = np.mean(lens)
+    return examples, len_ave
 
 def build_iters(**param):
 
@@ -59,7 +63,7 @@ def build_iters(**param):
     bsz = param['bsz']
     device = param['device']
 
-    examples_train = load_examples(ftrain, seq_len_max)
+    examples_train, len_ave = load_examples(ftrain, seq_len_max)
 
     EXPR = torchtext.data.Field(sequential=True, use_vocab=True,
                                pad_token=PAD,
@@ -68,21 +72,26 @@ def build_iters(**param):
     DS = torchtext.data.Field(sequential=True, use_vocab=False, pad_token=PAD_DS)
     H = torchtext.data.Field(sequential=False, use_vocab=False)
     VAL = torchtext.data.Field(sequential=False, use_vocab=False)
-
     train = Dataset(examples_train, fields=[('expr', EXPR),
                                             ('ds', DS),
                                             ('h', H),
                                             ('val', VAL)])
     EXPR.build_vocab(train)
-    examples_valid = load_examples(fvalid)
+    examples_valid, _ = load_examples(fvalid)
     valid = Dataset(examples_valid, fields=[('expr', EXPR),
                                             ('ds', DS),
                                             ('h', H),
                                             ('val', VAL)])
 
+    def batch_size_fn(new_example, current_count, ebsz):
+        return ebsz + (len(new_example.expr) / len_ave) ** 0.5
+        # return ebsz + (len(new_example.expr) / len_ave)
+        # return ebsz + len(new_example.expr)
+        # return current_count
+
     test = None
     if 'ftest' in param:
-        examples_test = load_examples(ftest)
+        examples_test, _ = load_examples(ftest)
         test = Dataset(examples_test, fields=[('expr', EXPR),
                                             ('ds', DS),
                                             ('h', H),
@@ -90,37 +99,44 @@ def build_iters(**param):
 
     analy = None
     if 'fanaly' in param:
-        examples_analy  = load_examples(fanaly)
+        examples_analy, _ = load_examples(fanaly)
         analy = Dataset(examples_analy, fields=[('expr', EXPR),
                                             ('ds', DS),
                                             ('h', H),
                                             ('val', VAL)])
 
-    train_iter = torchtext.data.Iterator(train, batch_size=bsz,
-                                         sort=False, repeat=False,
+    train_iter = utils.BucketIterator(train, batch_size=bsz,
+                                         sort=True,
+                                         shuffle=True,
+                                         repeat=False,
                                          sort_key=lambda x: len(x.expr),
-                                         sort_within_batch=True,
+                                         batch_size_fn=batch_size_fn,
                                          device=device)
-    valid_iter = torchtext.data.Iterator(valid, batch_size=bsz,
-                                         sort=False, repeat=False,
+    valid_iter = utils.BucketIterator(valid, batch_size=bsz,
+                                         sort=True,
+                                         shuffle=True,
+                                         repeat=False,
                                          sort_key=lambda x: len(x.expr),
-                                         sort_within_batch=True,
+                                         batch_size_fn=batch_size_fn,
                                          device=device)
     test_iter = None
     if 'ftest' in param:
-        test_iter = torchtext.data.Iterator(test, batch_size=bsz,
-                                             sort=False, repeat=False,
-                                             sort_key=lambda x: len(x.expr),
-                                             sort_within_batch=True,
-                                             device=device)
+        test_iter = utils.BucketIterator(test, batch_size=bsz,
+                                         sort=True,
+                                         shuffle=True,
+                                         repeat=False,
+                                         sort_key=lambda x: len(x.expr),
+                                         batch_size_fn=batch_size_fn,
+                                         device=device)
     analy_iter = None
     if 'fanaly' in param:
-        analy_iter = torchtext.data.Iterator(analy, batch_size=bsz,
-                                             sort=False, repeat=False,
-                                             sort_key=lambda x: len(x.expr),
-                                             sort_within_batch=True,
-                                             device=device)
-
+        analy_iter = utils.BucketIterator(analy, batch_size=bsz,
+                                         sort=True,
+                                         shuffle=True,
+                                         repeat=False,
+                                         sort_key=lambda x: len(x.expr),
+                                         batch_size_fn=batch_size_fn,
+                                         device=device)
 
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
@@ -198,7 +214,8 @@ def MSU(nlst, modd=True):
 
     def m10eval(op, a0, a1):
         if op == '/':
-            res = int(a0) // int(a1) if not modd else int(a0) % int(a1)
+            # res = int(a0) // int(a1) if not modd else int(a0) % int(a1)
+            res = int(a0) + int(a1)
         else:
             res = eval(a0 + op + a1)
         res = res % 10
@@ -467,7 +484,7 @@ def train(model, iters, opt, optim, scheduler):
             optim.step()
             loss = {'loss': loss.item(), 'gnorm': gnorm}
 
-            utils.progress_bar(i / len(train_iter), loss, epoch)
+            utils.progress_bar(i / train_iter.nbatch, loss, epoch)
 
             # valid:
             # if (i + 1) % int(1 / 4 * len(train_iter)) == 0:
