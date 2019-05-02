@@ -13,18 +13,18 @@ class MANNBaseEncoder(nn.Module):
     def __init__(self, idim, cdim, N, M, dropout, read_first):
         super(MANNBaseEncoder, self).__init__()
         self.idim = idim
-        self.odim = cdim + M
+        self.odim = cdim + M * 2
         self.cdim = cdim
         self.N = N
         self.M = M
-        self.controller = nn.LSTM(idim + M, cdim)
+        self.controller = nn.LSTM(idim + M * 2, cdim)
         self.dropout = nn.Dropout(dropout)
         self._reset_controller()
         self.read_first = read_first
 
-        self.h0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
-        self.c0 = nn.Parameter(torch.randn(cdim) * 0.05, requires_grad=True)
-        self.r0 = nn.Parameter(torch.randn(1, M) * 0.02, requires_grad=False)
+        self.h0 = nn.Parameter(torch.randn(1, 1, cdim) * 0.05, requires_grad=True)
+        self.c0 = nn.Parameter(torch.randn(1, 1, cdim) * 0.05, requires_grad=True)
+        self.r0 = nn.Parameter(torch.randn(1, M * 2) * 0.02, requires_grad=False)
 
     def _reset_controller(self):
         for p in self.controller.parameters():
@@ -83,9 +83,9 @@ class MANNBaseEncoder(nn.Module):
         self.reset_write(bsz)
         self.reset_mem(bsz)
 
-        h = self.h0.expand(1, bsz, self.cdim).contiguous()
-        c = self.c0.expand(1, bsz, self.cdim).contiguous()
-        r = self.r0.expand(bsz, self.M).contiguous()
+        h = self.h0.repeat(1, bsz, 1)
+        c = self.c0.repeat(1, bsz, 1)
+        r = self.r0.repeat(bsz, 1)
 
         hs = []
         cs = []
@@ -129,5 +129,6 @@ class MANNBaseEncoder(nn.Module):
         return os
 
 
-
-
+# TODO: two heads for NTM
+# TODO: read top two for SARNN
+# TODO: recursive SARNN

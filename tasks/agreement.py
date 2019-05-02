@@ -31,8 +31,8 @@ def load_examples(fname):
 
     return examples
 
-def build_iters(param_iter):
 
+def build_iters(param_iter):
     ftrain = param_iter['ftrain']
     fvalid = param_iter['fvalid']
     bsz = param_iter['bsz']
@@ -69,21 +69,23 @@ def build_iters(param_iter):
             'valid_iter': valid_iter,
             'SEQ': SEQ}
 
+
 def build_iters_test(ftests, SEQ, bsz, device):
     iters = []
     for ftest in ftests:
         examples = load_examples(ftest)
         test = Dataset(examples, fields=[('sen', SEQ),
-                                    ('sgold', SEQ),
-                                    ('sdiff', SEQ)])
+                                         ('sgold', SEQ),
+                                         ('sdiff', SEQ)])
         iter = torchtext.data.Iterator(test, batch_size=bsz,
-                                             sort=False, repeat=False,
-                                             sort_key=lambda x: len(x.sgold),
-                                             sort_within_batch=True,
-                                             device=device)
+                                       sort=False, repeat=False,
+                                       sort_key=lambda x: len(x.sgold),
+                                       sort_within_batch=True,
+                                       device=device)
         iters.append(iter)
 
     return iters
+
 
 def valid(model, valid_iter):
     nc = 0
@@ -97,12 +99,12 @@ def valid(model, valid_iter):
             bsz = next_words.shape[1]
 
             lens = sgold.ne(model.padding_idx).sum(0)
-            final_word_logits = next_words[lens-2, range(bsz)]
-            gold = sgold[lens-1, range(bsz)]
-            diff = sdiff[lens-1, range(bsz)]
+            final_word_logits = next_words[lens - 2, range(bsz)]
+            gold = sgold[lens - 1, range(bsz)]
+            diff = sdiff[lens - 1, range(bsz)]
 
             prob_diff = final_word_logits[range(bsz), gold] - \
-                    final_word_logits[range(bsz), diff]
+                        final_word_logits[range(bsz), diff]
 
             nc += prob_diff.gt(0).sum().item()
             nt += bsz
@@ -117,6 +119,7 @@ def valid(model, valid_iter):
     accuracy = nc / nt
     return accuracy
 
+
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
     valid_iter = iters['valid_iter']
@@ -124,9 +127,9 @@ def train(model, iters, opt, optim, scheduler):
     criterion_lm = nn.CrossEntropyLoss(ignore_index=model.padding_idx)
 
     basename = "{}-{}-{}-{}".format(opt.task,
-                                       opt.sub_task,
-                                       opt.enc_type,
-                                       utils.time_int())
+                                    opt.sub_task,
+                                    opt.enc_type,
+                                    utils.time_int())
     log_fname = basename + ".json"
     log_path = os.path.join(RES, log_fname)
     with open(log_path, 'w') as f:
@@ -175,6 +178,7 @@ def train(model, iters, opt, optim, scheduler):
                     print('Saving to ' + save_path)
                     torch.save(model.state_dict(), save_path)
 
+
 class Model(nn.Module):
 
     def __init__(self, encoder, embedding, edrop):
@@ -210,6 +214,3 @@ class Model(nn.Module):
         # next_words = self.out(output)
 
         return next_words
-
-
-

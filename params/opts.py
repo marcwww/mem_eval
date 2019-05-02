@@ -10,10 +10,10 @@ from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
-    group.add_argument('-enc_type', type=str, default='ntm')
+    # group.add_argument('-enc_type', type=str, default='ntm')
     # group.add_argument('-enc_type', type=str, default='srnn')
     # group.add_argument('-enc_type', type=str, default='topnn')
-    # group.add_argument('-enc_type', type=str, default='sarnn')
+    group.add_argument('-enc_type', type=str, default='sarnn')
     # group.add_argument('-enc_type', type=str, default='vecave')
     # group.add_argument('-enc_type', type=str, default='lstm')
     # group.add_argument('-enc_type', type=str, default='alstm')

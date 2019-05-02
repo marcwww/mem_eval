@@ -105,8 +105,8 @@ if __name__ == '__main__':
 
         TAR = res_iters['TAR']
         embedding_dec = nn.Embedding(num_embeddings=len(TAR.vocab.itos),
-                                 embedding_dim=opt.edim,
-                                 padding_idx=TAR.vocab.stoi[PAD])
+                                     embedding_dim=opt.edim,
+                                     padding_idx=TAR.vocab.stoi[PAD])
         embedding_dec.weight.requires_grad = not opt.fix_emb
 
     location = opt.gpu if torch.cuda.is_available() and opt.gpu != -1 else 'cpu'
@@ -169,13 +169,13 @@ if __name__ == '__main__':
 
     if opt.enc_type == 'topnn':
         encoder = nets.EncoderTOPNN(idim=opt.edim,
-                                cdim=opt.hdim,
-                                drop=opt.dropout)
+                                    cdim=opt.hdim,
+                                    drop=opt.dropout)
 
     if opt.enc_type == 'vecave':
         encoder = nets.EncoderVecAVE(idim=opt.edim,
-                                cdim=opt.hdim,
-                                drop=opt.dropout)
+                                     cdim=opt.hdim,
+                                     drop=opt.dropout)
 
     model = None
     if embedding is None:
@@ -197,7 +197,6 @@ if __name__ == '__main__':
         model_dict = torch.load(model_path, map_location=location)
         model.load_state_dict(model_dict)
         print('Loaded from ' + model_path)
-
 
     if opt.optim == 'adam':
         optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
@@ -223,4 +222,3 @@ if __name__ == '__main__':
     for key, val in param_str.items():
         print(str(key) + ': ' + str(val))
     train(model, res_iters, opt, optimizer, scheduler)
-

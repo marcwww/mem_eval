@@ -12,6 +12,8 @@ from sklearn.metrics import accuracy_score, \
 from collections import defaultdict
 
 parenthesis = {'(', ')'}
+
+
 class Example(object):
 
     def __init__(self, seq, lbl):
@@ -26,6 +28,7 @@ class Example(object):
         return list(filter(lambda x: x not in parenthesis, seq.split()))
         # return seq.split()
 
+
 def ConvertBinaryBracketedSeq(seq):
     tokens, transitions = [], []
     for item in seq:
@@ -36,6 +39,7 @@ def ConvertBinaryBracketedSeq(seq):
 
     return tokens, transitions
 
+
 class node(object):
     def __init__(self, idx, is_leaf, p=None, l=None, r=None, d=1):
         self.idx = idx
@@ -44,6 +48,7 @@ class node(object):
         self.r = r
         self.d = d
         self.is_leaf = is_leaf
+
 
 def reconstruct_tree(transitions):
     stack = []
@@ -56,13 +61,14 @@ def reconstruct_tree(transitions):
         if act == T_REDUCE:
             r = stack.pop(-1)
             l = stack.pop(-1)
-            n = node(idx, False, p=None, l=l, r=r, d=max(r.d, l.d)+1)
+            n = node(idx, False, p=None, l=l, r=r, d=max(r.d, l.d) + 1)
             idx += 1
             l.p = n
             r.p = n
             stack.append(n)
     assert len(stack) == 1
     return stack[0]
+
 
 def load_examples(fname, seq_len_max=None):
     examples = []
@@ -73,8 +79,8 @@ def load_examples(fname, seq_len_max=None):
             lbl, seq = \
                 line.strip().split('\t')
             e = Example(seq, lbl)
-            if  seq_len_max == None or \
-                len(e.transitions) <= seq_len_max:
+            if seq_len_max == None or \
+                    len(e.transitions) <= seq_len_max:
                 # len(e.seq) <= seq_len_max:
                 examples.append(e)
             else:
@@ -82,8 +88,8 @@ def load_examples(fname, seq_len_max=None):
     print('Discarding %d samples' % ndiscard)
     return examples
 
-def build_iters(**param):
 
+def build_iters(**param):
     ftrain = param['ftrain']
     fvalid = param['fvalid']
     seq_len_max = param['seq_len_max']
@@ -126,6 +132,7 @@ def build_iters(**param):
             'valid_iter': valid_iter,
             'SEQ': SEQ}
 
+
 def valid(model, valid_iter):
     pred_lst = []
     true_lst = []
@@ -134,7 +141,7 @@ def valid(model, valid_iter):
         model.eval()
         for i, batch in enumerate(valid_iter):
             seq, lbl = batch.seq, batch.lbl
-            res= model(seq)
+            res = model(seq)
             res_clf = res['res_clf']
 
             pred = res_clf.max(dim=1)[1].cpu().numpy()
@@ -146,8 +153,9 @@ def valid(model, valid_iter):
 
     return accuracy
 
+
 def valid_detail(model, valid_iter):
-    pred_dict= {}
+    pred_dict = {}
     true_dict = {}
     nsamples = defaultdict(int)
     acc = defaultdict(float)
@@ -156,7 +164,7 @@ def valid_detail(model, valid_iter):
         model.eval()
         for i, batch in enumerate(valid_iter):
             seq, lbl, depth = batch.seq, batch.lbl, batch.depth
-            res= model(seq)
+            res = model(seq)
             res_clf = res['res_clf']
 
             pred = res_clf.max(dim=1)[1].cpu().numpy()
@@ -177,6 +185,7 @@ def valid_detail(model, valid_iter):
 
     return acc, nsamples
 
+
 def train(model, iters, opt, optim, scheduler):
     train_iter = iters['train_iter']
     valid_iter = iters['valid_iter']
@@ -184,9 +193,9 @@ def train(model, iters, opt, optim, scheduler):
     criterion_lm = nn.CrossEntropyLoss(ignore_index=model.padding_idx)
 
     basename = "{}-{}-{}-{}".format(opt.task,
-                                       opt.sub_task,
-                                       opt.enc_type,
-                                       utils.time_int())
+                                    opt.sub_task,
+                                    opt.enc_type,
+                                    utils.time_int())
     log_fname = basename + ".json"
     log_path = os.path.join(RES, log_fname)
     with open(log_path, 'w') as f:
@@ -215,7 +224,7 @@ def train(model, iters, opt, optim, scheduler):
             loss_lm = criterion_lm(next_words.view(-1, model.num_words),
                                    seq_lm[1:].view(-1))
 
-            loss = (loss_clf + opt.lm_coef * loss_lm)/(1 + opt.lm_coef)
+            loss = (loss_clf + opt.lm_coef * loss_lm) / (1 + opt.lm_coef)
             losses.append(loss.item())
 
             loss.backward()
@@ -252,6 +261,7 @@ def train(model, iters, opt, optim, scheduler):
                     print('Saving to ' + save_path)
                     torch.save(model.state_dict(), save_path)
 
+
 class Model(nn.Module):
 
     def __init__(self, encoder, embedding, drop):
@@ -274,7 +284,6 @@ class Model(nn.Module):
         self.edrop = nn.Dropout(drop)
         self.e2i = nn.Linear(encoder.idim, encoder.idim)
 
-
     def enc(self, seq):
         mask = seq.data.eq(self.padding_idx)
         len_total, bsz = seq.shape
@@ -282,9 +291,9 @@ class Model(nn.Module):
         # inp = self.embedding(seq)
         embs = self.embedding(seq)
         inp = self.e2i(embs)
-        os = self.encoder(embs=inp, mask=1-mask, lens = lens)
+        os = self.encoder(embs=inp, mask=1 - mask, lens=lens)
 
-        rep = os[lens-1, range(bsz)]
+        rep = os[lens - 1, range(bsz)]
         return rep, os
 
     def forward(self, seq):
@@ -293,8 +302,5 @@ class Model(nn.Module):
         next_words = self.out2esz(os).matmul(w_t)
 
         res_clf = self.clf(rep)
-        return {'res_clf':res_clf,
+        return {'res_clf': res_clf,
                 'next_words': next_words}
-
-
-
