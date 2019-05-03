@@ -2,19 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2cd814a6-0683-48d0-b9f3-abe9aedd5438" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/docs/errs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/agr_alstm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/agr_lstm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/agr_ntm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/params/agr_sarnn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/feval/.ipynb_checkpoints/Untitled-checkpoint.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/feval/Untitled.ipynb" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/调参记录.numbers" beforeDir="false" afterPath="$PROJECT_DIR$/docs/调参记录.numbers" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macros.py" beforeDir="false" afterPath="$PROJECT_DIR$/macros.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/nets/MANN.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/MANN.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/nets/SARNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/nets/SARNN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/params/feval_sarnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/params/feval_sarnn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/params/opts.py" beforeDir="false" afterPath="$PROJECT_DIR$/params/opts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/agreement.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/agreement.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/feval.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/feval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/listops.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/listops.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,13 +26,13 @@
     <SUITE FILE_PATH="coverage/mann_eval$gpu1.coverage" NAME="gpu1 Coverage Results" MODIFIED="1542343439751" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$flang_analy.coverage" NAME="flang_analy Coverage Results" MODIFIED="1543828319339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/analies" />
     <SUITE FILE_PATH="coverage/mann_eval$gen.coverage" NAME="gen Coverage Results" MODIFIED="1539398085084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/polysemy" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu7.coverage" NAME="gpu7 Coverage Results" MODIFIED="1542678121086" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu7.coverage" NAME="gpu7 Coverage Results" MODIFIED="1556814771777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$gen_data_generalization.coverage" NAME="gen_data_generalization Coverage Results" MODIFIED="1539048409088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/flang" />
     <SUITE FILE_PATH="coverage/mann_eval$gen_data_same.coverage" NAME="gen_data_same Coverage Results" MODIFIED="1539677660110" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/flang" />
     <SUITE FILE_PATH="coverage/mann_eval$feval_test.coverage" NAME="feval_test_ne Coverage Results" MODIFIED="1544545676917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu4.coverage" NAME="gpu4 Coverage Results" MODIFIED="1556774273737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu4.coverage" NAME="gpu4 Coverage Results" MODIFIED="1556815175366" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$listops_test.coverage" NAME="listops_test Coverage Results" MODIFIED="1539949662398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu5.coverage" NAME="gpu5 Coverage Results" MODIFIED="1542596179024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu5.coverage" NAME="gpu5 Coverage Results" MODIFIED="1556815177059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$polysemy.coverage" NAME="polysemy Coverage Results" MODIFIED="1538638439917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
     <SUITE FILE_PATH="coverage/mann_eval$gen_re_long_tail.coverage" NAME="gen_re_long_tail Coverage Results" MODIFIED="1539339245299" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/polysemy" />
     <SUITE FILE_PATH="coverage/mann_eval$polysemy_test.coverage" NAME="polysemy_test Coverage Results" MODIFIED="1540028336031" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
@@ -48,11 +48,11 @@
     <SUITE FILE_PATH="coverage/mann_eval$cpu.coverage" NAME="cpu Coverage Results" MODIFIED="1552403877111" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$gpu0.coverage" NAME="gpu0 Coverage Results" MODIFIED="1544847543043" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$agreement_test.coverage" NAME="agreement_test Coverage Results" MODIFIED="1538209440898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu3.coverage" NAME="gpu3 Coverage Results" MODIFIED="1556774329983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu3.coverage" NAME="gpu3 Coverage Results" MODIFIED="1556815178703" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/mann_eval$feval_analy.coverage" NAME="feval_analy Coverage Results" MODIFIED="1545981237768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/analies" />
     <SUITE FILE_PATH="coverage/mann_eval$flang.coverage" NAME="flang Coverage Results" MODIFIED="1537544722944" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
     <SUITE FILE_PATH="coverage/mann_eval$gen_data.coverage" NAME="gen_data Coverage Results" MODIFIED="1540386557091" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/flang" />
-    <SUITE FILE_PATH="coverage/mann_eval$gpu6.coverage" NAME="gpu6 Coverage Results" MODIFIED="1543404288341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mann_eval$gpu6.coverage" NAME="gpu6 Coverage Results" MODIFIED="1556815173792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="-1705755844">
@@ -83,13 +83,14 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="analy_sarnn" value="2" />
+          <entry key="errs" value="2" />
           <entry key="gitignore" value="1" />
           <entry key="ipynb" value="8" />
           <entry key="json" value="8" />
           <entry key="md" value="4" />
           <entry key="numbers" value="3" />
           <entry key="png" value="11" />
-          <entry key="py" value="981" />
+          <entry key="py" value="998" />
           <entry key="sh" value="4" />
           <entry key="tsv" value="141" />
           <entry key="txt" value="212" />
@@ -104,8 +105,8 @@
           <entry key="Image" value="11" />
           <entry key="JSON" value="8" />
           <entry key="Markdown" value="4" />
-          <entry key="PLAIN_TEXT" value="361" />
-          <entry key="Python" value="981" />
+          <entry key="PLAIN_TEXT" value="363" />
+          <entry key="Python" value="998" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -113,7 +114,8 @@
           <entry key="Python Console" value="134" />
           <entry key="analy_sarnn" value="1" />
           <entry key="dummy" value="49" />
-          <entry key="py" value="53169" />
+          <entry key="errs" value="567" />
+          <entry key="py" value="55453" />
           <entry key="sh" value="27" />
           <entry key="tsv" value="2" />
         </counts>
@@ -121,8 +123,8 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Bash" value="27" />
-          <entry key="PLAIN_TEXT" value="52" />
-          <entry key="Python" value="53303" />
+          <entry key="PLAIN_TEXT" value="619" />
+          <entry key="Python" value="55587" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
@@ -131,14 +133,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tasks/agreement.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="50" column="26" lean-forward="true" selection-start-line="50" selection-start-column="26" selection-end-line="50" selection-end-column="26" />
+            <state relative-caret-position="100">
+              <caret line="201" column="61" lean-forward="true" selection-start-line="201" selection-start-column="61" selection-end-line="201" selection-end-column="61" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/params/agr_ntm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/params/agr_alstm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/params/agr_lstm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -146,80 +175,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nets/MANN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="114" column="48" lean-forward="true" selection-start-line="114" selection-start-column="48" selection-end-line="114" selection-end-column="48" />
+            <state relative-caret-position="210">
+              <caret line="22" column="36" lean-forward="true" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nets/SimpRNN.py">
+        <entry file="file://$PROJECT_DIR$/docs/errs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="16" column="44" selection-start-line="16" selection-start-column="44" selection-end-line="16" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/nets/SARNN.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="43" column="50" selection-start-line="43" selection-start-column="50" selection-end-line="43" selection-end-column="50" />
+            <state relative-caret-position="270">
+              <caret line="18" column="21" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/feval/valid_d30.parenthesis.tsv">
+        <entry file="file://$PROJECT_DIR$/params/agr_sarnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" column="17" lean-forward="true" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="53" column="25" lean-forward="true" selection-start-line="53" selection-start-column="25" selection-end-line="53" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tasks/feval.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="505" column="22" lean-forward="true" selection-start-line="505" selection-start-column="22" selection-end-line="505" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/params/feval_sarnn.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1606">
-              <caret line="27" column="61" lean-forward="true" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="303" column="8" selection-start-line="303" selection-start-column="8" selection-end-line="303" selection-end-column="8" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="330">
+              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
             </state>
           </provider>
         </entry>
@@ -227,8 +202,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/params/opts.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-24">
-              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="150">
+              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nets/SARNN.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="358">
+              <caret line="80" column="26" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -244,10 +231,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>odim</find>
-      <find>+ +</find>
-      <find>- -</find>
-      <find>* *</find>
       <find>uses</find>
       <find>some bath</find>
       <find>VBP</find>
@@ -274,6 +257,10 @@
       <find>train_d30.pn1.tsv</find>
       <find>seed</find>
       <find>progra</find>
+      <find>* 2</find>
+      <find>Savin</find>
+      <find>Sav</find>
+      <find>Sa</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -282,13 +269,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/params/sst2_srnn.py" />
-        <option value="$PROJECT_DIR$/params/sst2_vecave.py" />
-        <option value="$PROJECT_DIR$/params/sst2_sarnn.py" />
         <option value="$PROJECT_DIR$/tests/listops_test.py" />
         <option value="$PROJECT_DIR$/tests/agreement_test.py" />
         <option value="$PROJECT_DIR$/params/sst5_srnn.py" />
-        <option value="$PROJECT_DIR$/macros.py" />
         <option value="$PROJECT_DIR$/tasks/sst2.py" />
         <option value="$PROJECT_DIR$/params/sr_sarnn.py" />
         <option value="$PROJECT_DIR$/params/sr_ntm.py" />
@@ -324,15 +307,19 @@
         <option value="$PROJECT_DIR$/params/feval_lstm.py" />
         <option value="$PROJECT_DIR$/params/feval_alstm.py" />
         <option value="$PROJECT_DIR$/params/feval_ntm.py" />
-        <option value="$PROJECT_DIR$/params/opts.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/nets/MANN.py" />
         <option value="$PROJECT_DIR$/utils.py" />
-        <option value="$PROJECT_DIR$/tasks/feval.py" />
         <option value="$PROJECT_DIR$/params/feval_sarnn.py" />
         <option value="$PROJECT_DIR$/tasks/listops.py" />
-        <option value="$PROJECT_DIR$/tasks/agreement.py" />
+        <option value="$PROJECT_DIR$/tasks/feval.py" />
+        <option value="$PROJECT_DIR$/docs/errs" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/macros.py" />
+        <option value="$PROJECT_DIR$/params/agr_sarnn.py" />
+        <option value="$PROJECT_DIR$/params/opts.py" />
+        <option value="$PROJECT_DIR$/params/agr_ntm.py" />
+        <option value="$PROJECT_DIR$/nets/MANN.py" />
         <option value="$PROJECT_DIR$/nets/SARNN.py" />
+        <option value="$PROJECT_DIR$/tasks/agreement.py" />
       </list>
     </option>
   </component>
@@ -343,9 +330,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="960" />
     <option name="y" value="23" />
-    <option name="width" value="960" />
+    <option name="width" value="1920" />
     <option name="height" value="991" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -382,7 +368,7 @@
             <path>
               <item name="mann_eval" type="b2602c69:ProjectViewProjectNode" />
               <item name="mann_eval" type="462c0819:PsiDirectoryNode" />
-              <item name="nets" type="462c0819:PsiDirectoryNode" />
+              <item name="tasks" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -402,15 +388,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/params" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/params" />
       <recent name="$PROJECT_DIR$/tests" />
       <recent name="$PROJECT_DIR$/analies" />
-      <recent name="$PROJECT_DIR$/params" />
       <recent name="$PROJECT_DIR$/data" />
       <recent name="$PROJECT_DIR$/data/sst5" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/params" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -616,7 +602,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="-gpu 3" />
+      <option name="PARAMETERS" value="-gpu 3  -task agr -enc_type alstm" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -638,7 +624,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="-gpu 4" />
+      <option name="PARAMETERS" value="-gpu 4 -task agr -enc_type ntm" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -660,7 +646,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="-gpu 5" />
+      <option name="PARAMETERS" value="-gpu 5 -task agr -enc_type lstm" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -682,7 +668,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="-gpu 6" />
+      <option name="PARAMETERS" value="-gpu 6 -task agr -enc_type sarnn" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -704,7 +690,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="-gpu 7" />
+      <option name="PARAMETERS" value="-gpu 7 -task feval -enc_type sarnn" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -807,14 +793,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="991" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4956822" visible="true" weight="0.18477103" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4956822" visible="true" weight="0.20713525" />
       <window_info id="Structure" order="1" sideWeight="0.50431776" side_tool="true" weight="0.2274678" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.396861" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4978701" visible="true" weight="0.269188" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4978701" visible="true" weight="0.30923247" />
       <window_info anchor="bottom" id="Version Control" order="3" weight="0.32247192" />
       <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.49928468" weight="0.31256953" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
@@ -825,7 +810,7 @@
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32480535" />
       <window_info anchor="bottom" id="File Transfer" order="11" weight="0.18353726" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.50214595" weight="0.28985506" />
-      <window_info anchor="bottom" id="Terminal" order="13" sideWeight="0.49785408" weight="0.2925473" />
+      <window_info anchor="bottom" id="Terminal" order="13" sideWeight="0.49785408" weight="0.4160178" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -946,58 +931,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/505470009/-2027856692/argparse.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23940">
-          <caret line="1603" column="8" selection-start-line="1603" selection-start-column="8" selection-end-line="1603" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/analies/feval_analy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2250">
-          <caret line="160" column="73" selection-start-line="160" selection-start-column="73" selection-end-line="160" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nets/ALSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="592">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/down.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="41" lean-forward="true" selection-start-line="2" selection-start-column="41" selection-end-line="2" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/feval/test_d30.tsv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="17" lean-forward="true" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/505470009/1211974832/sklearn/metrics/classification.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.2/remote_sources/505470009/1211974832/torch/nn/utils/clip_grad.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="41" column="4" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/feval/train_d30.parenthesis.tsv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/feval/train.pa1.mmc3.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1081,13 +1014,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/macros.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="25" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tasks/pattern.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4095">
@@ -1136,13 +1062,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nets/NTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2520">
-          <caret line="178" column="16" selection-start-line="178" selection-start-column="16" selection-end-line="178" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/params/feval_srnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
@@ -1154,23 +1073,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="15" column="49" selection-start-line="15" selection-start-column="49" selection-end-line="15" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/params/opts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-24">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="53" column="25" lean-forward="true" selection-start-line="53" selection-start-column="25" selection-end-line="53" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1201,34 +1103,23 @@
     <entry file="file://$PROJECT_DIR$/params/feval_sarnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1606">
-          <caret line="27" column="61" lean-forward="true" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
+          <caret line="27" column="61" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tasks/listops.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="839">
-          <caret line="91" column="9" lean-forward="true" selection-start-line="91" selection-start-column="9" selection-end-line="91" selection-end-column="9" />
+        <state relative-caret-position="602">
+          <caret line="91" column="9" selection-start-line="91" selection-start-column="9" selection-end-line="91" selection-end-column="9" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/feval.py">
+    <entry file="file://$PROJECT_DIR$/tasks/flang.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="505" column="22" lean-forward="true" selection-start-line="505" selection-start-column="22" selection-end-line="505" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/agreement.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="50" column="26" lean-forward="true" selection-start-line="50" selection-start-column="26" selection-end-line="50" selection-end-column="26" />
+        <state relative-caret-position="-823">
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
@@ -1249,17 +1140,126 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nets/MANN.py">
+    <entry file="file://$PROJECT_DIR$/tasks/sr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="114" column="48" lean-forward="true" selection-start-line="114" selection-start-column="48" selection-end-line="114" selection-end-column="48" />
+        <state relative-caret-position="1005">
+          <caret line="67" lean-forward="true" selection-start-line="67" selection-end-line="67" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/macros.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="22" column="35" selection-start-line="22" selection-start-column="35" selection-end-line="22" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/errs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="21" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/agreement_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="125" lean-forward="true" selection-start-line="125" selection-end-line="125" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/agr_ntm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/agr_sarnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/agr_alstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/opts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nets/SARNN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="43" column="50" selection-start-line="43" selection-start-column="50" selection-end-line="43" selection-end-column="50" />
+        <state relative-caret-position="358">
+          <caret line="80" column="26" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/NTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="307">
+          <caret line="189" column="27" lean-forward="true" selection-start-line="189" selection-start-column="27" selection-end-line="189" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/MANN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="22" column="36" lean-forward="true" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/params/agr_lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/feval.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="563">
+          <caret line="493" column="102" selection-start-line="493" selection-start-column="12" selection-end-line="493" selection-end-column="102" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/agreement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="201" column="61" lean-forward="true" selection-start-line="201" selection-start-column="61" selection-end-line="201" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

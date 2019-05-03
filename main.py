@@ -7,7 +7,7 @@ import argparse
 from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tasks import polysemy, flang, listops, feval, sst2, sst5, sr
+from tasks import polysemy, flang, listops, feval, sst2, sst5, sr, agreement
 from torch.nn.init import orthogonal_, uniform_
 import crash_on_ipy
 import sys
@@ -53,6 +53,11 @@ if __name__ == '__main__':
         build_iters = feval.build_iters
         train = feval.train
         Model = feval.Model
+
+    if opt.task == 'agr':
+        build_iters = agreement.build_iters
+        train = agreement.train
+        Model = agreement.Model
 
     if opt.task == 'listops':
         build_iters = listops.build_iters
@@ -204,9 +209,10 @@ if __name__ == '__main__':
     # optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()),
     #                        lr=opt.lr,
     #                        weight_decay=opt.wdecay)
-    # optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()),
-    #                        lr=opt.lr,
-    #                        weight_decay=opt.wdecay)
+    if opt.optim == 'sgd':
+        optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()),
+                              lr=opt.lr,
+                              weight_decay=opt.wdecay)
     if opt.optim == 'rmsprop':
         optimizer = optim.RMSprop(params=filter(lambda p: p.requires_grad, model.parameters()),
                                   lr=opt.lr)

@@ -4,17 +4,23 @@ from torchtext.data import Dataset
 import torch
 from torch import nn
 from torch.nn import functional as F
-from torch.nn.utils import clip_grad_norm
+from torch.nn.utils import clip_grad_norm_
 import numpy as np
 import utils
+import tqdm
+from collections import defaultdict
+import logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)-8s %(message)s')
 
 
 class Example(object):
 
-    def __init__(self, sen, sgold, sdiff):
+    def __init__(self, sen, sgold, sdiff, nint):
         self.sen = self.tokenizer(sen)
         self.sgold = self.tokenizer(sgold)
         self.sdiff = self.tokenizer(sdiff)
+        self.nint = int(nint)
 
     def tokenizer(self, seq):
         return seq.split()
@@ -22,48 +28,67 @@ class Example(object):
 
 def load_examples(fname):
     examples = []
+    lens = []
 
     with open(fname, 'r') as f:
         for line in f:
-            sen, sgold, sdiff = \
+            sen, sgold, sdiff, nint = \
                 line.strip().split('\t')
-            examples.append(Example(sen, sgold, sdiff))
+            examples.append(Example(sen, sgold, sdiff, nint))
+            lens.append(len(sgold.split()))
 
-    return examples
+    return examples, np.mean(lens)
 
 
-def build_iters(param_iter):
+def build_iters(**param_iter):
     ftrain = param_iter['ftrain']
     fvalid = param_iter['fvalid']
     bsz = param_iter['bsz']
     device = param_iter['device']
+    device = torch.device(device if device != -1 else 'cpu')
 
-    examples_train = load_examples(ftrain)
+    examples_train, len_ave = load_examples(ftrain)
 
     SEQ = torchtext.data.Field(sequential=True, use_vocab=True,
                                pad_token=PAD,
                                unk_token=UNK,
                                eos_token=None)
+    NUM = torchtext.data.Field(sequential=False,
+                               use_vocab=False)
+    fields = [('sen', SEQ), ('sgold', SEQ), ('sdiff', SEQ), ('nint', NUM)]
 
-    train = Dataset(examples_train, fields=[('sen', SEQ),
-                                            ('sgold', SEQ),
-                                            ('sdiff', SEQ)])
+    train = Dataset(examples_train, fields=fields)
     SEQ.build_vocab(train)
-    examples_valid = load_examples(fvalid)
-    valid = Dataset(examples_valid, fields=[('sen', SEQ),
-                                            ('sgold', SEQ),
-                                            ('sdiff', SEQ)])
+    examples_valid, _ = load_examples(fvalid)
+    valid = Dataset(examples_valid, fields=fields)
 
-    train_iter = torchtext.data.Iterator(train, batch_size=bsz,
-                                         sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.sgold),
-                                         sort_within_batch=True,
-                                         device=device)
-    valid_iter = torchtext.data.Iterator(valid, batch_size=bsz,
-                                         sort=False, repeat=False,
-                                         sort_key=lambda x: len(x.sgold),
-                                         sort_within_batch=True,
-                                         device=device)
+    def batch_size_fn(new_example, current_count, ebsz):
+        return ebsz + (len(new_example.sgold) / len_ave) ** 0.3
+
+    train_iter = utils.BucketIterator(train, batch_size=bsz,
+                                      sort=True,
+                                      shuffle=True,
+                                      repeat=False,
+                                      sort_key=lambda x: len(x.sgold),
+                                      batch_size_fn=batch_size_fn,
+                                      device=device)
+    valid_iter = utils.BucketIterator(valid, batch_size=bsz,
+                                      sort=True,
+                                      shuffle=True,
+                                      repeat=False,
+                                      sort_key=lambda x: len(x.sgold),
+                                      batch_size_fn=batch_size_fn,
+                                      device=device)
+    # train_iter = torchtext.data.Iterator(train, batch_size=bsz,
+    #                                      sort=False, repeat=False,
+    #                                      sort_key=lambda x: len(x.sgold),
+    #                                      sort_within_batch=True,
+    #                                      device=device)
+    # valid_iter = torchtext.data.Iterator(valid, batch_size=bsz,
+    #                                      sort=False, repeat=False,
+    #                                      sort_key=lambda x: len(x.sgold),
+    #                                      sort_within_batch=True,
+    #                                      device=device)
 
     return {'train_iter': train_iter,
             'valid_iter': valid_iter,
@@ -88,13 +113,15 @@ def build_iters_test(ftests, SEQ, bsz, device):
 
 
 def valid(model, valid_iter):
-    nc = 0
-    nt = 0
+    nc_nint = defaultdict(int)
+    nt_nint = defaultdict(int)
+    acc_nint = defaultdict(tuple)
     with torch.no_grad():
         model.eval()
         for i, batch in enumerate(valid_iter):
             sgold = batch.sgold
             sdiff = batch.sdiff
+            nint = batch.nint
             next_words = model(sgold[:-1])
             bsz = next_words.shape[1]
 
@@ -106,17 +133,20 @@ def valid(model, valid_iter):
             prob_diff = final_word_logits[range(bsz), gold] - \
                         final_word_logits[range(bsz), diff]
 
-            nc += prob_diff.gt(0).sum().item()
-            nt += bsz
-            # loss_gold = F.cross_entropy(next_words.view(-1, model.num_words),
-            #                     sgold[1:].view(-1), reduce=False, ignore_index=model.padding_idx)
-            # loss_diff = F.cross_entropy(next_words.view(-1, model.num_words),
-            #                     sdiff[1:].view(-1), reduce=False, ignore_index=model.padding_idx)
-            #
-            # nc += (loss_diff - loss_gold).gt(0).sum().item()
-            # nt += sgold.shape[0]
+            correct = prob_diff.gt(0).cpu().numpy()
+            nint = nint.cpu().numpy()
+            for nc, ni in zip(correct, nint):
+                nc_nint[ni] += nc
+                nt_nint[ni] += 1
 
-    accuracy = nc / nt
+    for ni in nc_nint.keys():
+        if ni > 5:
+            continue
+        acc_nint[ni] = (round(float(nc_nint[ni]) / float(nt_nint[ni]), 4), nt_nint[ni])
+    accuracy = sum([value for key, value in nc_nint.items()]) / \
+               sum([value for key, value in nt_nint.items()])
+    accuracy = round(accuracy, 4)
+    logging.info(f'acc_nint: {acc_nint}')
     return accuracy
 
 
@@ -135,10 +165,13 @@ def train(model, iters, opt, optim, scheduler):
     with open(log_path, 'w') as f:
         f.write(str(utils.param_str(opt)) + '\n')
 
+    acc = valid(model, valid_iter)
+    print(acc)
     best_performance = 0
     losses = []
     for epoch in range(opt.nepoch):
-        for i, batch in enumerate(train_iter):
+        train_iter_tqdm = tqdm.tqdm(train_iter)
+        for i, batch in enumerate(train_iter_tqdm):
             sen = batch.sen
 
             model.train()
@@ -148,12 +181,9 @@ def train(model, iters, opt, optim, scheduler):
             loss = criterion_lm(next_words.view(-1, model.num_words), sen[1:].view(-1))
             losses.append(loss.item())
             loss.backward()
-            gnorm = clip_grad_norm(model.parameters(), opt.gclip)
+            gnorm = clip_grad_norm_(model.parameters(), opt.gclip)
             optim.step()
-
-            loss = {'clf_loss': loss.item()}
-
-            utils.progress_bar(i / len(train_iter), loss, epoch)
+            train_iter_tqdm.set_description(f'Epoch {epoch} loss {loss.item():.4f} gnorm {gnorm:.4f}')
 
             if (i + 1) % int(1 / 4 * len(train_iter)) == 0:
                 # print('\r')
@@ -163,7 +193,7 @@ def train(model, iters, opt, optim, scheduler):
                     valid(model, valid_iter)
                 log_str = '{\'Epoch\':%d, \'Format\':\'a/l\', \'Metrics\':[%.4f, %.4f]}' % \
                           (epoch, accurracy, loss_ave)
-                print(log_str)
+                print(log_str + '\n')
                 with open(log_path, 'a+') as f:
                     f.write(log_str + '\n')
 
@@ -175,7 +205,7 @@ def train(model, iters, opt, optim, scheduler):
                     best_performance = accurracy
                     model_fname = basename + ".model"
                     save_path = os.path.join(RES, model_fname)
-                    print('Saving to ' + save_path)
+                    print('Saving to ' + save_path + '\n')
                     torch.save(model.state_dict(), save_path)
 
 
@@ -202,13 +232,11 @@ class Model(nn.Module):
 
         inp = self.embedding_drop(True, seq)
         res = self.encoder(embs=inp, lens=lens)
-        output = res['output']
-        res['output'] = output
-        return res
+        output = res
+        return output
 
     def forward(self, seq):
-        res = self.enc(seq)
-        output = res['output']
+        output = self.enc(seq)
         w_t = self.embedding.weight.transpose(0, 1)
         next_words = self.out2esz(output).matmul(w_t)
         # next_words = self.out(output)

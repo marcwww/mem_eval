@@ -1,0 +1,19 @@
+1. for sarnn, policys not sum to 1
+should be:
+0.2 0.3 0.0(should always be 0)
+0.3 0.3 0.4
+0.5 0.4 0.6
+
+and cumprod:
+1.0 0.20 0.060
+0.3 0.06 0.024
+0.5 0.08 0.036
+
+note that, now the last two row sums to 1
+
+2. for sarnn, it can never conquer parenthesized cases:
+(1) policy should be based on mem and next_inp, e.g.:
+    a. 5+3*2 v.s. 5*3*2
+    b. (1) v.s. (1+2)
+(2) should be able to reduce more than once at one time step, e.g.:
+    (1+(2+(3+(4+5))))

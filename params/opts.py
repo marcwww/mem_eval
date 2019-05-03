@@ -6,7 +6,8 @@ from . import flang_srnn, flang_lstm, flang_alstm, flang_sarnn, flang_ntm, \
     flang_topnn, \
     sst2_srnn, sst2_sarnn, sst2_lstm, sst2_vecave, \
     sst5_srnn, sst5_lstm, sst5_sarnn, sst5_alstm, sst5_ntm, \
-    sr_lstm, sr_alstm, sr_sarnn, sr_ntm, sr_srnn
+    sr_lstm, sr_alstm, sr_sarnn, sr_ntm, sr_srnn, \
+    agr_sarnn, agr_lstm, agr_ntm, agr_alstm
 
 def general_opts(parser):
     group = parser.add_argument_group('general')
@@ -23,7 +24,8 @@ def general_opts(parser):
     # group.add_argument('-task', type=str, default='sst2')
     # group.add_argument('-task', type=str, default='sst5')
     # group.add_argument('-task', type=str, default='sr')
-    group.add_argument('-task', type=str, default='feval')
+    # group.add_argument('-task', type=str, default='feval')
+    group.add_argument('-task', type=str, default='agr')
     # group.add_argument('-task', type=str, default='polysemy')
     group.add_argument('-sub_task', type=str, default='overall')
 
@@ -174,6 +176,22 @@ def select_opt(task, enc_type, parser):
     elif task == 'sr' and enc_type == 'ntm':
         sr_ntm.model_opts(parser)
         sr_ntm.train_opts(parser)
+
+    elif task == 'agr' and enc_type == 'sarnn':
+        agr_sarnn.model_opts(parser)
+        agr_sarnn.train_opts(parser)
+
+    elif task == 'agr' and enc_type == 'lstm':
+        agr_lstm.model_opts(parser)
+        agr_lstm.train_opts(parser)
+
+    elif task == 'agr' and enc_type == 'alstm':
+        agr_alstm.model_opts(parser)
+        agr_alstm.train_opts(parser)
+
+    elif task == 'agr' and enc_type == 'ntm':
+        agr_ntm.model_opts(parser)
+        agr_ntm.train_opts(parser)
 
     else:
         raise ModuleNotFoundError

@@ -30,10 +30,16 @@ class EncoderSARNN(MANNBaseEncoder):
         self.policy = nn.Sequential(nn.Linear(idim + M * 2, 3), nn.LogSoftmax(dim=-1))
         self.hid2pushed = nn.Linear(cdim, M) if cdim != M else lambda x: x
 
+    def _inf_bias_policy(self, inp, weight, bias):
+        bias = bias.clone()
+        bias[0] = -1e20
+        logits = F.linear(inp, weight, bias)
+        return F.log_softmax(logits, dim=-1).chunk(dim=-1, chunks=3)
+
     def update_stack(self, inp, hid):
         # inp: (bsz, edim)
         bsz, edim = inp.shape
-
+        # self.mem: (bsz, N, M)
         mem_padded = F.pad(self.mem.unsqueeze(1), [0, 0, 0, self.N], 'constant', 0)
 
         # m_pop: (bsz, N+1, N, M)
@@ -41,14 +47,20 @@ class EncoderSARNN(MANNBaseEncoder):
         pin_stack = torch.cat([m_pop[:, :, 0], m_pop[:, :, 1]], dim=2)  # pin_stack: (bsz, N+1, M*2)
         pin_inp = inp.unsqueeze(1).expand(bsz, self.N+1, edim)  # pin_inp: (bsz, N+1, edim)
         pin = torch.cat([pin_inp, pin_stack], dim=-1)  # pin: (bsz, N+1, edim + M*2)
-        lp_pop, lp_stay, lp_push = self.policy(pin).chunk(dim=-1, chunks=3)  # lp_xxx: (bsz, N+1, 1)
+        lp_pop, lp_stay, lp_push = self.policy(pin[:, :-1]).chunk(dim=-1, chunks=3)  # lp_xxx: (bsz, N, 1)
+        _, lp_stay_tail, lp_push_tail = self._inf_bias_policy(pin[:, -1:], self.policy[0].weight, self.policy[0].bias)
+        # lp_xxx_tail: (bsz, 1, 1)
+        lp_stay = torch.cat([lp_stay, lp_stay_tail], dim=1)  # to (bsz, N+1, 1)
+        lp_push = torch.cat([lp_push, lp_push_tail], dim=1)  # to (bsz, N+1, 1)
         lp_pop_revised = torch.cat([self.zero.expand(bsz, 1, 1),
-                                    lp_pop[:, :-1]],
+                                    lp_pop],
                                    dim=1)  # lp_pop_revised: (bsz, N+1, 1)
         #  this 'revised' corresponding to the original paper for the base cases
         lp_pop = lp_pop_revised.cumsum(dim=1)
         p_stay = (lp_pop + lp_stay).exp().unsqueeze(-1)  # p_stay: (bsz, N+1, 1, 1)
         p_push = (lp_pop + lp_push).exp().unsqueeze(-1)  # p_push: (bsz, N+1, 1, 1)
+
+        # assert ((p_stay + p_push).sum(dim=1).sum() - bsz) < 1e-4
 
         # pushed: (bsz, M)
         pushed = self.hid2pushed(hid)
@@ -65,7 +77,8 @@ class EncoderSARNN(MANNBaseEncoder):
         return mem_new_stay, mem_new_push, m_pop, m_push, pushed
 
     def read(self, controller_outp):
-        r = torch.cat([self.mem[:, 0], self.mem[:, 1]], dim=1)
+        # r = torch.cat([self.mem[:, 0], self.mem[:, 1]], dim=1)
+        r = self.mem[:, 0]
         return r
 
     def write(self, controller_outp, input):

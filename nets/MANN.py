@@ -13,18 +13,18 @@ class MANNBaseEncoder(nn.Module):
     def __init__(self, idim, cdim, N, M, dropout, read_first):
         super(MANNBaseEncoder, self).__init__()
         self.idim = idim
-        self.odim = cdim + M * 2
+        self.odim = cdim + M
         self.cdim = cdim
         self.N = N
         self.M = M
-        self.controller = nn.LSTM(idim + M * 2, cdim)
+        self.controller = nn.LSTM(idim + M, cdim)
         self.dropout = nn.Dropout(dropout)
         self._reset_controller()
         self.read_first = read_first
 
         self.h0 = nn.Parameter(torch.randn(1, 1, cdim) * 0.05, requires_grad=True)
         self.c0 = nn.Parameter(torch.randn(1, 1, cdim) * 0.05, requires_grad=True)
-        self.r0 = nn.Parameter(torch.randn(1, M * 2) * 0.02, requires_grad=False)
+        self.r0 = nn.Parameter(torch.randn(1, M) * 0.02, requires_grad=False)
 
     def _reset_controller(self):
         for p in self.controller.parameters():
